@@ -465,7 +465,248 @@ message = (age < 3) ? 'Hi, baby!' :
 
 console.log(message);
 
-//Functions-----------------------------------------------------------------
+// Arrays & Loops-----------------------------------------------------------------
+
+// Arrays-----------------------
+// special type of object, typeof will return "object" for arrays
+// 0-indexed, elements accessed like most other languages, arr[indexNum]
+// may contain different types in same array, objects, functions, arrays
+
+// declaration, notice the use of const (common practice)
+const cars = ["Saab", "Volvo", "BMW", "Toyota", "Nissan"];
+// declaring empty array, then adding elements
+const cars2 = [];
+cars2[0]= "Saab";
+cars2[1]= "Volvo";
+cars2[2]= "BMW";
+// using new keyword
+const cars3 = new Array("Saab", "Volvo", "BMW", "Toyota", "Nissan");
+
+// Array Methods-----------------------
+// converting array to string
+console.log(cars.toString());
+
+// built-in methods
+// length
+console.log(cars.length);
+// sort
+console.log(`cars before sorting: ${cars}`);
+console.log(cars.sort());
+
+// adding new elements
+cars.push("Hyundai");
+console.log(cars);
+cars[cars.length] = "Honda";
+console.log(cars);
+
+// removing last element from array, returns what was popped up
+console.log(cars.pop())
+
+// adding elements to high indexes can create undefined holes
+const fruits = ["Banana", "Orange", "Apple"];
+fruits[6] = "Lemon";  // Creates undefined "holes" in fruits
+console.log(fruits);
+
+// Array(40) not the same as [40], Array(40) creates 40 undefined elements
+console.log(new Array(40));
+
+// check if object is an array
+console.log(`cars is an array: ${Array.isArray(cars)}`);
+
+// instanceof operator returns true if an object is created by a given constructor
+console.log(`cars is an array: ${cars instanceof Array}`);
+
+// getting the nth element, return is same as []
+// ex: 3rd element
+console.log(cars.at(2));
+
+// join(), works like toString() but lets you specifiy seperator
+console.log(cars.join(" * "));
+
+// shift(), returns value that was shifted out
+// removes 1st element and shifts all other elements to lower index
+console.log(cars.shift());
+console.log(cars);
+
+//unshift(), returns new array length
+// unshifts older elements, and adds argument to beginning of array
+console.log(cars.unshift("Lambo"));
+console.log(cars);
+
+// delete, deletes element but leaves undefined holes in array
+delete cars[0];
+console.log(cars);
+cars.shift();
+
+// concatenating arrays, returns result of concatenation
+// does not change existing arrays, can take any number of array arguments
+// can also take strings as argument
+console.log(cars.concat(cars2));
+console.log(cars.concat("Tesla"));
+
+// copyWithing(), copies array elements to another position in an array
+// does not add items to array
+// does not change length of array
+// overwrites existing values
+// ex: copy element(s) at index 0 to index 2
+cars.copyWithin(2, 0);
+console.log(cars);
+// ex: copy to index 0, the elements from index 0 to 2
+cars.copyWithin(0, 0, 2);
+console.log(cars);
+
+// flat(), flattens array (reduces dimensions)
+const myArr = [[1,2],[3,4],[5,6]];
+console.log(myArr.flat());
+
+// flatMap(), first maps all elements of an array and then creates a new array by flattening the array.
+const arr = [1, 2, 3, 4, 5, 6];
+console.log(arr.flatMap(x => [x, x * 10]));
+
+// splice(), returns array with deleted items
+// 1st parameter defines the position where new elements should be added (spliced in)
+// 2nd parameter defines how many elements should be removed
+// rest of parameters define the new elements to be added
+const fruits2 = ["Banana", "Orange", "Apple", "Mango"];
+console.log(fruits2.splice(2, 0, "Lemon", "Kiwi"));
+console.log(fruits2);
+// can be used to remove elements without leaving holes
+fruits2.splice(0, 1);
+console.log(fruits2);
+
+// toSpliced(), same as splice() but creates & returns new array instead of altering old one
+const months = ["Jan", "Feb", "Mar", "Apr"];
+console.log(months.toSpliced(0, 1));
+
+// slice() slices out a piece of an array into a new array
+// creates new array and does not alter old array
+// can take 2 arguments, 1 for start (inclusive) and 1 for end (not included)
+const citrus = fruits2.slice(1);
+console.log(citrus);
+console.log(fruits2.slice(1, 2))
+
+// Automatic toString()
+// JavaScript automatically converts an array to a comma separated string when a primitive value is expected.
+console.log(fruits2);
+
+// Loops-----------------------
+
+// loop through a collection
+for (const car of cars) {
+  console.log(car);
+}
+
+// using map() to do something to each item in a collection
+function toUpper(string) {
+  return string.toUpperCase();
+}
+const cats = ["Leopard", "Serval", "Jaguar", "Tiger", "Caracal", "Lion"];
+const upperCats = cats.map(toUpper);
+console.log(upperCats);
+
+// using filtered() to create new collection containing only items that match
+// like map but function passed in returns boolean
+// if boolean function returns true, item is added
+function lCat(cat) {
+  return cat.startsWith("L");
+}
+const filtered = cats.filter(lCat);
+console.log(filtered);
+
+// for loop format
+// for (initializer; condition; final-expression) {
+      // code to run
+// }
+// initializer, condition, and/or final-expression can be omitted (removing all = infinite loop) (semi-colons must still be present)
+// An initializer — this is usually a variable set to a number, which is incremented to count the number of times the loop has run. It is also sometimes referred to as a counter variable.
+// A condition — this defines when the loop should stop looping. This is generally an expression featuring a comparison operator, a test to see if the exit condition has been met.
+// A final-expression — this is always evaluated (or run) each time the loop has gone through a full iteration. It usually serves to increment (or in some cases decrement) the counter variable, to bring it closer to the point where the condition is no longer true.
+// ex:
+// notes: 
+// i can be omitted, code will still work
+// i will not exist outside the loop
+// we don't have to declare a variable and can use an existing one
+for (let i = 0; i < cats.length; i++) {
+  console.log(cats[i]);
+}
+
+// break keyword
+for (let i = 0; i < cats.length; i++) {
+  console.log(cats[i]);
+  // breaks out of for loop after 1 iteration
+  break;
+}
+
+// continue keyword
+for (let i = 0; i < cats.length; i++) {
+  if (cats[i] == "Leopard") {
+    // if the cat is a Leopard, continue and do not print it
+    continue;
+  }
+  console.log(cats[i]);
+}
+
+// Please note that syntax constructs that are not expressions cannot be used with the ternary operator ?. In particular, directives such as break/continue aren’t allowed there.
+// ex: (i > 5) ? alert(i) : continue; is not allowed
+
+// while loop
+// syntax:
+// initializer
+// while (condition) {
+    // code to run
+
+//   final-expression
+// }
+// curly braces can be omitted for a single statement
+// anything can be used as condition b/c it will be converted to truthy
+// ex:
+let i = cats.length - 1;
+while (i > 0) {
+  console.log(cats[i]);
+  i--;
+}
+i = 1
+while (i) console.log(i--);
+
+// do...while loop
+// same as while loop but executes at least once
+// syntax:
+// initializer
+// do {
+    // code to run
+
+//   final-expression
+// } while (condition);
+do {
+  console.log("Do while loop result.");
+} while (i > 0);
+
+// using labels for break/continue
+// helps simplying breaking/continuing
+// notice how only 1 break was used instead of 2
+outer: for (let i = 0; i < 3; i++) {
+
+  for (let j = 0; j < 3; j++) {
+
+    let input = prompt(`Value at coords (${i},${j})`, '');
+
+    // if an empty string or canceled, then break out of both loops
+    if (!input) break outer; // (*)
+
+    // do something with the value...
+  }
+}
+console.log("Done!")
+
+// break can be used in any code block but continue can only be used in a loop
+// ex: 
+// label: {
+    // ...
+//   break label; // works
+    // ...
+// }
+
+// Functions-----------------------------------------------------------------
 // A parameter is the variable listed inside the parentheses in the function declaration (it’s a declaration time term).
 // An argument is the value that is passed to the function when it is called (it’s a call time term).
 
@@ -497,7 +738,7 @@ function showMessage(from, text) {
     text = 'no text given';
   }
 
-  alert( from + ": " + text );
+  console.log( from + ": " + text );
 }
 
 function showMessage(from, text) {
@@ -541,8 +782,8 @@ let sum = (a, b) => a + b;
 console.log(sum(99, 99));
 
 let welcome = (age < 18) ?
-  () => alert('Hello!') :
-  () => alert("Greetings!");
+  () => console.log('Hello!') :
+  () => console.log("Greetings!");
 
 welcome();
 
@@ -694,4 +935,4 @@ welcome(); // ok now
   // Request for data from a remote server.
   // Display a spinner
   // When the data is available, display it on the webpage.
-// To do this, the JavaScript engine uses an event loop, which will be covered in the following tutorial.
+// To do this, the JavaScript engine uses an event loop.
