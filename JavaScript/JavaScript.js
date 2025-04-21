@@ -750,7 +750,7 @@ console.log( arr3.indexOf(0) ); // 1
 console.log( arr3.indexOf(false) ); // 2
 console.log( arr3.indexOf(null) ); // -1
 
-console.log( arr2.includes(1) ); // true
+console.log( arr3.includes(1) ); // true
 
 // lastIndexOf()
 // same as indexOf, but looks for from right to left.
@@ -773,7 +773,7 @@ const myArr = [[1,2],[3,4],[5,6]];
 console.log(myArr.flat());
 
 // flatMap(), first maps all elements of an array and then creates a new array by flattening the array.
-const arr = [1, 2, 3, 4, 5, 6];
+let arr = [1, 2, 3, 4, 5, 6];
 console.log(arr.flatMap(x => [x, x * 10]));
 
 // find
@@ -802,7 +802,7 @@ console.log(user1.name); // John
 // returns array of the first two users
 let someUsers = users.filter(item => item.id < 3);
 
-alert(someUsers.length); // 2
+console.log(someUsers.length); // 2
 
 // sort(fn)
 // elements are converted to strings for comparisons
@@ -820,7 +820,7 @@ function compare(a, b) {
 }
 arr4.sort(compare);
 
-alert(arr4);  // 1, 2, 15
+console.log(arr4);  // 1, 2, 15
 
 // looking at how elements are compared
 [1, -2, 15, 2, 0, 8].sort(function(a, b) {
@@ -836,7 +836,7 @@ arr4 = [ 1, 2, 15 ];
 
 arr4.sort(function(a, b) { return a - b; });
 
-alert(arr);  // 1, 2, 15
+console.log(arr);  // 1, 2, 15
 
 // using arrow function for sorter code
 arr4 = [ 1, 2, 15 ];
@@ -871,7 +871,7 @@ let names = 'Bilbo, Gandalf, Nazgul';
 let arr5 = names.split(', ');
 
 for (let name of arr5) {
-  alert( `A message to ${name}.` ); // A message to Bilbo  (and other names)
+  console.log( `A message to ${name}.` ); // A message to Bilbo  (and other names)
 }
 
 // join(glue)
@@ -955,7 +955,7 @@ console.log(arr2); // Outputs [1, 2, 3, 4, 5]
 // So what .reduce() will do is go through every element in arr and apply the callback function to it. It updates total without actually changing the array itself. After it’s done, it returns total.
 arr = [1, 2, 3, 4, 5];
 let result = arr.reduce((sum, current) => sum + current, 0);
-alert(result); // 15
+console.log(result); // 15
 // notice how arguments are pass in order, name does not matter, and extra arguments are ignored
 
 // example of using all 3 functions to simplify code:
@@ -1020,9 +1020,9 @@ users = [
 // find users, for who army.canJoin returns true
 let soldiers = users.filter(army.canJoin, army);
 
-alert(soldiers.length); // 2
-alert(soldiers[0].age); // 20
-alert(soldiers[1].age); // 23
+console.log(soldiers.length); // 2
+console.log(soldiers[0].age); // 20
+console.log(soldiers[1].age); // 23
 // If in the example above we used users.filter(army.canJoin), then army.canJoin would be called as a standalone function, with this=undefined, thus leading to an instant error.
 // A call to users.filter(army.canJoin, army) can be replaced with users.filter(user => army.canJoin(user)), that does the same. The latter is used more often, as it’s a bit easier to understand for most people.
 
