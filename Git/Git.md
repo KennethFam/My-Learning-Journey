@@ -179,6 +179,7 @@ git config --get user.email
         ```
         - This displays the URL of the repository you created on GitHub, which is the remote for your local copy. You may have also noticed the word origin at the start of the git remote -v output, which is the name of your remote connection. The name “origin” is both the default and the convention for the remote repository, but it could have just as easily been named “party-parrot” or “dancing-banana”.
 - Workflow
+    - Basic Git syntax: `program | action | destination`
     - creating a file, not apart of Git (just a basic command line command)
         - For Mac/Linux:
             ```
@@ -229,6 +230,12 @@ git config --get user.email
         ```
         - If that was the only file you needed to commit, then git status will display “nothing to commit, working tree clean” if it is called again.
             - If you call git status, you may see “Your branch is ahead of ‘origin/main’ by 1 commit”. It just means that you now have newer snapshots than what is on your remote repository.
+        - If you are using Visual Studio Code (and you should be if you’re following this curriculum), there’s a way to ensure that if you use git commit without the message flag (-m), you won’t get stuck writing your commit message in Vim. The following command will set this configuration:
+            ```
+            git config --global core.editor "code --wait"
+            ```
+            - Once you run that command, you will be able to choose to use either `git commit -m "your message here"` or `git commit` to type your message with Visual Studio Code!
+            - To make a commit with Visual Studio Code as the text editor, just type git commit. After you hit `Enter` a new tab in VS Code will open for you to write your commit message. You may provide more details on multiple lines as part of your commit message. After typing your commit message, save it `Ctrl` + `S` (Mac: `Cmd` + `S`) and close the tab. If you return to the command line, you will see your commit message and a summary of your changes.
     - checking logs to see who has made commits, what commits they made, and when
         ```
         git log
@@ -249,5 +256,10 @@ git config --get user.email
         ```
         - This is a shorthand. The full command should be `git push origin main`, but it is okay since you are not dealing with another branch (other than main) or a different remote.
         - If you run git status, it should display Your branch is up to date with 'origin/main'.
-    
-    
+
+## Git Best Practices
+- Two helpful best practices to consider are atomic commits and leveraging those atomic commits to make your commit messages more useful to future collaborators.
+    - atomic commit: a commit that includes changes related to only one feature or task of your program
+        - Two main reasons for doint this:
+            1. if something you change turns out to cause some problems, it is easy to revert the specific change without losing other changes
+            2. it enables you to write better commit messages
