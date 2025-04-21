@@ -27,6 +27,10 @@
     ```
     cd ~
     ```
+- Navigating to parent directory:
+    ```
+    cd ..
+    ```
 
 
 ## File Commands
