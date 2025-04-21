@@ -465,6 +465,179 @@ message = (age < 3) ? 'Hi, baby!' :
 
 console.log(message);
 
+// Objects-----------------------------------------------------------------
+// Objects are associative arrays with several special features.
+// Objects are passed by reference. They are not copied.
+// declaration: An object can be created with figure brackets {…} with an optional list of properties. A property is a “key: value” pair, where key is a string (also called a “property name”), and value can be anything.
+// empty object
+let eo = new Object();
+let empt_obj = {};
+
+// delcaring with values
+let ex_obj = { // an object
+  name: "John", // by key "name" store value "John"
+  age: 30 // by key "age" store value 30
+};
+console.log(ex_obj);
+// value can be of any type
+// can remove property by using delete operator
+delete ex_obj.age;
+console.log(ex_obj);
+
+// can also use multiword property names but must be quoted
+let ex_obj2 = {
+  name: "John",
+  age: 30,
+  "likes birds": true,  // multiword property name must be quoted
+  // note: last property may end with comma ("trailing" or "hanging" comma, makes it easier to add/remove/move around properties)
+}
+
+// dot access does not work on multiword properties, must use []
+console.log(ex_obj2["likes birds"]);
+
+// can be used to get value from user at runtime and use that value to get another value
+// dot notation cannot do the same
+let key_ex = "name"
+console.log(ex_obj[key_ex]);
+
+// object with function and this
+// "this" keyword refers to the current object the code is being executed in
+let person1 = {
+  name: "John",
+  greeting() {
+    console.log(`Hello, my name is ${name}!`);
+  }
+};
+person1.greeting();
+
+// Constructors-----------------------
+// section on functions is after objects
+
+// this works, but using a constructor would be better
+function createPerson(name) {
+  const obj = {};
+  obj.name = name;
+  obj.introduceSelf = function () {
+    console.log(`Hi! I'm ${this.name}.`);
+  };
+  return obj;
+}
+const salva = createPerson("Salva");
+salva.introduceSelf();
+
+// naming convention for constructor is to capitalize the name of the object you are creating
+function Person(name) {
+  this.name = name;
+  this.introduceSelf = function () {
+    console.log(`Hi! I'm ${this.name}.`);
+  };
+}
+// A constructor is just a function called using the new keyword. When you call a constructor, it will:
+// create a new object
+// bind this to the new object, so you can refer to this in your constructor code
+// run the code in the constructor
+// return the new object.
+const frankie = new Person("Frankie");
+frankie.introduceSelf();
+
+// Computed Properties-----------------------
+// We can use square brackets in an object literal, when creating an object. That’s called computed properties.
+let fruit = prompt("Which fruit to buy?", "apple");
+
+let bag = {
+  [fruit]: 5, // the name of the property is taken from the variable fruit
+};
+
+console.log( bag.apple ); // 5 if fruit="apple"
+
+// same as 
+let fruit2 = prompt("Which fruit to buy?", "apple");
+let bag2 = {};
+
+// take property name from the fruit variable
+bag2[fruit2] = 5;
+
+// more complex expression
+let fruit3 = 'apple';
+let bag3 = {
+  [fruit3 + 'Computers']: 5 // bag.appleComputers = 5
+};
+
+// Property Value Shorthand-----------------------
+age = 20;
+let bag4 = {
+  fruit, // same as fruit: fruit
+  age // same as age: age
+};
+console.log(bag4);
+
+// Property Names Limitations-----------------------
+// none, can even use keywords
+// They can be any strings or symbols (a special type for identifiers, to be covered later).
+// Other types are automatically converted to strings.
+// exeption: __proto__, special property that cannot be set to non-object value
+let obj3 = {};
+obj3.__proto__ = 5; // assign a number
+console.log(obj3.__proto__); // [object Object] - the value is an object, didn't work as intended
+
+// Property Existence Test-----------------------
+// using undefined
+console.log(bag.fruit === undefined);
+
+// using "in" operator
+// note that key is in string form otherwise, without quotes, it's assumed to be a var name that contains a string
+console.log("fruit" in bag);
+
+// special case where in works and comaprison to undefined doesn't
+let obj4 = {
+  test: undefined
+};
+console.log( obj4.test ); // it's undefined, so - no such property?
+console.log( "test" in obj4 ); // true, the property does exist!
+
+// Object Ordering-----------------------
+// special order: integers properties are sorted while others appear in creation order
+// integers properties: a string that can be converted to-and-from an integer without a change
+
+// obj w/ integer properties
+// if we wanted this in order of creation, simply add a non-numeric character to the keys
+// e.g. "+49", "+41", etc.
+let codes = {
+  "49": "Germany",
+  "41": "Switzerland",
+  "44": "Great Britain",
+  // ..,
+  "1": "USA"
+};
+
+for (let code in codes) {
+  console.log(code); // 1, 41, 44, 49
+}
+
+// obj w/ non-integer properties
+let user4 = {
+  name: "John",
+  surname: "Smith"
+};
+user4.age = 25; // add one more
+
+// non-integer properties are listed in the creation order
+for (let prop in user4) {
+  console.log( prop ); // name, surname, age
+}
+
+// Object Assignment-----------------------
+// as mentioned earlier, objects are assigned by reference
+// While mutating the object we have a reference to affects all other variables that reference it, reassigning a variable does not change what the other variables refer to. For example:
+let animal = { species: "dog" };
+let dog = animal;
+
+// reassigning animal variable with a completely new object
+animal = { species: "cat" };
+
+console.log(animal); // { species: "cat" }
+console.log(dog); // { species: "dog" }
+
 // Arrays & Loops-----------------------------------------------------------------
 
 // Arrays-----------------------
@@ -472,8 +645,9 @@ console.log(message);
 // 0-indexed, elements accessed like most other languages, arr[indexNum]
 // may contain different types in same array, objects, functions, arrays
 
-// declaration, notice the use of const (common practice)
+// declaration, notice the use of const (common practice), but let can be used too to make reassignment possible
 const cars = ["Saab", "Volvo", "BMW", "Toyota", "Nissan"];
+let cars_var = ["Saab", "Volvo", "BMW", "Toyota", "Nissan"];
 // declaring empty array, then adding elements
 const cars2 = [];
 cars2[0]= "Saab";
@@ -543,8 +717,47 @@ cars.shift();
 // can also take strings as argument
 console.log(cars.concat(cars2));
 console.log(cars.concat("Tesla"));
+// will work with objects
+// can only concat values of object by adding special property: Symbol.isConcatSpreadable
+let arr1 = [1, 2];
 
-// copyWithing(), copies array elements to another position in an array
+let arrayLike = {
+  0: "something",
+  1: "else",
+  [Symbol.isConcatSpreadable]: true,
+  length: 2
+};
+
+console.log( arr1.concat(arrayLike) ); // 1,2,something,else
+
+// forEach
+// syntax:
+// arr.forEach(function(item, index, array) {
+   // ... do something with an item
+// });
+["Bilbo", "Gandalf", "Nazgul"].forEach(console.log); // calls console.log on each element and prints the element, index, and array
+["Bilbo", "Gandalf", "Nazgul"].forEach((item, index, array) => {
+  console.log(`${item} is at index ${index} in ${array}`);
+}); // if the function returns anything, the return value is ignored
+
+// Searching Arrays
+// arr.indexOf(item, from) – looks for item starting from index from, and returns the index where it was found, otherwise -1.
+// arr.includes(item, from) – looks for item starting from index from, returns true if found.
+// Note: include works with NaN but indexOf does not (will return -1 even if NaN is in the array)
+let arr3 = [1, 0, false, 1];
+
+console.log( arr3.indexOf(0) ); // 1
+console.log( arr3.indexOf(false) ); // 2
+console.log( arr3.indexOf(null) ); // -1
+
+console.log( arr2.includes(1) ); // true
+
+// lastIndexOf()
+// same as indexOf, but looks for from right to left.
+console.log( arr3.lastIndexOf(1));
+
+// copyWithing()
+// arr.copyWithin(target, start, end) – copies its elements from position start till position end into itself, at position target (overwrites existing).
 // does not add items to array
 // does not change length of array
 // overwrites existing values
@@ -563,16 +776,122 @@ console.log(myArr.flat());
 const arr = [1, 2, 3, 4, 5, 6];
 console.log(arr.flatMap(x => [x, x * 10]));
 
-// splice(), returns array with deleted items
-// 1st parameter defines the position where new elements should be added (spliced in)
-// 2nd parameter defines how many elements should be removed
+// find
+// used to find object with specific condition
+// syntax
+// let result = arr.find(function(item, index, array) {
+    // if true is returned, item is returned and iteration is stopped
+    // for falsy scenario returns undefined
+// });
+// If it returns true, the search is stopped, the item is returned. If nothing is found, undefined is returned.
+// ex:
+let users = [
+  {id: 1, name: "John"},
+  {id: 2, name: "Pete"},
+  {id: 3, name: "Mary"},
+  {id: 4, name: "John"}
+];
+
+let user1 = users.find(item => item.id == 1);
+
+console.log(user1.name); // John
+
+// filter
+// just like find but doesn't stop after first element, returns array of all elements that match condition
+// same syntax as find
+// returns array of the first two users
+let someUsers = users.filter(item => item.id < 3);
+
+alert(someUsers.length); // 2
+
+// sort(fn)
+// elements are converted to strings for comparisons
+let arr4 = [ 1, 2, 15 ];
+
+// the method reorders the content of arr
+arr4.sort();
+
+console.log( arr4 );  // 1, 15, 2
+// to use own sorting order, we need to supply a function as the argument of arr.sort()
+function compare(a, b) {
+  if (a > b) return 1; // if the first value is greater than the second
+  if (a == b) return 0; // if values are equal
+  if (a < b) return -1; // if the first value is less than the second
+}
+arr4.sort(compare);
+
+alert(arr4);  // 1, 2, 15
+
+// looking at how elements are compared
+[1, -2, 15, 2, 0, 8].sort(function(a, b) {
+  console.log( a + " <> " + b );
+  return a - b;
+});
+
+// compariosn functions
+// may return any number
+// a comparison function is only required to return a positive number to say “greater” and a negative number to say “less
+// ex:
+arr4 = [ 1, 2, 15 ];
+
+arr4.sort(function(a, b) { return a - b; });
+
+alert(arr);  // 1, 2, 15
+
+// using arrow function for sorter code
+arr4 = [ 1, 2, 15 ];
+arr4.sort((a, b) => a - b);
+
+// The arr.findIndex method has the same syntax but returns the index where the element was found instead of the element itself. The value of -1 is returned if nothing is found.
+// The arr.findLastIndex method is like findIndex, but searches from right to left, similar to lastIndexOf.
+// Find the index of the first John
+console.log(users.findIndex(user => user.name == 'John')); // 0
+
+// Find the index of the last John
+console.log(users.findLastIndex(user => user.name == 'John')); // 3
+
+// locale compare
+// For many alphabets, it’s better to use str.localeCompare method to correctly sort letters, such as Ö.
+let countries = ['Österreich', 'Andorra', 'Vietnam'];
+
+console.log( countries.sort( (a, b) => a > b ? 1 : -1) ); // Andorra, Vietnam, Österreich (wrong)
+
+console.log( countries.sort( (a, b) => a.localeCompare(b) ) ); // Andorra,Österreich,Vietnam (correct!)
+
+// reverse()
+// reverses order of elements in array
+console.log( countries.reverse() );
+
+// split()
+// splits a string into an array by the given delimiter delim
+// takes in 2 arguments: 1st a delimiter, and 2nd a length limit (optional) (extra elements ignored)
+// if split takes in an empty str like '', the string would be split into an array of letters
+let names = 'Bilbo, Gandalf, Nazgul';
+
+let arr5 = names.split(', ');
+
+for (let name of arr5) {
+  alert( `A message to ${name}.` ); // A message to Bilbo  (and other names)
+}
+
+// join(glue)
+// does the opposite of split
+// creates a string of arr items joined by glue between them
+str = arr.join(';'); // glue the array into a string using ;
+
+console.log( str ); // Bilbo;Gandalf;Nazgul
+
+// splice(), modifies (deletes/replaces) items from array and also returns the new array with the edited items
+// 1st parameter defines the position where new elements should be added (spliced in), takes negative indexes
+// 2nd parameter defines how many elements should be removed (not index)
 // rest of parameters define the new elements to be added
 const fruits2 = ["Banana", "Orange", "Apple", "Mango"];
-console.log(fruits2.splice(2, 0, "Lemon", "Kiwi"));
+console.log(fruits2.splice(2, 0, "Lemon", "Kiwi")); // insert these two elements at index 2, and delete 0 element(s)
 console.log(fruits2);
 // can be used to remove elements without leaving holes
 fruits2.splice(0, 1);
 console.log(fruits2);
+// passing no arguments simply results in a return of a copy of the original array
 
 // toSpliced(), same as splice() but creates & returns new array instead of altering old one
 const months = ["Jan", "Feb", "Mar", "Apr"];
@@ -589,14 +908,9 @@ console.log(fruits2.slice(1, 2))
 // JavaScript automatically converts an array to a comma separated string when a primitive value is expected.
 console.log(fruits2);
 
-// Loops-----------------------
-
-// loop through a collection
-for (const car of cars) {
-  console.log(car);
-}
-
 // using map() to do something to each item in a collection
+// map takes in a callback (e.g. a function) as in argument
+// map automatically loops through the whole array and performs the callback function on the array
 function toUpper(string) {
   return string.toUpperCase();
 }
@@ -612,6 +926,112 @@ function lCat(cat) {
 }
 const filtered = cats.filter(lCat);
 console.log(filtered);
+
+// reduce() and reduceRight() (same as reduce but goes from right to left)
+// syntax:
+// let value = arr.reduce(function(accumulator, item, index, array) {
+      // ...
+// }, [initial]);
+// The function is applied to all array elements one after another and “carries on” its result to the next call.
+// accumulator – is the result of the previous function call, equals initial the first time (if initial is provided).
+// item – is the current array item.
+// index – is its position.
+// array – is the array.
+// As the function is applied, the result of the previous function call is passed to the next one as the first argument.
+// just like .map() and .filter(), it expects callback function but there are two differences
+// The callback function takes two arguments instead of one. The first argument is the accumulator, which is the current value of the result at that point in the loop. The first time through, this value will either be set to the initialValue (described in the next bullet point), or the first element in the array if no initialValue is provided. The second argument for the callback is the current value, which is the item currently being iterated on.
+// It also takes in an initialValue as a second argument (after the callback), which helps when we don’t want our initial value to be the first element in the array. If there is not initial value, reduce will use the first element as the initial value and starts the iteration from the 2nd element. For instance, if we wanted to sum all numbers in an array, we could call reduce without an initialValue, but if we wanted to sum all numbers in an array and add 10, we could use 10 as our initialValue.
+// if no initial value is given and array is empty, reduce will return an error 
+// it's advised to always set an initial value
+const arr2 = [1, 2, 3, 4, 5];
+const productOfAllNums = arr2.reduce((total, currentItem) => {
+  return total * currentItem;
+}, 1);
+console.log(productOfAllNums); // Outputs 120;
+console.log(arr2); // Outputs [1, 2, 3, 4, 5]
+// In the above function, we:
+// Pass in a callback function, which is (total, currentItem) => { return total * currentItem }.
+// Initialize total to 1 in the second argument.
+// So what .reduce() will do is go through every element in arr and apply the callback function to it. It updates total without actually changing the array itself. After it’s done, it returns total.
+arr = [1, 2, 3, 4, 5];
+let result = arr.reduce((sum, current) => sum + current, 0);
+alert(result); // 15
+// notice how arguments are pass in order, name does not matter, and extra arguments are ignored
+
+// example of using all 3 functions to simplify code:
+function sumOfTripledEvens(array) {
+  let sum = 0;
+  for (let i = 0; i < array.length; i++) {
+    // Step 1: If the element is an even number
+    if (array[i] % 2 === 0) {
+      // Step 2: Multiply this number by three
+      const tripleEvenNumber = array[i] * 3;
+
+      // Step 3: Add the new number to the total
+      sum += tripleEvenNumber;
+    }
+  }
+  return sum;
+}
+// can be written as:
+function sumOfTripledEvens(array) {
+  return array
+    .filter((num) => num % 2 === 0)
+    .map((num) => num * 3)
+    .reduce((acc, curr) => acc + curr);
+}
+// notice how you can use multiple methods in succession
+
+// some(fn) and every(fn)
+// These methods behave sort of like || and && operators: if fn returns a truthy value, arr.some() immediately returns true and stops iterating over the rest of items; if fn returns a falsy value, arr.every() immediately returns false and stops iterating over the rest of items as well.
+// ex:
+function arraysEqual(arr1, arr2) {
+  return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
+}
+
+// arr.fill(value, start, end) – fills the array with repeating value from index start to end.
+
+// more methods: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+// thisArg argument-----------------------
+// Almost all array methods that call functions – like find, filter, map, with a notable exception of sort, accept an optional additional parameter thisArg.
+// syntax:
+// arr.find(func, thisArg);
+// arr.filter(func, thisArg);
+// arr.map(func, thisArg);
+// ...
+// thisArg is the optional last argument
+// ex:
+let army = {
+  minAge: 18,
+  maxAge: 27,
+  canJoin(user) {
+    return user.age >= this.minAge && user.age < this.maxAge;
+  }
+};
+
+users = [
+  {age: 16},
+  {age: 20},
+  {age: 23},
+  {age: 30}
+];
+
+// find users, for who army.canJoin returns true
+let soldiers = users.filter(army.canJoin, army);
+
+alert(soldiers.length); // 2
+alert(soldiers[0].age); // 20
+alert(soldiers[1].age); // 23
+// If in the example above we used users.filter(army.canJoin), then army.canJoin would be called as a standalone function, with this=undefined, thus leading to an instant error.
+// A call to users.filter(army.canJoin, army) can be replaced with users.filter(user => army.canJoin(user)), that does the same. The latter is used more often, as it’s a bit easier to understand for most people.
+
+// Loops-----------------------
+
+// loop through a collection
+for (const car of cars) {
+  console.log(car);
+}
 
 // for loop format
 // for (initializer; condition; final-expression) {
@@ -680,6 +1100,25 @@ while (i) console.log(i--);
 do {
   console.log("Do while loop result.");
 } while (i > 0);
+
+// for...in loop
+// used with objects
+// syntax: 
+// for (key in object) {
+    // executes the body for each key among object properties
+// }
+let user2 = {
+  name: "John",
+  age: 30,
+  isAdmin: true
+};
+// note that the var declaration can have any name, not just "key"
+for (let key in user2) {
+  // keys
+  console.log( key );  // name, age, isAdmin
+  // values for the keys
+  console.log( user[key] ); // John, 30, true
+}
 
 // using labels for break/continue
 // helps simplying breaking/continuing
