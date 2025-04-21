@@ -223,7 +223,7 @@ git config --get user.email
         ``` 
         git add .
         ```
-    - committing all files in the staging area to local Git repository
+    - committing snapshot in the staging area to local Git repository
         ```
         git commit -m "your commit message which will appear in git log"
         ```
