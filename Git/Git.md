@@ -243,5 +243,10 @@ git config --get user.email
         ```
         ctrl + `
         ```
+    - pushing work to GitHub
+        ```
+        git push
+        ```
+        - This is a shorthand. The full command should be `git push origin main`, but it is okay since you are not dealing with another branch (other than main) or a different remote.
     
     
