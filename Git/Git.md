@@ -179,7 +179,7 @@ git config --get user.email
         ```
         - This displays the URL of the repository you created on GitHub, which is the remote for your local copy. You may have also noticed the word origin at the start of the git remote -v output, which is the name of your remote connection. The name “origin” is both the default and the convention for the remote repository, but it could have just as easily been named “party-parrot” or “dancing-banana”.
 - Workflow
-    - creating a file using `touch`, not apart of Git (just a basic command line command)
+    - creating a file, not apart of Git (just a basic command line command)
         - For Mac/Linux:
             ```
             touch fileName.fileExtension
@@ -192,7 +192,7 @@ git config --get user.email
             ```
             New-Item fileName.fileExtension -ItemType File
             ```
-    - deleting/removing a file
+    - deleting/removing a file, not apart of Git (just a basic command line command)
         - For Mac/Linux:
             ```
             rm fileName.fileExtension
@@ -207,3 +207,31 @@ git config --get user.email
             Remove-Item fileName.fileExtension
             ```
             - use -Force at the end if needed
+    - checking current state of working directory
+        ```
+        git status
+        ```
+        - new files that are only in your working directory will be under a section called "Untracked files"
+    - adding a file to the staging area
+        - The staging area is part of the two-step process for making a commit in Git. Think of the staging area as a “waiting room” for your changes until you commit them.
+        ```
+        git add fileName.fileExtension
+        ```
+        - Once executed, the file will be shown in a section titled "Changes to be committed" if git status is called.
+    - committing a file to local Git repository
+        ```
+        git commit -m "Add fileName.fileExtension"
+        ```
+        - If that was the only file you needed to commit, then git status will display “nothing to commit, working tree clean” if it is called again.
+            - If you call git status, you may see “Your branch is ahead of ‘origin/main’ by 1 commit”. It just means that you now have newer snapshots than what is on your remote repository.
+    - checking logs to see who has made commits, what commits they made, and when
+        ```
+        git log
+        ```
+        - If your terminal is stuck in a screen with (END) at the bottom, just press “q” to escape.
+    - launching current directory in VSCode, not apart of Git
+        ```
+        code .
+        ```
+        - 
+    
