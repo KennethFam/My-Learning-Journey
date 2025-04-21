@@ -212,15 +212,20 @@ git config --get user.email
         git status
         ```
         - new files that are only in your working directory will be under a section called "Untracked files"
+        - files appearing under “Changes not staged for commit” are files that are already in the repository and have been modified but not yet committed
     - adding a file to the staging area
         - The staging area is part of the two-step process for making a commit in Git. Think of the staging area as a “waiting room” for your changes until you commit them.
         ```
         git add fileName.fileExtension
         ```
         - Once executed, the file will be shown in a section titled "Changes to be committed" if git status is called.
-    - committing a file to local Git repository
+    - adding all modified (new, edited, or deleted) files to the staging area
+        ``` 
+        git add .
         ```
-        git commit -m "Add fileName.fileExtension"
+    - committing all files in the staging area to local Git repository
+        ```
+        git commit -m "your commit message which will appear in git log"
         ```
         - If that was the only file you needed to commit, then git status will display “nothing to commit, working tree clean” if it is called again.
             - If you call git status, you may see “Your branch is ahead of ‘origin/main’ by 1 commit”. It just means that you now have newer snapshots than what is on your remote repository.
@@ -234,4 +239,9 @@ git config --get user.email
         code .
         ```
         - 
+    - opening the terminal in VSCode, not apart of Git
+        ```
+        ctrl + `
+        ```
+    
     
