@@ -250,12 +250,16 @@ git config --get user.email
         ```
         ctrl + `
         ```
-    - pushing work to GitHub
+    - pushing work to remote repository (e.g. GitHub)
         ```
         git push
         ```
         - This is a shorthand. The full command should be `git push origin main`, but it is okay since you are not dealing with another branch (other than main) or a different remote.
         - If you run git status, it should display Your branch is up to date with 'origin/main'.
+    - getting latest version from remote repository (e.g. GitHub)
+        ```
+        git pull
+        ```
 
 ## Git Best Practices
 - Two helpful best practices to consider are atomic commits and leveraging those atomic commits to make your commit messages more useful to future collaborators.
