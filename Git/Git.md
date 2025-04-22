@@ -208,6 +208,11 @@ git config --get user.email
             Remove-Item fileName.fileExtension
             ```
             - use -Force at the end if needed
+    - downloading commits, files, and refs from a remote repository into your local repo
+        ```
+        git fetch
+        ```
+        - Use this in conjunction with git status to see how your local repo differs from the remote repo (e.g. GitHub).
     - checking current state of working directory
         ```
         git status
