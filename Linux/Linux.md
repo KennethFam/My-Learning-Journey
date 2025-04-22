@@ -1,6 +1,10 @@
 # Linux
 
-# Basic Commands
+## Basic Keybinds
+- Copy: `ctrl` + `shift` + `c`
+- Patse: `ctrl` + `shift` + `v`
+
+## Basic Commands
 - Checking for updates:
     ```
     sudo apt update
