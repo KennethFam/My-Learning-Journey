@@ -35,7 +35,14 @@
     ```
     cd ..
     ```
-
+- Listing the contents of the current directory
+    ```
+    ls
+    ```
+    - To check if a specific directory exits:
+        ```
+        ls path/to/directory
+        ```
 
 ## File Commands
 - Creating a file:
