@@ -17,6 +17,10 @@
     ```
     sudo apt full-upgrade
     ```
+- Installing APT/Debian package(s)
+    ```
+    sudo apt install package1 package2 ...
+    ```
 
 ## Directory Commands
 - Creating a directory:
