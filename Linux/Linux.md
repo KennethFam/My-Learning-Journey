@@ -21,6 +21,12 @@
     ```
     sudo apt install package1 package2 ...
     ```
+- Equivalent of SFC /SCANNOW (Windows command to check for corrupted files)
+    - First, the debsum package must be installed. The package is simply called `debsums`.
+    ```bash
+    sudo debsums
+    ```
+        - Add -s flag at the end to check configuration files, which are not checked by default. Setting this flag will also make it so that only error messages are printed instead of a bunch of messages confirming that a package is okay.
 
 ## Directory Commands
 - Creating a directory:
