@@ -3,17 +3,17 @@
 ## Version Control
 - Version control is a system that records changes to a file or set of files over time so that you can recall specific versions later.
 - Local Version Control Systems
-    - ![alt text](LVCS.png)
+    - ![alt text](Images/LVCS.png)
     - simple local database keeps all the changes to files under revision control
         - Revision Control System (RCS) is a good example of a LVCS
 - Centralized Version Control Systems
-    - ![alt text](CVCS.png)
+    - ![alt text](Images/CVCS.png)
     - have a single server that contains all the versioned files, and a number of clients that check out files from that central place
     - single point of failure
         - if server goes down, nobody can collaborate at all or save versioned changes to anything they’re working on
         - if the disk that the database is on gets corrupted, everything is lost unless there is a back-up
 - Distributed Version Control Systems
-    - ![alt text](DVCS.png)
+    - ![alt text](Images/DVCS.png)
     - Git belongs in this category
     - clients don’t just check out the latest snapshot of the files; rather, they fully mirror the repository, including its full history
     - if any server dies, and these systems were collaborating via that server, any of the client repositories can be copied back up to the server to restore it
@@ -28,10 +28,10 @@
 
 ## How Git Works
 - major difference between Git and any other VCS (Subversion and friends included) is the way Git thinks about its data
-    - ![alt text](DeltaVC.png)
+    - ![alt text](Images/DeltaVC.png)
     - most other systems store information as a list of file-based changes. These other systems (CVS, Subversion, Perforce, and so on) think of the information they store as a set of files and the changes made to each file over time (this is commonly described as delta-based version control)
 - thinks of its data more like a series of snapshots of a miniature filesystem
-    - ![alt text](SnapshotVC.png)
+    - ![alt text](Images/SnapshotVC.png)
     - every time you commit, or save the state of your project, Git basically takes a picture of what all your files look like at that moment and stores a reference to that snapshot
     -  if files have not changed, Git doesn’t store the file again, just a link to the previous identical file it has already stored
     - Git thinks about its data more like a stream of snapshots
@@ -50,7 +50,7 @@
         - Committed:  the data is safely stored in your local database
     - If a particular version of a file is in the Git directory, it’s considered committed. If it has been modified and was added to the staging area, it is staged. And if it was changed since it was checked out but has not been staged, it is modified.
 - 3 main states lead to three main sections of a Git project
-    - ![alt text](3MainSections.png)
+    - ![alt text](Images/3MainSections.png)
     - working tree
         - a single checkout of one version of the project
         - these files are pulled out of the compressed database in the Git directory and placed on disk for you to use or modify
