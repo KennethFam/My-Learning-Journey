@@ -92,3 +92,17 @@
     ```
     - Notice how we didn't 'call' the function called myEventHandler? If we were to call it inside the parameter list, the function we called myEventHandler would run immediately and give the addEventListener the result of calling that function.
 
+## Event Loop
+- Visualization of some components during runtime:
+    - ![alt text](Images/event_loop.png)
+    1. Push `main()` onto the call stack.
+    2. Push `console.log()` onto the call stack. This then runs right away and gets popped.
+    3. Push `setTimeout(2000)` onto the stack. `setTimeout(2000)` is a Node API. When we call it, we register the event-callback pair. The event will wait 2000 milliseconds, then callback is the function.
+    4. After registering it in the APIs, `setTimeout(2000)` gets popped from the call stack.
+    5. Now the second `setTimeout(0)` gets registered in the same way. We now have two Node APIs waiting to execute.
+    6. After waiting for 0 seconds, `setTimeout(0)` gets moved to the callback queue, and the same thing happens with `setTimeout(2000)`.
+    7. In the callback queue, the functions wait for the call stack to be empty, because only one statement can execute a time. This is taken care of by the event loop.
+    8. The last `console.log()` runs, and the `main()` gets popped from the call stack.
+    9. The event loop sees that the call stack is empty and the callback queue is not empty. So it moves the callbacks (in a first-in-first-out order) to the call stack for execution.
+- Summary:
+    - JavaScript is a single-threaded language, meaning it can only execute one line of code at a time via the Call Stack. So, how do asynchronous calls work? Well, if an asynchronous function is pushed onto the Call Stack, it gets registered with the browser's Web APIs (e.g. timers, HTTP request handlers). Once the asynchronous function is done, it puts the callback onto the Callback Queue. The Event Loop, symbolized by the two arrows forming a circle, waits for the call stack to become empty and then puts the first callback in the Callback Queue onto the Call Stack. Once the callback on the Call Stack finishes, if the Call Stack is still empty, the next callback gets put on by the Event Loop and so on.
