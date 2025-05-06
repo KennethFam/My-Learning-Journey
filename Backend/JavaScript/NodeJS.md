@@ -1,5 +1,30 @@
 # NodeJS
 
+## What is recommended to learn about JavaScript before diving deep with Node.js?
+- Lexical Structure
+- Expressions
+- Data Types
+- Classes
+- Variables
+- Functions
+- `this` operator
+- Arrow Functions
+- Loops
+- Scopes
+- Arrays
+- Template Literals
+- Strict Mode
+- ECMAScript 2015 (ES6) and beyond
+- Asynchronous JavaScript
+
+## Understanding Asynchronous Programming
+- Asynchronous programming and callbacks
+- Timers
+- Promises
+- Async and Await
+- Closures
+- The Event Loop
+
 ## What is NodeJS?
 - As an asynchronous event driven JavaScript runtime, Node is designed to build scalable network applications.
     - Node is an asynchronous event driven JavaScript runtime. In this context asynchronous means that when you write your code you do not try to predict the exact sequence in which every line will run. Instead you write your code as a collection of smaller functions that get called in response to specific events such as a network request (event driven).
@@ -106,3 +131,558 @@
     9. The event loop sees that the call stack is empty and the callback queue is not empty. So it moves the callbacks (in a first-in-first-out order) to the call stack for execution.
 - Summary:
     - JavaScript is a single-threaded language, meaning it can only execute one line of code at a time via the Call Stack. So, how do asynchronous calls work? Well, if an asynchronous function is pushed onto the Call Stack, it gets registered with the browser's Web APIs (e.g. timers, HTTP request handlers). Once the asynchronous function is done, it puts the callback onto the Callback Queue. The Event Loop, symbolized by the two arrows forming a circle, waits for the call stack to become empty and then puts the first callback in the Callback Queue onto the Call Stack. Once the callback on the Call Stack finishes, if the Call Stack is still empty, the next callback gets put on by the Event Loop and so on.
+
+## Introduction
+- The most common example Hello World of Node.js is a web server:
+    ```javascript
+    const { createServer } = require('node:http');
+
+    const hostname = '127.0.0.1';
+    const port = 3000;
+
+    const server = createServer((req, res) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Hello World');
+    });
+
+    server.listen(port, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
+    });
+    ```
+    To run this snippet, save it as a `server.js` file and run `node server.js` in your terminal. If you use mjs version of the code, you should save it as a `server.mjs` file and run `node server.mjs` in your terminal.
+
+    This code first includes the Node.js `http` module.
+
+    The `createServer()` method of `http` creates a new HTTP server and returns it.
+
+    The server is set to listen on the specified port and host name. When the server is ready, the callback function is called, in this case informing us that the server is running.
+
+    Whenever a new request is received, the `request` event is called, providing two objects: a request (an `http.IncomingMessage` object) and a response (an `http.ServerResponse` object).
+
+    Those 2 objects are essential to handle the HTTP call.
+
+    The first provides the request details. In this simple example, this is not used, but you could access the request headers and request data.
+
+    The second is used to return data to the caller.
+
+    In this case with:
+    ```javascript
+    res.statusCode = 200;
+    ```
+    we set the `statusCode property` to `200`, to indicate a successful response.
+
+    We set the `Content-Type header`:
+    ```javascript
+    res.setHeader('Content-Type', 'text/plain');
+    ```
+
+### ECMAScript 2015 (ES6)
+- Node.js is built against modern versions of V8. By keeping up-to-date with the latest releases of this engine, we ensure new features from the JavaScript ECMA-262 specification are brought to Node.js developers in a timely manner, as well as continued performance and stability improvements.
+- All features are split into three groups for **shipping**, **staged**, and **in progress** features:
+    - All **shipping** features, which V8 considers stable, are turned on by default on Node.js and do **NOT** require any kind of runtime flag.
+    - **Staged** features, which are almost-completed features that are not considered stable by the V8 team, require a runtime flag: `--harmony`.
+    - **In progress** features can be activated individually by their respective harmony flag, although this is highly discouraged unless for testing purposes. Note: these flags are exposed by V8 and will potentially change without any deprecation notice.
+- Listing all in-progress features:
+    ```shell
+    node --v8-options | grep "in progress"
+    ```
+-- Finding which version ships with a particular version of Node.js:
+    ```shell
+    node -p process.versions.v8
+    ```
+
+### NODE_ENV
+- Always run your Node.js with the `NODE_ENV=production` set. A test and thus a functionality of your product could pass when `NODE_ENV` is set to `development` but fail when setting NODE_ENV to `production`. Therefore, setting `NODE_ENV` to anything but `production` is considered an antipattern.
+
+### Security Best Practices 
+- Some examples of security risks and mitigations can be read [here](https://nodejs.org/en/learn/getting-started/security-best-practices).
+
+## Running Node.js Scripts from the Command Line
+- Let's say our application file is `app.js`. To run the file, you would run this in the terminal:
+    ```shell
+    node app.js
+    ```
+    - Above, you are explicitly telling the shell to run your script with node. You can also embed this information into your JavaScript file with a "shebang" line. The "shebang" is the first line in the file, and tells the OS which interpreter to use for running the script. Below is the first line of JavaScript:
+        ```javascript
+        #!/usr/bin/node
+        ```
+        - Above, we are explicitly giving the absolute path of interpreter. Not all operating systems have node in the bin folder, but all should have env. You can tell the OS to run env with node as parameter:
+            ```javascript
+            #!/usr/bin/env node
+            // your javascript code
+            ```
+        - To use a shebang, your file should have executable permission. You can give app.js the executable permission by running:
+            ```shell
+            chmod u+x app.js
+            ```
+- Passing a string as an argument to `node` instead of a file path:
+    - To execute a string as argument you can use `-e`, `--eval "script"`. Evaluate the following argument as JavaScript. The modules which are predefined in the REPL can also be used in script.
+
+    On Windows, using cmd.exe a single quote will not work correctly because it only recognizes double " for quoting. In Powershell or Git bash, both ' and " are usable.
+        ```shell
+        node -e "console.log(123)"
+        ```
+- Restarting the file/application automatically when changes occur (as of Node.js V16):
+    ```shell
+    node --watch app.js
+    ```
+- Running a task with Node.js
+    - Node.js provides a built-in task runner that allows you to execute specific commands defined in your `package.json` file. This can be particularly useful for automating repetitive tasks such as running tests, building your project, or linting your code.
+    - The --run flag:
+        - Allows you to run a specified command from the scripts section of your `package.json` file. For example, if you have the following `package.json`:
+            ```json
+            {
+                "type": "module",
+                "scripts": {
+                    "start": "node app.js",
+                    "dev": "node --run -- --watch",
+                    "test": "node --test"
+                }
+            }
+            ```
+        You can run the test script using the `--run` flag:
+            ```shell
+            node --run test
+            ```
+- Passing arguments to the command:
+    - Let's explain the `dev` key in the `scripts` object of the package.json file.
+
+    The syntax `-- --another-argument` is used to pass arguments to the command. In this case, the `--watch` argument is passed to the `dev` script.
+        ```shell
+        node --run dev
+        ```
+    Take a look at the example `package.json` to see what dev is.
+- Environment Variables 
+    - The `--run` flag sets specific environment variables that can be useful for your scripts:
+        - `NODE_RUN_SCRIPT_NAME`: The name of the script being run.
+        - `NODE_RUN_PACKAGE_JSON_PATH`: The path to the `package.json` file being processed.
+
+## The HTTP Module
+
+### Performing a GET Request
+- Simplest way is to use the [Axios Library](https://github.com/axios/axios).
+    ```javascript
+    const axios = require('axios');
+
+    axios
+    .get('https://example.com/todos')
+    .then(res => {
+        console.log(`statusCode: ${res.status}`);
+        console.log(res);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+    ```
+- Another way using just the Node.js standard modules:
+    ```javascript
+    const https = require('https');
+
+    const options = {
+    hostname: 'example.com',
+    port: 443,
+    path: '/todos',
+    method: 'GET',
+    };
+
+    const req = https.request(options, res => {
+    console.log(`statusCode: ${res.statusCode}`);
+
+    res.on('data', d => {
+        process.stdout.write(d);
+    });
+    });
+
+    req.on('error', error => {
+    console.error(error);
+    });
+
+    req.end();
+    ```
+### Performing a POST Request
+- Using the [Axios Library](https://github.com/axios/axios):
+    ```javascript
+    const axios = require('axios');
+
+    axios
+    .post('https://whatever.com/todos', {
+        todo: 'Buy the milk',
+    })
+    .then(res => {
+        console.log(`statusCode: ${res.status}`);
+        console.log(res);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+    ```
+- Using just the Node.js standard modules:
+    ```javascript
+    const https = require('https');
+
+    const data = JSON.stringify({
+    todo: 'Buy the milk',
+    });
+
+    const options = {
+    hostname: 'whatever.com',
+    port: 443,
+    path: '/todos',
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': data.length,
+    },
+    };
+
+    const req = https.request(options, res => {
+    console.log(`statusCode: ${res.statusCode}`);
+
+    res.on('data', d => {
+        process.stdout.write(d);
+    });
+    });
+
+    req.on('error', error => {
+    console.error(error);
+    });
+
+    req.write(data);
+    req.end();
+    ```
+### PUT and DELETE
+- `PUT` and `DELETE` requests use the same POST request format - you just need to change the `options.method` value to the appropriate method.
+
+### `http.createServer`
+- The `createServer` method creates an HTTP server that accepts handlers that will be executed every time we get a request.
+- Basic Syntax:
+    ```javascript
+    http.createServer([options][, requestListener])
+    ```
+    - Read about all the options [here](https://nodejs.org/api/http.html#httpcreateserveroptions-requestlistener).
+    - It's a `requestListener` function.
+        - The `requestListener` is a function which is automatically added to the 'request' event.
+    - It returns a new instance of `http.Server`.
+    - Examples:
+        ```javaScript
+        const http = require('node:http');
+
+        // Create a local server to receive data from
+        const server = http.createServer((req, res) => {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+            data: 'Hello World!',
+        }));
+        });
+
+        server.listen(8000);
+        ```
+        ```javascript
+        const http = require('node:http');
+
+        // Create a local server to receive data from
+        const server = http.createServer();
+
+        // Listen to the request event
+        server.on('request', (request, res) => {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+            data: 'Hello World!',
+        }));
+        });
+
+        server.listen(8000);
+        ```
+### File System (fs module)
+- Part of Node.js core. 
+- Can be used by requiring it:
+    ```javascript
+    const fs = require('fs');
+    ```
+- Methods:
+    - `fs.access()`: check if the file exists and Node.js can access it with its permissions
+    - `fs.appendFile()`: append data to a file. If the file does not exist, it's created
+    `fs.chmod()`: change the permissions of a file specified by the filename passed. Related: `fs.lchmod()`, `fs.fchmod()`
+    - `fs.chown()`: change the owner and group of a file specified by the filename passed. Related: `fs.fchown()`, `fs.lchown()`
+    - `fs.close()`: close a file descriptor
+    - `fs.copyFile()`: copies a file
+    - `fs.createReadStream()`: create a readable file stream
+    - `fs.createWriteStream()`: create a writable file stream
+    - `fs.link()`: create a new hard link to a file
+    - `fs.mkdir()`: create a new folder
+    - `fs.mkdtemp()`: create a temporary directory
+    - `fs.open()`: opens the file and returns a file descriptor to allow file manipulation
+    - `fs.readdir()`: read the contents of a directory
+    - `fs.readFile()`: read the content of a file. Related: `fs.read()`
+    - `fs.readlink()`: read the value of a symbolic link
+    - `fs.realpath()`: resolve relative file path pointers (`.`, `..`) to the full path
+    - `fs.rename()`: rename a file or folder
+    - `fs.rmdir()`: remove a folder
+    - `fs.stat()`: returns the status of the file identified by the filename passed. Related: `fs.fstat ()`, `fs.lstat()`
+    - `fs.symlink()`: create a new symbolic link to a file
+    - `fs.truncate()`: truncate to the specified length the file identified by the filename passed. Related: `fs.ftruncate()`
+    - `fs.unlink()`: remove a file or a symbolic link
+    - `fs.unwatchFile()`: stop watching for changes on a file
+    - `fs.utimes()`: change the timestamp of the file identified by the filename passed. Related: `fs.futimes()`
+    - `fs.watchFile()`: start watching for changes on a file. Related: `fs.watch()`
+    - `fs.writeFile()`: write data to a file. Related: `fs.write()`
+- All methods are async, but they can be made synchronous by appending Sync: e.g. `fs.rename()` to `fs.renameSync()`.
+- Use `fs/promises`, a promise-based API, to avoid a bunch of callbacks. For example, change this:
+    ```javascript
+    // Example: Read a file and change its content and read
+    // it again using callback-based API.
+    const fs = require('fs');
+
+    const fileName = '/Users/joe/test.txt';
+    fs.readFile(fileName, 'utf8', (err, data) => {
+    if (err) {
+        console.log(err);
+        return;
+    }
+    console.log(data);
+    const content = 'Some content!';
+    fs.writeFile(fileName, content, err2 => {
+        if (err2) {
+        console.log(err2);
+        return;
+        }
+        console.log('Wrote some content!');
+        fs.readFile(fileName, 'utf8', (err3, data3) => {
+        if (err3) {
+            console.log(err3);
+            return;
+        }
+        console.log(data3);
+        });
+    });
+    });
+    ```
+
+    To This: 
+
+    ```js
+    // Example: Read a file and change its content and read
+    // it again using promise-based API.
+    const fs = require('fs/promises');
+
+    async function example() {
+    const fileName = '/Users/joe/test.txt';
+    try {
+        const data = await fs.readFile(fileName, 'utf8');
+        console.log(data);
+        const content = 'Some content!';
+        await fs.writeFile(fileName, content);
+        console.log('Wrote some content!');
+        const newData = await fs.readFile(fileName, 'utf8');
+        console.log(newData);
+    } catch (err) {
+        console.log(err);
+    }
+    }
+    example();
+    ```
+
+### Writing Files
+- Easiest way is to use the `fs.writeFile()` API:
+    ```js
+    const fs = require('node:fs');
+    const content = 'Some content!';
+    fs.writeFile('/Users/joe/test.txt', content, err => {
+    if (err) {
+        console.error(err);
+    } else {
+        // file written successfully
+    }
+    });
+    ```
+- To write to a file synchronously, use `fs.writeFileSync()`:
+    ```js
+    const fs = require('node:fs');
+    const content = 'Some content!';
+    try {
+    fs.writeFileSync('/Users/joe/test.txt', content);
+    // file written successfully
+    } catch (err) {
+    console.error(err);
+    }
+    ```
+- Promised-based method:
+    ```js
+    const fs = require('node:fs/promises');
+    async function example() {
+    try {
+        const content = 'Some content!';
+        await fs.writeFile('/Users/joe/test.txt', content);
+    } catch (err) {
+        console.log(err);
+    }
+    }
+    example();
+    ```
+- By default, all of the previous methods replace the contents of the file if it does already exist. You can modify the default using:
+    ```js
+    fs.writeFile('/Users/joe/test.txt', content, { flag: 'a+' }, err => {});
+    ```
+- Common flags:
+    | Flag | Description | File gets created if it doesn't exist |
+    | ---- | ----------- | ------------------------------------- |
+    | `r+` | This flag opens the file for reading and writing | no |
+    | `w+` | This flag opens the file for reading and writing and it also positions the stream at the beginning of the file | yes |
+    | `a` | This flag opens the file for writing and it also positions the stream at the end of the file | yes |
+    | `a+` | This flag opens the file for reading and writing and it also positions the stream at the end of the file | yes | 
+    - [more flags](https://nodejs.org/api/fs.html#file-system-flags)
+
+- Appending content to the end of a file: 
+    ```js
+    // using just fs
+    const fs = require('node:fs');
+    const content = 'Some content!';
+    fs.appendFile('file.log', content, err => {
+    if (err) {
+        console.error(err);
+    } else {
+        // done!
+    }
+    });
+    ```
+    ```js
+    // using promises
+    const fs = require('node:fs/promises');
+    async function example() {
+    try {
+        const content = 'Some content!';
+        await fs.appendFile('/Users/joe/test.txt', content);
+    } catch (err) {
+        console.log(err);
+    }
+    }
+    example();
+    ```
+
+    ### Reading Files
+    - Simpliest way is to use the `fs.readFile()` method, passing it the file path, encoding, and a callback function that will be called with the file data (and the error):
+        ```js
+        const fs = require('node:fs');
+        fs.readFile('/Users/joe/test.txt', 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log(data);
+        });
+        ```
+    - Synchronous way:
+        ```js 
+        const fs = require('node:fs');
+        try {
+            const data = fs.readFileSync('/Users/joe/test.txt', 'utf8');
+            console.log(data);
+        } catch (err) {
+            console.error(err);
+        }
+        ```
+    - Using the Promise API:
+        ```js
+        const fs = require('node:fs/promises');
+        async function example() {
+        try {
+            const data = await fs.readFile('/Users/joe/test.txt', { encoding: 'utf8' });
+            console.log(data);
+        } catch (err) {
+            console.error(err);
+        }
+        }
+        example();
+        ```
+    - All the methods above read the full content of the file into memory before returning the data.
+        - This means that big files are going to have a major impact on your memory consumption and speed of execution of the program.
+    - For large files, a better option is to read the file content using streams:
+        ```js
+        import fs from 'fs';
+        import path from 'path';
+        import { pipeline } from 'node:stream/promises';
+        const fileUrl = 'https://www.gutenberg.org/files/2701/2701-0.txt';
+        const outputFilePath = path.join(process.cwd(), 'moby.md');
+        async function downloadFile(url, outputPath) {
+        const response = await fetch(url);
+        if (!response.ok || !response.body) {
+            throw new Error(`Failed to fetch ${url}. Status: ${response.status}`);
+        }
+        const fileStream = fs.createWriteStream(outputPath);
+        console.log(`Downloading file from ${url} to ${outputPath}`);
+        await pipeline(response.body, fileStream);
+        console.log('File downloaded successfully');
+        }
+        async function readFile(filePath) {
+        const readStream = fs.createReadStream(filePath, { encoding: 'utf8' });
+        try {
+            for await (const chunk of readStream) {
+                console.log('--- File chunk start ---');
+                console.log(chunk);
+                console.log('--- File chunk end ---');
+            }
+            console.log('Finished reading the file.');
+        } catch (error) {
+            console.error(`Error reading file: ${error.message}`);
+        }
+        }
+        try {
+            await downloadFile(fileUrl, outputFilePath);
+            await readFile(outputFilePath);
+        } catch (error) {
+            console.error(`Error: ${error.message}`);
+        }
+        ```
+## The URL Class
+- Browser-compatible `URL` class, implemented by following the WHATWG URL Standard.
+- In accordance with browser conventions, all properties of `URL` objects are implemented as getters and setters on the class prototype, rather than as data properties on the object itself. Thus, unlike legacy `urlObjects`, using the `delete` keyword on any properties of `URL` objects (e.g. `delete myURL.protocol`, `delete myURL.pathname`, etc) has no effect but will still return `true`.
+- How to use:
+    ```js
+    usl = require('node:url')
+    ```
+- Check out the class [here](https://nodejs.org/api/url.html#url_the_whatwg_url_api).
+
+## Events
+- Node.js equivalent of events on the front end.
+- Requiring the events module:
+    ```js
+    const EventEmitter = require('node:events');
+    const eventEmitter = new EventEmitter();
+    ```
+- Exposes the `on` and `emit` methods.
+    - `emit` is used to trigger an event.
+    - `on` is used to add a callback function that's going to be executed when the event is triggered.
+    - For example, let's create a `start` event, and as a matter of providing a sample, we react to that by just logging to the console:
+        ```js
+        eventEmitter.on('start', () => {
+            console.log('started');
+        });
+        ```
+        When we run
+
+        ```js
+        eventEmitter.emit('start');
+        ```
+
+        the event handler function is triggered, and we get the console log.
+    - You can pass arguments to the event handler by passing them as additional arguments to `emit():`
+        ```js
+        eventEmitter.on('start', number => {
+            console.log(`started ${number}`);
+        });
+        eventEmitter.emit('start', 23);
+        ```
+
+        Multiple Arguments:
+        ```js
+        eventEmitter.on('start', (start, end) => {
+            console.log(`started from ${start} to ${end}`);
+        });
+        eventEmitter.emit('start', 1, 100);
+        ```
+    - Other methods:
+        - `once()`: add a one-time listener
+        - `removeListener()` / `off()`: remove an event listener from an event
+        - `removeAllListeners()`: remove all listeners for an event
+    - For more methods, check [here](https://github.com/nodejs/nodejs.dev/blob/aa4239e87a5adc992fdb709c20aebb5f6da77f86/content/learn/node-js-modules/node-module-events.en.md).
