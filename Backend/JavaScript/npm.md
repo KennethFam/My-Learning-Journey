@@ -5,6 +5,7 @@
 - `npm` installs, updates and manages downloads of dependencies of your project. Dependencies are pre-built pieces of code, such as libraries and packages, that your Node.js application needs to work.
 
 ## Basic Commands
+- Note: Do not include `<` and `>` for package names. 
 - If a project has a `package.json` file, by running
     ```shell
     npm install
@@ -14,7 +15,7 @@
     ```shell
     npm install <package-name>
     ```
-    Furthermore, since npm 5, this command adds `<package-name>` to the `package.json` file dependencies. Before version 5, you needed to add the flag `--save`.
+    Furthermore, since npm 5, this command adds `<package-name>` to the `package.json` file dependencies. Before version 5, you needed to add the flag `--save`. 
 
     Often you'll see more flags added to this command:
     - `--save-dev` installs and adds the entry to the package.json file devDependencies

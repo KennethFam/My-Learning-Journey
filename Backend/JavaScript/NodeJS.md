@@ -177,6 +177,25 @@
     res.setHeader('Content-Type', 'text/plain');
     ```
 
+### Modules
+- Consider modules to be the same as JavaScript libraries, or a set of functions you want to include in your application.
+- To include a module, use the `require()` method with the name of the module. Example of including http module:
+    ```js
+    var http = require('http');
+    ```
+- You can create your own module. Example:
+    ```js
+    exports.myDateTime = function () {
+        return Date();
+    };
+    ```
+    - `exports` is used to make properties and method availabled outside the module file.
+    - Let's say this is stored in a file named `myModule.js`. We can use this module using the require method like this:
+        ```js
+        var myMod = require('./myModule')
+        ```
+        - `./` means that the module is located in the same folder as your main file.
+
 ### ECMAScript 2015 (ES6)
 - Node.js is built against modern versions of V8. By keeping up-to-date with the latest releases of this engine, we ensure new features from the JavaScript ECMA-262 specification are brought to Node.js developers in a timely manner, as well as continued performance and stability improvements.
 - All features are split into three groups for **shipping**, **staged**, and **in progress** features:
@@ -686,3 +705,17 @@
         - `removeListener()` / `off()`: remove an event listener from an event
         - `removeAllListeners()`: remove all listeners for an event
     - For more methods, check [here](https://github.com/nodejs/nodejs.dev/blob/aa4239e87a5adc992fdb709c20aebb5f6da77f86/content/learn/node-js-modules/node-module-events.en.md).
+
+## Query Strings
+```js
+var http = require('http');
+var url = require('url');
+
+http.createServer(function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    var q = url.parse(req.url, true).query;
+    var txt = q.year + " " + q.month;
+    res.end(txt);
+}).listen(8080);
+```
+- Going to `http://localhost:8080/?year=2017&month=July` will display 2017 July.
