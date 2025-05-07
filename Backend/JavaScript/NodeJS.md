@@ -719,3 +719,11 @@ http.createServer(function (req, res) {
 }).listen(8080);
 ```
 - Going to `http://localhost:8080/?year=2017&month=July` will display 2017 July.
+
+## Debugging
+- Using
+    - VS Code
+        - [Video](https://www.youtube.com/watch?v=2oFKNL7vYV8)
+        - [Documentation](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
+    - Chrome Dev Tools
+        - [Article](https://web.archive.org/web/20230923074524/https://www.section.io/engineering-education/debug-node-devtools/)
