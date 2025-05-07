@@ -727,3 +727,60 @@ http.createServer(function (req, res) {
         - [Documentation](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
     - Chrome Dev Tools
         - [Article](https://web.archive.org/web/20230923074524/https://www.section.io/engineering-education/debug-node-devtools/)
+
+## Environment Variables
+- Environment variables are just variables that have environment-specific values. For example, since they are specific to individual environments, we can use them to:
+    - Provide different values for different environments, such as your machine during development and a website host when deployed, without having to modify the source code.
+    - Store secrets, such as database URLs and credentials, or API keys.
+- `NODE_ENV`: A common name given to an environment variable that indicates to the source code whether it's running in "dev" or "prod" mode and do different things based on that.
+
+### Loading Environment Variables
+- Defining environment variables and their values directly in the command to run code:
+    ```shell
+    NODE_ENV=prod VIDEO_URL="https://www.youtube.com/watch?v=X2CYWg9-2N0" node index.js
+    ```
+    - Quotes are optional for values that don't contain special characters like `=`.
+    - In the above, we define environment variables called `NODE_ENV` and `VIDEO_URL`, and assign them their respective values. Now any part of our code that uses those variables will have those values, just like function parameters! The convention for naming environment variables is to use `UPPER_SNAKE_CASE` (sometimes endearingly referred to as `SCREAMING_SNAKE_CASE` or `SHOUTY_CASE`).
+    - You might see that this could quickly get quite cumbersome though, especially if you had lots of environment variables. If you had sensitive data like database credentials, that’s even worse since you wouldn’t want to push your package.json if it contained those values in an npm script!
+- Defining environment variables using shell command `export`:
+    ```shell
+    export NODE_ENV=prod VIDEO_URL="https://www.youtube.com/watch?v=X2CYWg9-2N0"
+    ```
+    - The above command will set the two environment variables in the current shell environment only, meaning if you were to open a new shell, it would not have access to those environment variables since it’s a new environment. If we ran `node index.js` in the first shell (the one with the environment variables set), anything that used the `NODE_ENV` environment variable would have the value `"prod"`. If we instead ran node `index.js` in the second shell, it would have the value `undefined` instead since nothing was set in its environment
+    - To overwrite any variables, just rerun `export` with the new values for those variables like above.
+- To view all environment variables in the current shell, you can run `printenv`
+    - It will show a lot of environment variables we never set because the shell itself has a lot of environment variables already set and loaded when it first loads.
+
+### dotenv
+- One of the most common ways to load environment variables.
+- Install it using npm:
+    ```shell
+    npm install dotenv
+    ```
+- After installing the npm package, you can create a file called `.env` in the root of your project that will contain all of your environment variables in the format `NAME="VALUE"`. For example:
+    ```env
+    NODE_ENV=prod
+    VIDEO_URL="https://www.youtube.com/watch?v=X2CYWg9-2N0"
+    ```
+    - File should be in `.gitignore` to keep secrets safe from being published!
+    - To use the file, import it into your app by doing:
+        ```js
+        require("dotenv").config();
+        ```
+        - You can now just run your code with `node index.js` and dotenv will handle all the loading for you. 
+
+#### Accessing Environment Variables
+- Environment variables are accessed via Node’s built-in `process` object, more specifically its `env` property. Node will load each environment variable to the `process.env` object, using its name as the property. You can then access them like any normal object property.
+    ```js
+    if (process.env.NODE_ENV === "prod") {
+        // do production-specific stuff
+    }
+
+    // don't want to ruin the surprise by hardcoding the URL!
+    // it might even change every few days!
+    redirectUserToSuperSecretVideo(process.env.VIDEO_URL);
+    ```
+- No hardcoding of those values into the source code! If you want to change the value of an environment variable, you can just change it in your `.env` file then rerun the program. Do also note that environment variables will always be strings, so you must convert if you want to use any as a number or boolean, for example.
+
+#### Documentation
+- Check out [dotenv's documentation](https://www.npmjs.com/package/dotenv#-documentation).
