@@ -755,7 +755,7 @@ http.createServer(function (req, res) {
 - One of the most common ways to load environment variables.
 - Install it using npm:
     ```shell
-    npm install dotenv
+    npm install dotenv --save
     ```
 - After installing the npm package, you can create a file called `.env` in the root of your project that will contain all of your environment variables in the format `NAME="VALUE"`. For example:
     ```env
