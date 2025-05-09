@@ -62,3 +62,7 @@
         $ npm run prod
     ```
     - Note: $ is used to indicate the command prompt.
+- Looking for a package in the current directory:
+    ```shell
+    npm ls packageName
+    ```

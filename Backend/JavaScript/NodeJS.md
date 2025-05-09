@@ -1,4 +1,4 @@
-# NodeJS
+# Node.js
 
 ## What is recommended to learn about JavaScript before diving deep with Node.js?
 - Lexical Structure
