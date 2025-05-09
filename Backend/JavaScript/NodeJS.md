@@ -784,3 +784,7 @@ http.createServer(function (req, res) {
 
 #### Documentation
 - Check out [dotenv's documentation](https://www.npmjs.com/package/dotenv#-documentation).
+
+## Port Number
+- Let's say you have an application listening to a specific port on the same machine. To send a request to the port, you simple go to https://localhost:PortNumber/ in your browser. Replace "PortNumber" with the actual port number. You can omit the `/` at the end; the browser will add it for you.
+    - This action tells the browser to send a GET request to the / path of whatever server is listening at PortNumber on our localhost and display in the window whatever it receives in response.
