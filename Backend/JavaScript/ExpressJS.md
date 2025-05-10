@@ -3,6 +3,9 @@
 ## What is Express.js?
 - An intentionally barebones and unopinionated backend framework; it allows us to do many things how we want, and to extend it with only the features we need.
 
+## Documentation
+- Can be found [here](https://expressjs.com/en/api.html).
+
 ## Installation
 1. Open project directory and run this command to create a package.json:
     ```shell
