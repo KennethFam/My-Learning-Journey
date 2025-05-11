@@ -195,6 +195,7 @@
         var myMod = require('./myModule')
         ```
         - `./` means that the module is located in the same folder as your main file.
+        - `../` means to go up one directory level from the current file's location.
 
 ### ECMAScript 2015 (ES6)
 - Node.js is built against modern versions of V8. By keeping up-to-date with the latest releases of this engine, we ensure new features from the JavaScript ECMA-262 specification are brought to Node.js developers in a timely manner, as well as continued performance and stability improvements.
