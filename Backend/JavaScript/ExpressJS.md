@@ -540,3 +540,18 @@ Ultimately, the controller is the brains of the operation ensuring that each com
     3. With the string `next('route')` - Will pass control to the next route handler with the same matching path (if there is one). This only works for `app.METHOD` or `router.METHOD`. Potentially, it can also be the same as just calling next with no argument.
 
     4. With the string `next('router')` - Will skip all middleware functions attached to the specific router instance and pass control back out of the router instance. Basically, we exit the router and go back to the parent router, e.g. `app` (yes, the Express app is also just a router under the hood).
+
+## MVC (Model-View-Controller) Pattern
+- Example of MVC Project Directory
+    - ![alt-text](Images/mvc.png)
+        - models directory
+            - Contains our database(s).
+        - controllers directory
+            - Contains controllers that contain our HTTP method handlers.
+        - views directory
+            - Contains the views (mainly frontend).
+        - routes directory
+            - Matches routes to their respective controllers.
+        - index.js/app.js
+            - This contains our application. It is where we create our server (e.g. set up what `port` to listen to, set up `app.use`, etc.)
+- Check out this [video](https://www.youtube.com/watch?v=Cgvopu9zg8Y) for more information.
