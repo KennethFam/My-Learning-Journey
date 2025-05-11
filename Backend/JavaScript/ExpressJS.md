@@ -60,3 +60,164 @@ app.listen(PORT, () => {
 ## Auto-Restarting Server Upon File Changes
 - When you run your server with `node app.js`, any changes to any JavaScript and JSON files in your project directory won’t be reflected automatically unless you manually interrupt and rerun `node app.js`. To avoid this manual process, you can use [Node’s watch mode](https://nodejs.org/docs/latest-v20.x/api/cli.html#--watch) by adding the `--watch` flag, e.g. `node --watch app.js`. Node will watch `app.js` for changes, as well as any of the files it ultimately depends on. When it detects a change, it will automatically restart the server just like with Webpack and Vite’s dev servers.
 - You may also come across [Nodemon](https://www.npmjs.com/package//nodemon), a highly configurable package that can also watch for changes and restart your server for you. Node didn’t always have a stable built-in watch mode, so you’re likely to see Nodemon around the place. Our recommendation would be to stick with Node’s built in watch mode via the `--watch flag`, as this would be by far the simplest method.
+
+## Routes
+- Some examples of routes:
+    ```js
+    app.get("/", (req, res) => res.send("Hello, world!"));
+    ```
+
+    - Matches any `GET` requests that go through the app router (which is the whole server) to the `/` path.
+
+    ```js
+    app.post("/messages", (req, res) => res.send("This is where you can see any messages."));
+    ```
+
+    - Matches any `POST` requests that go through the app router to the `/messages` path. 
+
+- Each [HTTP verb](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods) has its own Express method. `app.all()` can be used to make a route to match all verbs.
+
+### Paths
+- The first argument we pass a route is the path to match, which can either be a string or a regular expression.
+    - For example, `/messages` matchs that exactly, while `/messages/all` only matches `/messages/all` and not `/messages`.
+
+- With string paths, we can also use certain symbols like `?`, `+`, `*` and `()` to provide some pattern-matching functionality, similar to regular expressions. For example:
+    ```js
+    // ? makes a character optional
+    // The following path matches both /message and /messages
+    "/messages?"
+
+    // () groups characters together, allowing symbols to act on the group
+    // The following path matches both / and /messages
+    "/(messages)?"
+
+    // * is a wildcard matching any number of any characters
+    // The following path can match /foo/barbar and even /foo-FOO/bar3sdjsdfbar
+    "/foo*/bar*bar"
+    ```
+- Your routes will be set up in your server in the order they are defined.
+    ```js
+    app.get("*", (req, res) => {
+        res.send("* is a great way to catch all otherwise unmatched paths, e.g. for custom 404 error handling.");
+    });
+    app.get("/messages", (req, res) => {
+        res.send("This route will not be reached because the previous route's path matches first.");
+    });
+    ```
+    - In order for our `GET /messages` request to match the `/messages` route, we will need to reverse the order our routes are defined. Doing so will prevent it from reaching the `*` route, as it will match the `/messages` route first.
+
+### Route Parameters
+- Route parameters allow us to extract a value from the path to use.
+- Route paramters are denoted as `:` followed by the name of the paramter (which can only consist of case-sensitive alphanumeric characters, or `_`).
+- Whatever we name that route parameter, Express will automatically populate the `req.params` object in any of the following middleware functions with whatever value the path passed into the parameter, using the parameter name as its key.
+    ```js
+    /**
+    * GET /odin/messages will have this log
+    * { username: 'odin' }
+    *
+    * GET /theodinproject79687378/messages would instead log
+    * { username: 'theodinproject79687378' }
+    */
+    app.get("/:username/messages", (req, res) => {
+        console.log(req.params);
+        res.end();
+    });
+
+    /**
+    * GET /odin/messages/79687378 will have this log
+    * { username: "odin", messageId: "79687378" }
+    */
+    app.get("/:username/messages/:messageId", (req, res) => {
+        console.log(req.params);
+        res.end();
+    });
+    ```
+
+### Query Parameters
+- Query parameters are a unique and optional part of a URL that appear at the end. A `?` denotes the start of the query parameters, with each query being a key-value pair with the format `key=value`, and each query separated by an `&`. They are special as they are not actually considered part of the path itself, but are essentially more like arguments we can pass in to a given path.
+    - For example, `/odin/messages?sort=date&direction=ascending` will still match the route with the `/:username/messages` path, but we can access the `sort=date` and `direction=ascending` key-value pairs inside the middleware chain.
+    - Express automatically parses any query parameters in a request and will populate the `req.query` object with any key-value pairs it finds. If any keys are repeated, Express will put all values for that key into an array.
+    - Code Example:
+        ```js
+        /**
+        * GET /odin/messages?sort=date&direction=ascending will log
+        * Params: { username: "odin" }
+        * Query: { sort: "date", direction: "ascending" }
+        *
+        * GET /odin/messages?sort=date&sort=likes&direction=ascending will log
+        * Params: { username: "odin" }
+        * Query: { sort: ["date", "likes"], direction: "ascending" }
+        */
+        app.get("/:username/messages", (req, res) => {
+            console.log("Params:", req.params);
+            console.log("Query:", req.query);
+            res.end();
+        });
+        ```
+
+### Routers
+- So far, we’ve not been using many routes, and all routes we’ve shown have been attached to `app`, our server itself. In a real application with lots of routes, we’d probably want to organize our routes into groups and extract each group out to their own file. We could also then more easily write things that affect only the routes in that file, and not any others.
+    - For example, say we were making a library app and we wanted pages that dealt with books and pages that dealt with authors. That’s on top of the homepage and any other miscellaneous pages like “about” or “contact”.
+
+    We might want our server to handle the following routes:
+
+    ```
+    GET /
+    GET /about
+    GET /contact
+    POST /contact
+
+    GET /books
+    GET /books/:bookId
+    GET /books/:bookId/reserve
+    POST /books/:bookId/reserve
+
+    GET /authors
+    GET /authors/:authorId
+    ```
+
+    Let’s add some routers to handle each of our route groups. We’ll need a router first, which we can place in a new `routes` folder. For example, `routes/authorRouter.js`:
+
+    ```js
+    // routes/authorRouter.js
+    const { Router } = require("express");
+
+    const authorRouter = Router();
+
+    authorRouter.get("/", (req, res) => res.send("All authors"));
+    authorRouter.get("/:authorId", (req, res) => {
+    const { authorId } = req.params;
+        res.send(`Author ID: ${authorId}`);
+    });
+
+    module.exports = authorRouter;
+    ```
+
+    In the above, we destructure the Express object to get a Router function and use it to create our `authorRouter`. We can use the same `.get` or `.post` methods on this router instead of on the whole server object, meaning we can write routes and middleware scoped to this router. Since we’ll make this router usable only for paths that start with `/authors`, our route paths here don’t need to include it. Instead, they extend the parent path (we wouldn’t want our route to match `/authors/authors/:authorId`).
+
+    After creating the other two routers for the other route groups - `routes/bookRouter.js` and `routes/indexRouter.js`, add them to our server in `app.js`:
+
+    ```js
+    // app.js
+    const express = require("express");
+    const app = express();
+    const authorRouter = require("./routes/authorRouter");
+    const bookRouter = require("./routes/bookRouter");
+    const indexRouter = require("./routes/indexRouter");
+
+    app.use("/authors", authorRouter);
+    app.use("/books", bookRouter);
+    app.use("/", indexRouter);
+
+    const PORT = 3000;
+    app.listen(PORT, () => {
+        console.log(`My first Express app - listening on port ${PORT}!`);
+    });
+    ```
+
+    We specify that any requests with paths starting with `/authors` will be passed through `authorRouter` for route matching. If our request starts with `/books`, it will skip these author routes and then check the routes in `bookRouter` instead. Any other requests that don’t start with either of these will run through `indexRouter`.
+
+    To test these routes, use [Postman](https://www.postman.com/downloads/) which will allow you to send `GET` and `POST` requests without the browser (we can’t send `POST` requests from the browser address bar).
+
+### Express Routing documentation
+- Express's primer on Routing can be found [here](https://expressjs.com/en/guide/routing.html).
