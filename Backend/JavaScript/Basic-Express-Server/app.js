@@ -16,18 +16,10 @@ const options = {
 
 const errFile = '404.html';
 
-app.get('/', (req, res, next) => {
-  res.sendFile('index.html', options, (err) => {
-    if (err) {
-        next(err)
-    } else {
-        console.log('Sent: index.html');
-    }
-  })
-});
-
-app.get('/:file', (req, res, next) => {
-    const fileName = req.params.file
+// {} are in Express v5 and replace ?, makes :file optional
+// req.params.file will be undefined if no file is specified
+app.get('/{:file}', (req, res, next) => {
+    const fileName = req.params.file == undefined ? "index.html" : req.params.file;
     res.sendFile(fileName, options, (err) => {
         if (err) {
             res.status(404).sendFile(errFile, options, (err) => {

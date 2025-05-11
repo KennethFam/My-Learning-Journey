@@ -81,7 +81,7 @@ app.listen(PORT, () => {
 - The first argument we pass a route is the path to match, which can either be a string or a regular expression.
     - For example, `/messages` matchs that exactly, while `/messages/all` only matches `/messages/all` and not `/messages`.
 
-- With string paths, we can also use certain symbols like `?`, `+`, `*` and `()` to provide some pattern-matching functionality, similar to regular expressions. For example:
+- With string paths, we can also use certain symbols like `?`, `+`, `*` and `()` to provide some pattern-matching functionality, similar to regular expressions. Learn more about path syntax [here](https://expressjs.com/en/guide/migrating-5.html#path-syntax). Examples:
     ```js
     // ? makes a character optional
     // The following path matches both /message and /messages
