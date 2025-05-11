@@ -555,3 +555,7 @@ Ultimately, the controller is the brains of the operation ensuring that each com
         - index.js/app.js
             - This contains our application. It is where we create our server (e.g. set up what `port` to listen to, set up `app.use`, etc.)
 - Check out this [video](https://www.youtube.com/watch?v=Cgvopu9zg8Y) for more information.
+
+## How Express works
+- [Good article](https://medium.com/@viral_shah/express-middlewares-demystified-f0c2c37ea6a1).
+- [Source code](https://github.com/expressjs/express).
