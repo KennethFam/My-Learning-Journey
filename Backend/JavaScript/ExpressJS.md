@@ -567,7 +567,7 @@ Ultimately, the controller is the brains of the operation ensuring that each com
     - An example of a template engine is [EJS](https://ejs.co/), whose syntax is very similar to that of HTML.
 
 ### Serving Views
-- For dynamic views, set the following application properties:
+- For dynamic views, require the node:path package (`const path = require("node:path");`) and set the following application properties:
 
     ```js
     app.set("views", path.join(__dirname, "views"));
@@ -576,7 +576,7 @@ Ultimately, the controller is the brains of the operation ensuring that each com
 
     For `views`, set the path to your views directory. In this case, our views are in the views directory in the project directory.
 
-    For `view engine`, set it to the view engine that you're using. In this case, we're using `ejs`.
+    For `view engine`, set it to the view engine that you're using. In this case, we're using `ejs`. After the view engine is set, you don’t have to specify the engine or load the template engine module in your app; Express loads the module internally
 
 - For static views, set the following properties:
 
