@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const path = require("node:path");
 
 // app.get("/", (req, res) => res.send("Hello, world!"));
 
@@ -8,6 +9,9 @@ const app = express();
 //     console.log(`My first Express app - listening on port ${PORT}!`);
 // });
 
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+
 const PORT = 8080;
 
 const options = {
@@ -15,6 +19,23 @@ const options = {
 }
 
 const errFile = '404.html';
+
+// load index.ejs
+// app.get("/", (req, res) => {
+//     res.render("index", { message: "EJS rocks!" });
+// });
+
+// load index.ejs with navbar.ejs and user.ejs
+// const links = [
+//   { href: "/", text: "Home" },
+//   { href: "about", text: "About" },
+// ];
+
+// const users = ["Rose", "Cake", "Biff"];
+
+// app.get("/", (req, res) => {
+//   res.render("index", { links: links, users: users });
+// });
 
 // {} are in Express v5 and replace ?, makes :file optional
 // req.params.file will be undefined if no file is specified
