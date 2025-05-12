@@ -129,8 +129,8 @@
 
         This will include the navbar with links in `index.ejs`.
 
-        Note the use of the raw output tag `<%-` with the include which is used to avoid double-escaping the HTML output. `<%=` outputs html escaped while `<%-` outputs html unescaped. Unescaped means that turning characters like `<`, `>`, etc. are not turned into safe equivalents (`%lt;`, `&gt;`, etc.).
-
+        Note the use of the raw output tag `<%-` with the include which is used to avoid double-escaping the HTML output.
+        
 ## Another Example Using include
 - Let’s use `include` to dynamically render a list of variables a different way. In `app.js`, add the following `users` array just below the `links` variable, and pass it to the `render` function when rendering `index`:
     ```js
