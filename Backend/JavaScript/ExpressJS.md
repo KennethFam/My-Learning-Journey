@@ -559,3 +559,9 @@ Ultimately, the controller is the brains of the operation ensuring that each com
 ## How Express works
 - [Good article](https://medium.com/@viral_shah/express-middlewares-demystified-f0c2c37ea6a1).
 - [Source code](https://github.com/expressjs/express).
+
+## Views
+- Views are the user-facing part of the application. An example would be an HTML file.
+- Plain HTML files are static. 
+- We can make views dynamic with respect to data using template engines to create our views. As the name suggests, we write template files in our codebase that get transformed into HTML when we respond to a server request. Any variables defined in our template files are replaced with actual data. Additionally, we can insert conditional and/or loop logic into our template file, e.g. render the user’s username once they have logged in. This would not be possible with plain HTML. 
+    - An example of a template engine is [EJS](https://ejs.co/), whose syntax is very similar to that of HTML.
