@@ -6,6 +6,11 @@
 
 ## Basic Commands
 - Note: Do not include `<` and `>` for package names. 
+- To add a `package.json` file, run:
+    ```shell
+    npm init
+    ```
+    - This will prompt you to add basic information about your project. To skip that, simply add the `-y` flag at the end.
 - If a project has a `package.json` file, by running
     ```shell
     npm install
