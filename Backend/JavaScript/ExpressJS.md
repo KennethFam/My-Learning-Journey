@@ -591,3 +591,67 @@ Ultimately, the controller is the brains of the operation ensuring that each com
 
 ### Express Resource on Template Engines
 - [Express's own documentation on template engines](https://expressjs.com/en/guide/using-template-engines.html).
+
+## Forms and Data Handling
+- Let's take a look at a simple HTML form, with a single text field for collecting a full name, and its associated label element:
+    ```html
+    <form action="/create" method="POST">
+        <label for="fullName">Full Name:</label>
+        <input placeholder="John Doe" type="text" name="fullName" id="fullName">
+        <button type="submit">Submit</button>
+    </form>
+    ```
+    - We have the HTML form element itself, with an action pointing to some resource on our server, and a method defined. Notice how the method corresponds to an HTTP verb, typically either `GET` or `POST`.
+    - The form consists of a text input with an associated label and a submit button.
+    - The input’s `name` attribute plays a key role, as it defines how our input will be identified in the form data sent to our server. This is especially important when handling form submissions on the backend.
+    - The `type="submit"` button then allows the user to upload the entered data to the server.
+    - The `form` attributes define how to communicate with the server:
+        - `action`: The resource/URL where data is sent for processing when the form is submitted. If this is not set, or is an empty string, the form will be submitted back to the current page URL
+        - `method`: Defines the HTTP method to use (`POST` or `GET`).
+    - `POST` is generally more secure because it keeps sensitive information out of the URL, which means they won’t show up in server logs, and is the standard choice for creating or updating data on the server side. `GET` is for forms that don’t modify data, such as search forms, or when you want the form submission to be bookmarkable or shareable via URL. The form data here is sent as a query string as part of the request url.
+    - The form's handling process goes like this:
+        1. The form’s `action` will point to some endpoint on our server, which will allow our controller to handle the request. The controller then communicates with the database to handle the data.
+        2. We then generate a new or updated view with the controller’s response and redirect the client. This is known as the [Post/Redirect/Get (PRG)](https://en.wikipedia.org/wiki/Post/Redirect/Get) design pattern which helps prevent duplicate `POST` requests.
+
+### Validation and Sanitization
+- Before the data from a form is sent off to our server, we should consider two important steps:
+    - Validation ensures user input meets the specified criteria (e.g. required fields, correct format).
+    - Sanitization cleans user input to prevent malicious data from being processed by removing or encoding potentially malicious characters.
+
+- We don’t always have to sanitize data right when we get it - sometimes it makes sense to sanitize just before we use it instead.
+
+- A library that can help us with these two tasks is `express-validator`. While it makes these processes much simpler, it’s important to understand the underlying concepts of these two operations.
+
+### Forms and Express Routes
+- Example of handling routes in Express:
+    ```js
+    exports.userUpdateGet = (req, res, next) => {};
+    exports.userUpdatePost = (req, res, next) => {};
+    ```
+
+    Inside our router, we can then assign routes which correspond to the controller’s functions:
+
+    ```js
+    const { Router } = require("express");
+    const usersRouter = Router();
+    const usersController = require("../controllers/usersController");
+
+    // User update routes
+    usersRouter.get("/:id/update", usersController.userUpdateGet);
+    usersRouter.post("/:id/update", usersController.userUpdatePost);
+
+    module.exports = usersRouter;
+    ```
+
+    In our form, the action would look something like this if we're using `EJS`:
+
+    ```html
+    <!-- Example using EJS with POST to submit an update to our Express server. -->
+    <form action="/users/<%= user.userId %>/update" method="POST"></form>
+    ```
+
+    `/users/:id/update` is an endpoint we’ve created on our Express server.
+
+### Example of Express Server With Data Handling
+- Check out the Basic-Express-Server-With-Data-Handling folder for an example of a server that uses data validation and sanitization.
+    - Check [here](https://www.theodinproject.com/lessons/nodejs-forms-and-data-handling#putting-it-together) for an explanation of the code.
