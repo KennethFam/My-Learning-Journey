@@ -653,5 +653,7 @@ Ultimately, the controller is the brains of the operation ensuring that each com
     `/users/:id/update` is an endpoint we’ve created on our Express server.
 
 ### Example of Express Server With Data Handling
-- Check out the Basic-Express-Server-With-Data-Handling folder for an example of a server that uses data validation and sanitization.
+- Check out the [Basic-Express-Server-With-Data-Handling project](https://github.com/KennethFam/Basic-Express-Server-With-Data-Handling) for an example of a server that uses data validation and sanitization.
     - Check [here](https://www.theodinproject.com/lessons/nodejs-forms-and-data-handling#putting-it-together) for an explanation of the code.
+    - The flow looks like this:
+        -![alt text](Images/data_validation_flow.png)
