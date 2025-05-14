@@ -9,7 +9,7 @@
   <ul>
     <% if (locals.users) {%>
       <% users.forEach(user => { %>
-        <li>ID: <%= user.id %>, Name: <%= user.firstName %> <%= user.lastName %></li>
+        <li>ID: <%= user.id %>, Name: <%= user.firstName %> <%= user.lastName %>, Email: <%= user.email %>, Age: <%= user.age %>, Bio: <%= user.bio %></li>
         <a href="/<%= user.id %>/update">Update</a>
         <!-- This time we're sending a POST request to our route, so we need a form. -->
         <form action="/<%= user.id %>/delete" method="POST" style="display:inline;">
