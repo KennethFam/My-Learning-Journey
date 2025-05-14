@@ -88,3 +88,20 @@ exports.usersDeletePost = (req, res) => {
   usersStorage.deleteUser(req.params.id);
   res.redirect("/");
 };
+
+exports.userSearch = (req, res) => {
+  const {name, searchEmail} = req.query;
+
+  if (!name && !searchEmail) {
+    return res.status(400).render("createUser", {
+      title: "Create user",
+      errors: [{msg: "Either Name or Email has to be filled out for a search."}],
+    });
+  }
+
+  res.render("search", {
+    title: "Search results",
+    results: usersStorage.search(name, searchEmail),
+  });
+
+};

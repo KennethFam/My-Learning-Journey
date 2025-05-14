@@ -20,6 +20,30 @@
     <input type="text" name="bio" id="bio">
     <button type="submit">Submit</button>
   </form>
+
+  <h1>Search for User</h1>
+  <form action="/search" method="GET" onsubmit="return validateForm()">
+    <label for="name">Name: </label>
+    <input type="text" name="name" id="name">
+    <label for="searchEmail">Email: </label>
+    <input type="text" name="searchEmail" id="searchEmail">
+    <button type="submit">Search</button>
+  </form>
+
+  <script>
+    function validateForm() {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("searchEmail").value.trim();
+
+      if (email === "" && name === "") {
+        alert("Either Name or Email has to be specified for a search.");
+        return false;
+      }
+
+      return true;
+    }
+  </script>
+
   <a href="/">Back to home</a>
 </body>
 </html>

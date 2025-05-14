@@ -1,0 +1,16 @@
+<!-- views/search.ejs -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><%= title %></title>
+    </head>
+    <body>
+        <h1><%= title %></h1>
+        <ul>
+            <% results.forEach((user) => { %>
+                <li>ID: <%= user.id %>, Name: <%= user.firstName %> <%= user.lastName %>, Email: <%= user.email %>, Age: <%= user.age %>, Bio: <%= user.bio %></li>
+            <% }); %>
+        </ul>
+        <a href="/">Back to home</a>
+    </body>
+</html>
