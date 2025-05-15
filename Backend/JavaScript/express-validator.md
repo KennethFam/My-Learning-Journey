@@ -105,3 +105,4 @@
 ## Documentation
 - [The documentation for express-validator.](https://express-validator.github.io/docs/)
 - [Validation chain methods.](https://express-validator.github.io/docs/api/validation-chain/)
+- [Implementing a custom validator.](https://express-validator.github.io/docs/guides/customizing#implementing-a-custom-validator)
