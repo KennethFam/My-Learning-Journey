@@ -41,7 +41,22 @@
             .withMessage("Name must only contain alphabet letters."),  
     ];
     ```
-    - This ensures that `name` is not only present and trimmed, but also only contains alphabet letters.
+    - This ensures that `name` is not only present and trimmed, but also only contains alphabet letters. The following shows how the e-mail not in use validation ends up running not only for the sign-up page, but also for the login page:
+        ```js
+        const baseEmailChain = body('email').isEmail();
+        app.post('/login', baseEmailChain, handleLoginRoute);
+        app.post('/signup', baseEmailChain.custom(checkEmailNotInUse), handleSignupRoute);
+        ```
+
+##### Reusing Validation Chains
+- Validation chains are mutable. This means that calling methods on one will cause the original chain object to be updated, just like any references to it. If you wish to reuse the same chain, it's a good idea to return them from functions:
+    ```js
+    const createEmailChain = () => body('email').isEmail();
+    app.post('/login', createEmailChain(), handleLoginRoute);
+    app.post('/signup', createEmailChain().custom(checkEmailNotInUse), handleSignupRoute);
+    ```
+
+- Storing chains and then calling methods on them might cause bugs.
 
 #### Escaping User Input
 - While this might work for outputs we know won’t have special characters, like names or ages, we also have to consider situations that do allow those characters. For example, when writing their “About Me” description, what would happen if the client decides to inject JavaScript code instead?
