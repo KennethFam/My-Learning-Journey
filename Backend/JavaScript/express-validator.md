@@ -68,3 +68,25 @@
 - So why not escape the data when we receive it by adding .escape() to the end of our body() validation chain instead? “Dangerous characters” are only dangerous at the point of use, and also only in certain contexts. What’s “dangerous” for HTML may not be dangerous for SQL and vice versa, and they won’t pose risks until they get used in those contexts.
 
 - Also, if we have data with HTML entities after escaping them, if we used escaped output with (`<%= %>)`, then `&lt;` wouldn’t become `<` but output literally as the text `&lt;`. We’d need to either unescape them then re-escape them via escaped output, or end up using unescaped output (`<%- %>`), which, like using `.innerHTML`, is undesirable as shown above.
+
+### Validation Results
+- Once the validation rules are applied, you can use `validationResult` to handle any validation errors:
+    ```js
+    const controller = (req, res, next) => {
+    const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).render("index", {
+            errors: errors.array(),
+            });
+        }
+
+        // do stuff if successful
+        res.redirect("/success");
+        };
+    ```
+
+- This setup checks for any failed validation checks, and if there are any (the errors array is NOT empty), then the server sends a [400 status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400), along with any errors that may be present, to our `index` view. Otherwise, we’re redirected to the `/success` route in our router.
+
+## Documentation
+- [The documentation for express-validator.](https://express-validator.github.io/docs/)
+- [Validation chain methods.](https://express-validator.github.io/docs/api/validation-chain/)
