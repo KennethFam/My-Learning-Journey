@@ -2,6 +2,7 @@
 
 ## Introduction
 - Data persistence is integral to the vast majority of web applications. Data persistence is achieved through databases. Being able to understand how to structure, build, and query your own database are important skills for any full-stack developer to have.
+- Note that values encapsulated in `<>` are meant to be filled with your own values without `<>`. You will see this notation throughout the sections.
 
 ## Installation
 
@@ -158,3 +159,102 @@
     - Now, this variable lives in our environment for us to use. As the variable is new, we’ll want to reload the environment so that we can access it. To reload the environment, you can close and re-open your terminal.
     - Once that’s done, we can move to testing it out!
 </details>
+
+## Node Package Installation
+- Run:
+    ```shell
+    npm install pg
+    ```
+    - `pg` is short for `node-postgres`.
+- Connect to the db in JavaScript:
+    ```js
+    const { Pool } = require("pg");
+
+    // All of the following properties should be read from environment variables
+    // We're hardcoding them here for simplicity
+    module.exports = new Pool({
+        host: "localhost", // or wherever the db is hosted
+        user: "<role_name>",
+        database: "<db_name>",
+        password: "<role_password>",
+        port: 5432 // The default port
+    });
+
+    ```
+    - An alternative to defining the connection information is through a [Connection URI](https://node-postgres.com/features/connecting#connection-uri). You’ll likely be using connection URIs when connecting with a hosted database service. Here’s what it would look like based on the above properties:
+        ```js
+        const { Pool } = require("pg");
+
+        // Again, this should be read from an environment variable
+        module.exports = new Pool({
+            connectionString: "postgresql://<role_name>:<role_password>@localhost:5432/top_users"
+        });
+        ```
+
+
+## Basic Commands
+- Launch the PostgreSQL shell:
+    ```
+    psql
+    ```
+- Exit the PostgreSQL shell:
+    ```
+    \q
+    ```
+- View the current dbs:
+    ```
+    \l
+    ```
+- Create a database:
+    ```sql
+    CREATE DATABASE <db_name>;
+    ```
+- Connect to a database:
+    ```
+    \c <db_name>
+    ```
+- Create a table:
+    ```sql
+    CREATE TABLE <relation_name> (
+        <varname> <type> ...,
+        <varname> <type> ...
+    );
+    ```
+    - Example:
+        ```sql
+        CREATE TABLE usernames (
+            id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+            username VARCHAR ( 255 ) 
+        );
+        ```
+        - Entering the command `\d` will result in:
+            ```
+            |       Name       |   Type   |
+            + -----------------+----------+
+            | usernames        | table    |
+            | usernames_id_seq | sequence |
+            ```
+            - What is `usernames_id_seq`? The `GENERATED ALWAYS AS IDENTITY` clause caused this to be made. It defined the `id` column as an [identity column](https://www.postgresql.org/docs/current/sql-createtable.html#SQL-CREATETABLE-PARMS-GENERATED-IDENTITY). PostgreSQL now automatically generates a value for this column. By default it starts at 1 and increments by 1 for each new row. Additionally, PostgreSQL implicitly creates usernames_id_seq, which is a sequence object, that keeps track of the next value to be used.
+
+- Check for relations:
+    ```
+    \d
+    ```
+- Insert (a) value(s) into a relation:
+    ```sql
+    INSERT INTO <relation_name> (<var_name>)
+    VALUES (<val1>), (<val2>), ...;
+    ```
+    - Example:
+        ```sql
+        INSERT INTO usernames (username)
+        VALUES ('Mao'), ('nevz'), ('Lofty');
+        ```
+- Selecting values from a relation (similar to sql):
+    ```sql
+    SELECT <var_name> FROM <relation_name>;
+    ```
+    - Example:
+        ```sql
+        SELECT * FROM usernames;
+        ```
