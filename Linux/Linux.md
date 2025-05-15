@@ -13,6 +13,10 @@
     ```
     sudo apt upgrade
     ```
+- Checking for updates and upgrading packages:
+    ```
+    sudo apt update && sudo apt upgrade
+    ```
 - Updating packages including including ones that require the removal of packages:
     ```
     sudo apt full-upgrade
@@ -27,6 +31,10 @@
     sudo debsums
     ```
         - Add -s flag at the end to check configuration files, which are not checked by default. Setting this flag will also make it so that only error messages are printed instead of a bunch of messages confirming that a package is okay.
+- Getting your Linux username:
+    ```
+    whoami
+    ```
 
 ## Directory Commands
 - Creating a directory:
