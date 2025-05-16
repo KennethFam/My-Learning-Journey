@@ -166,33 +166,8 @@
     npm install pg
     ```
     - `pg` is short for `node-postgres`.
-- Connect to the db in JavaScript:
-    ```js
-    const { Pool } = require("pg");
 
-    // All of the following properties should be read from environment variables
-    // We're hardcoding them here for simplicity
-    module.exports = new Pool({
-        host: "localhost", // or wherever the db is hosted
-        user: "<role_name>",
-        database: "<db_name>",
-        password: "<role_password>",
-        port: 5432 // The default port
-    });
-
-    ```
-    - An alternative to defining the connection information is through a [Connection URI](https://node-postgres.com/features/connecting#connection-uri). You’ll likely be using connection URIs when connecting with a hosted database service. Here’s what it would look like based on the above properties:
-        ```js
-        const { Pool } = require("pg");
-
-        // Again, this should be read from an environment variable
-        module.exports = new Pool({
-            connectionString: "postgresql://<role_name>:<role_password>@localhost:5432/top_users"
-        });
-        ```
-
-
-## Basic Commands
+## Basic Shell Commands
 - Launch the PostgreSQL shell:
     ```
     psql
@@ -258,3 +233,110 @@
         ```sql
         SELECT * FROM usernames;
         ```
+- Dropping a table:
+    ```sql
+    DROP TABLE <relation_name>
+    ```
+
+## Using node-postgres in Express
+
+### Connecting to the database in JavaScript
+- Connect to the db in JavaScript:
+    ```js
+    const { Pool } = require("pg");
+
+    // All of the following properties should be read from environment variables
+    // We're hardcoding them here for simplicity
+    module.exports = new Pool({
+        host: "localhost", // or wherever the db is hosted
+        user: "<role_name>",
+        database: "<db_name>",
+        password: "<role_password>",
+        port: 5432 // The default port
+    });
+
+    ```
+    - An alternative to defining the connection information is through a [Connection URI](https://node-postgres.com/features/connecting#connection-uri). You’ll likely be using connection URIs when connecting with a hosted database service. Here’s what it would look like based on the above properties:
+        ```js
+        const { Pool } = require("pg");
+
+        // Again, this should be read from an environment variable
+        module.exports = new Pool({
+            connectionString: "postgresql://<role_name>:<role_password>@localhost:5432/top_users"
+        });
+        ```
+
+#### Two ways of connecting with pg
+- `pg` as two ways to connect to a db: a client and a pool.
+    - Client is an individual connection to the DB, which you manually manage. You open a connection, do your query, then close it. This is fine for one-off queries, but can become expensive if you’re dealing with a lot of queries. Wouldn’t this problem be alleviated if we could somehow hold onto a client? Yes!
+    - Enter pool. As the name suggests, it’s a pool of clients. A pool holds onto connections. And when you query, it’ll programmatically open a new connection unless there’s an existing spare one. Perfect for web servers.
+
+### Querying with pg
+- Let's take a look at some example queries:
+    ```js
+    async function getAllUsernames() {
+        const { rows } = await pool.query("SELECT * FROM usernames");
+        return rows;
+    }
+
+    async function insertUsername(username) {
+        await pool.query("INSERT INTO usernames (username) VALUES ($1)", [username]);
+    }
+    ```
+    - The first one is self-explanatory, but what's the `$1`? `pg` provides what's called [query parameterization](https://node-postgres.com/features/queries#parameterized-query). Instead of passing user input directly, we pass it in an array as the second argument. `pg` handles the rest. Why is this needed? We’re passing user entered value i.e. `username` directly into our query. A nefarious user could enter something like `sike'); DROP TABLE usernames;` -- and wreak havoc. This is called [SQL Injection](https://en.wikipedia.org/wiki/SQL_injection). `pg` prevents this through parameterization.
+
+### Populate the db via a script
+- You might have noticed how cumbersome it is to create a table and populate it with data. Luckily, we have the power of c(n)ode by our side. We can automate it via a script.
+    - Example:
+        ```js
+        #! /usr/bin/env node
+
+        const { Client } = require("pg");
+
+        const SQL = `
+        CREATE TABLE IF NOT EXISTS usernames (
+            id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+            username VARCHAR ( 255 )
+        );
+
+        INSERT INTO usernames (username) 
+        VALUES
+            ('Bryan'),
+            ('Odin'),
+            ('Damon');
+        `;
+
+        async function main() {
+            console.log("seeding...");
+            const client = new Client({
+            connectionString: "postgresql://<role_name>:<role_password>@localhost:5432/top_users",
+            });
+            await client.connect();
+            await client.query(SQL);
+            await client.end();
+            console.log("done");
+        }
+
+        main();
+        ```
+        - You can run this script using node or add it as a [script in package.json](https://stackoverflow.com/a/36433748).
+
+## Local vs production dbs
+- Great! You’ve just learned how to set up and use a local db with PostgreSQL. Local databases are ideal for development because they offer faster interactions, easier modifications, and don’t require an internet connection. This makes them especially useful when prototyping or testing new features.
+- When you’re ready to make your project public, you’ll need to transition to a production database hosted on an external server independent of your local machine. A production database allows for global accessibility, scalability and more robust security. Most of the hosting providers introduced in the [deployment lesson](https://www.theodinproject.com/lessons/nodejs-using-postgresql) also offer database services. Now that we know the difference, lets see how we can populate a production database.
+
+### Populating production dbs
+- We’ve hardcoded our local db connection information in the script. Hence, the script only populates our local db. We need a way to populate our production db as well. One way to do this is by using environment variables, though this leads to unnecessary hassle. Why? Because now, the script can only populate the production db on the production server i.e. we’ll need to access the production server’s cli to run the script. Or, we could sneakily edit our environment file to point to the production db and run the script on our machine, and revert it.
+- We should aim to make our script as independent from our codebase as possible.
+- A far more painless approach is providing the connection information as an argument to the script. This way, we can run the script for local db as well as production db on our machine. You can access arguments via [process.argv](https://nodejs.org/docs/latest/api/process.html#processargv).
+    ```shell
+    # populating local db 
+    node db/populatedb.js <local-db-url>
+
+    # populating production db
+    # run it from your machine once after deployment of your app & db
+    node db/populatedb.js <production-db-url>
+    ```
+
+## Links
+- [Documentation](https://node-postgres.com/)
