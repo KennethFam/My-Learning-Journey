@@ -16,6 +16,7 @@
     npm install
     ```
     it will install everything the project needs, in the node_modules folder, creating it if it's not existing already.
+    - Some documentation will include the `--save` flag. This is due to the fact that, before npm v 5, you had to manually specify this flag to save the dependency in your `package.json`. For npm v5 and above, it's done automatically.
 - Installing a single package:
     ```shell
     npm install <package-name>

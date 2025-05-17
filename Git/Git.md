@@ -272,3 +272,75 @@ git config --get user.email
         - Two main reasons for doint this:
             1. if something you change turns out to cause some problems, it is easy to revert the specific change without losing other changes
             2. it enables you to write better commit messages
+
+## Ignoring Files
+- Often, you’ll have a class of files that you don’t want Git to automatically add or even show you as being untracked. These are generally automatically generated files such as log files or files produced by your build system. In such cases, you can create a file listing patterns to match them named `.gitignore`.
+
+- Example `.gitignore` file:
+    ```bash
+    $ cat .gitignore
+    *.[oa]
+    *~
+    ```
+    - The first line tells Git to ignore any files ending in “.o” or “.a” — object and archive files that may be the product of building your code. The second line tells Git to ignore all files whose names end with a tilde (`~`), which is used by many text editors such as Emacs to mark temporary files. You may also include a log, tmp, or pid directory; automatically generated documentation; and so on. Setting up a `.gitignore` file for your new repository before you get going is generally a good idea so you don’t accidentally commit files that you really don’t want in your Git repository.
+
+- The rules for the patterns you can put in the `.gitignore` file are as follows:
+    - Blank lines or lines starting with `#` are ignored.
+    - Standard glob patterns work, and will be applied recursively throughout the entire working tree.
+    - You can start patterns with a forward slash (`/`) to avoid recursivity.
+    - You can end patterns with a forward slash (`/`) to specify a directory.
+    - You can negate a pattern by starting it with an exclamation point (`!`).
+
+    Glob patterns are like simplified regular expressions that shells use. An asterisk (`*`) matches zero or more characters; `[abc]` matches any character inside the brackets (in this case a, b, or c); a question mark (`?`) matches a single character; and brackets enclosing characters separated by a hyphen (`[0-9]`) matches any character between them (in this case 0 through 9). You can also use two asterisks to match nested directories; `a/**/z` would match `a/z`, `a/b/z`, `a/b/c/z`, and so on.
+
+- Another example `.gitignore` file:
+    ```
+    # ignore all .a files
+    *.a
+
+    # but do track lib.a, even though you're ignoring .a files above
+    !lib.a
+
+    # only ignore the TODO file in the current directory, not subdir/TODO
+    /TODO
+
+    # ignore all files in any directory named build
+    build/
+
+    # ignore doc/notes.txt, but not doc/server/arch.txt
+    doc/*.txt
+
+    # ignore all .pdf files in the doc/ directory and any of its subdirectories
+    doc/**/*.pdf
+    ```
+
+- GitHub maintains a fairly comprehensive list of good `.gitignore` file examples for dozens of projects and languages at <https://github.com/github/gitignore> if you want a starting point for your project.
+
+- In the simple case, a repository might have a single `.gitignore` file in its root directory, which applies recursively to the entire repository. However, it is also possible to have additional `.gitignore` files in subdirectories. The rules in these nested `.gitignore` files apply only to the files under the directory where they are located. The Linux kernel source repository has 206 `.gitignore` files. See `man gitignore` for more details on multiple `.gitignore` files.
+
+### Removing an already cached file or directory
+- To remove a file that has already been checked in, simply run:
+    ```
+    git rm --cached FILENAME
+    ```
+    - For directorys, add a `-r` flag, which stands for recursive.
+
+### Configuring ignored files for all repositories on your computer
+- You can tell Git to always ignore certain files or directories when you make a commit in any Git repository on your computer. For example, you could use this feature to ignore any temporary backup files that your text editor creates.
+
+- To always ignore a certain file or directory, add it to a file named `ignore` that's located inside the directory `~/.config/git`. By default, Git will ignore any files and directories that are listed in the global configuration file `~/.config/git/ignore`. If the `git` directory and `ignore` file don't exist yet, you may need to create them.
+
+### Excluding local files without creating a .gitignore file
+- If you don't want to create a `.gitignore` file to share with others, you can create rules that are not committed with the repository. You can use this technique for locally-generated files that you don't expect other users to generate, such as files created by your editor.
+
+- Use your favorite text editor to open the file called `.git/info/exclude` within the root of your Git repository. Any rule you add here will not be checked in, and will only ignore files for your local repository.
+    1. Open Git Bash.
+    2. Navigate to the location of your Git repository.
+    3. Using your favorite text editor, open the file `.git/info/exclude`.
+
+### Links
+- [The Ignoring Files chapter of the Pro Git book.](https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository#_ignoring)
+
+- [The Ignoring Files article on the GitHub Help site.](https://help.github.com/articles/ignoring-files)
+
+- [The gitignore(5) manual page.](https://git-scm.com/docs/gitignore)
