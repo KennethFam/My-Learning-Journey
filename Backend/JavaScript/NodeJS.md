@@ -769,6 +769,10 @@ http.createServer(function (req, res) {
         require("dotenv").config();
         ```
         - You can now just run your code with `node index.js` and dotenv will handle all the loading for you. 
+        - Let's say we had an envvironment variabled named `vidURL`. To use it in js, simple call:
+            ```js
+            process.env.vidURL
+            ```
 
 #### Accessing Environment Variables
 - Environment variables are accessed via Node’s built-in `process` object, more specifically its `env` property. Node will load each environment variable to the `process.env` object, using its name as the property. You can then access them like any normal object property.
