@@ -323,7 +323,7 @@ git config --get user.email
     ```
     git rm --cached FILENAME
     ```
-    - For directorys, add a `-r` flag, which stands for recursive.
+    - For directories, add a `-r` flag, which stands for recursive.
 
 ### Configuring ignored files for all repositories on your computer
 - You can tell Git to always ignore certain files or directories when you make a commit in any Git repository on your computer. For example, you could use this feature to ignore any temporary backup files that your text editor creates.
