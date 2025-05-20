@@ -4,6 +4,17 @@
 - Copy: `ctrl` + `shift` + `c`
 - Patse: `ctrl` + `shift` + `v`
 
+## Basic Command Formatting:
+- Use `\` for multi-line commands:
+    ```bash
+    PGUSER=dbuser \
+    PGPASSWORD=secretpassword \
+    PGHOST=database.server.com \
+    PGPORT=3211 \
+    PGDATABASE=mydb \
+    node script.js
+    ```
+
 ## Basic Commands
 - Checking for updates:
     ```
