@@ -210,6 +210,7 @@
             | usernames_id_seq | sequence |
             ```
             - What is `usernames_id_seq`? The `GENERATED ALWAYS AS IDENTITY` clause caused this to be made. It defined the `id` column as an [identity column](https://www.postgresql.org/docs/current/sql-createtable.html#SQL-CREATETABLE-PARMS-GENERATED-IDENTITY). PostgreSQL now automatically generates a value for this column. By default it starts at 1 and increments by 1 for each new row. Additionally, PostgreSQL implicitly creates usernames_id_seq, which is a sequence object, that keeps track of the next value to be used.
+            - To avoid the `id_seq` outputs, do `\dt` instead.
 
 - Check for relations:
     ```
