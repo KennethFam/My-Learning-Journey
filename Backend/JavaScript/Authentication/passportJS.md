@@ -143,3 +143,4 @@
 
 ## Links
 - [Documentation.](http://www.passportjs.org/docs/username-password/)
+- - [TOP Authentication Tutorial.](https://www.theodinproject.com/lessons/node-path-nodejs-authentication-basics)

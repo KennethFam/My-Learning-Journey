@@ -340,4 +340,4 @@
     ```
 
 ## Links
-- [Documentation](https://node-postgres.com/)
+- [Documentation.](https://node-postgres.com/)

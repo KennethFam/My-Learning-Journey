@@ -48,6 +48,8 @@
 
     You should now be able to log in using the new user you’ve created (the one with a hashed password). Unfortunately, users that were saved BEFORE you added bcrypt will no longer work, but that’s a small price to pay for security! (and a good reason to include bcrypt from the start on your next project)
 
+## Links
+- - [TOP Authentication Tutorial.](https://www.theodinproject.com/lessons/node-path-nodejs-authentication-basics)
 
 
     
