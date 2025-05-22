@@ -3,6 +3,8 @@
 ## Description
 - An excellent middleware to handle our authentication and sessions for us. Keep in mind that this library should be used with another middleware like bcrypt, which securely stores user passwords.
 
+- ![alt text](Images/passport.png)
+
 ## Installation
 - Run this command to install passport:
     ```shell
@@ -19,6 +21,37 @@
 
 ## How it works
 - Passport.js uses what they call Strategies to authenticate users. They have over 500 of these strategies. The most basic (and most common) strategy is username-and-password, or what they call the [LocalStrategy](http://www.passportjs.org/docs/username-password/).
+
+## Cookies vs Sessions
+- A cookie has its data stored on a browser. The browser will attach that cookie (key-value pair) to every http request that it sends. Cookies should not hold sensitive information because a hacker could get ahold of that information and use it.
+
+- A session is stored on the server side. It stores larger amounts of data than cookies. Sessions need to be authenticated into with a secret key.
+
+## Sessions
+- `express-sessions` only stores sessions in memory that is local to your application. This is not a scalable solution, so we want to use a database for sessions.
+
+- To store sessions in `PostgreSQL`, you can use a library called `connect-pg-simple`. [Here is the documentation.](https://www.npmjs.com/package/connect-pg-simple)
+    - Example set-up:
+        ```js
+        app.use(session({ 
+            store: new (require(`connect-pg-simple`)(session))({
+                conString: process.env.DATABASE_URL, // connection string for the db
+                createTableIfMissing: true // create session db if it does not exist
+            }),
+            secret: process.env.SESSION_SECRET, // set secret
+            resave: false, // session is only saved if it was modified, affects existing sessions
+            saveUninitialized: false, // only save session if you modify it, affects new sessions
+            cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days, maxAge is in miliseconds
+        }));
+        ```
+
+- To store sessions in `MongoDB`, you can use a library called `connect-mongo`. [Check out this video here.](https://youtu.be/J1qXK66k1y4?list=PLYQSCk-qyTW2ewJ05f_GKHtTIzjynDgjK)
+
+### Secret
+- To create a secret to sign a cookie, you can just use the code below to generate a random secret and store that secret as an environment variable
+    ```shell
+    node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+    ```
 
 ## LocalStrategy Setup
 - Let's assume we have installed all the necessary dependencies, created a database, etc. Our app.js should look something like this:
@@ -143,4 +176,5 @@
 
 ## Links
 - [Documentation.](http://www.passportjs.org/docs/username-password/)
-- - [TOP Authentication Tutorial.](https://www.theodinproject.com/lessons/node-path-nodejs-authentication-basics)
+- [TOP Authentication Tutorial.](https://www.theodinproject.com/lessons/node-path-nodejs-authentication-basics)
+- [Basic Authentication App.](https://github.com/KennethFam/Basic-Authentication-App)
