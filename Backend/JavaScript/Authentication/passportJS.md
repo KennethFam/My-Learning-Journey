@@ -47,6 +47,8 @@
 
 - To store sessions in `MongoDB`, you can use a library called `connect-mongo`. [Check out this video here.](https://youtu.be/J1qXK66k1y4?list=PLYQSCk-qyTW2ewJ05f_GKHtTIzjynDgjK)
 
+- On the browser, the session cookie should show up as `connect.sid`. When a request is sent, the server gets this cookie and checks if the session is valid. To view cookies, inspect the page, go to `Application`, and look under `Storage`.
+
 ### Secret
 - To create a secret to sign a cookie, you can just use the code below to generate a random secret and store that secret as an environment variable
     ```shell

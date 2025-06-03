@@ -221,6 +221,8 @@ app.listen(PORT, () => {
 
     To test these routes, use [Postman](https://www.postman.com/downloads/) which will allow you to send `GET` and `POST` requests without the browser (we can’t send `POST` requests from the browser address bar).
 
+- Routes should be placed after other middleware but before error handler.
+
 ### Express Routing documentation
 - Express's primer on Routing can be found [here](https://expressjs.com/en/guide/routing.html).
 
@@ -659,3 +661,5 @@ Ultimately, the controller is the brains of the operation ensuring that each com
     - Check [here](https://www.theodinproject.com/lessons/nodejs-forms-and-data-handling#putting-it-together) for an explanation of the code.
     - The flow looks like this:
         -![alt text](Images/data_validation_flow.png)
+- [Here is a good playlist of videos on passport. 1, 2, 3, 5, and 6 cover LocalStrategy.](https://www.youtube.com/playlist?list=PLYQSCk-qyTW2ewJ05f_GKHtTIzjynDgjK)
+    - You may notice at some points in the videos, the Express app contains the line `app.use(passport.initialize())`. This line is no longer required to include in current versions of Passport.
