@@ -180,3 +180,5 @@
 - [Documentation.](http://www.passportjs.org/docs/username-password/)
 - [TOP Authentication Tutorial.](https://www.theodinproject.com/lessons/node-path-nodejs-authentication-basics)
 - [Basic Authentication App.](https://github.com/KennethFam/Basic-Authentication-App)
+- [Here is a good playlist of videos on passport. 1, 2, 3, 5, and 6 cover LocalStrategy.](https://www.youtube.com/playlist?list=PLYQSCk-qyTW2ewJ05f_GKHtTIzjynDgjK)
+    - You may notice at some points in the videos, the Express app contains the line `app.use(passport.initialize())`. This line is no longer required to include in current versions of Passport.
