@@ -4,6 +4,62 @@
 - Prisma is a popular ORM in the Node.js landscape.
 - Prisma ORM consists of several libraries, so we can use npm to install whichever one(s) our application needs.
 
+## Installation
+- Installing Prisma using npm:
+    ```shell
+    npm install prisma --save-dev
+    ```
+
+- Installing and generating Prisma Client:
+    ```shell
+    npm install @prisma/client
+    ```
+    ```shell
+    npx prisma generate
+    ```
+
+## Commands
+- Invoking the Prisma CLI:
+    ```shell
+    npx prisma
+    ```
+
+- Creating a [Prisma Schema](https://www.prisma.io/docs/orm/prisma-schema) file:
+    ```shell
+    npx prisma init --datasource-provider postgresql --output ../generated/prisma
+    ```
+    - This command does a few things:
+        - Creates a new directory called `prisma` that contains a file called `schema.prisma`, which contains the Prisma Schema with your database connection variable and schema models.
+        - Sets the `datasource` to PostgreSQL and the output to a custom location, respectively.
+        - Creates the `.env` file in the root directory of the project, which is used for defining environment variables (such as your database connection)
+
+        Note that the default schema created by `prisma init` uses PostgreSQL as the `provider`. If you didn't specify a provider with the `datasource-provider` option, you need to edit the `datasource` block to use the `postgresql` provider instead:
+        ```
+        datasource db {
+            provider = "postgresql"
+            url      = env("DATABASE_URL")
+        }
+        ```
+
+- To map your data model to the database schema, you need to use the prisma migrate CLI commands:
+
+    ```shell
+    npx prisma migrate dev --name init
+    ```
+
+    This command does two things:
+    1. It creates a new SQL migration file for this migration
+    2. It runs the SQL migration file against the database
+    
+    - `generate` is called under the hood by default, after running `prisma migrate dev`. If the `prisma-client-js` generator is defined in your schema, this will check if `@prisma/client` is installed and install it if it's missing.
+
+- Whenever you update your Prisma schema, you will have to update your database schema using either `prisma migrate dev` or `prisma db push`. This will keep your database schema in sync with your Prisma schema. These commands will also run `prisma generate` under the hood to re-generate your Prisma Client.
+
+- Prisma Studio is a visual editor for the data in your database. Run this command in your terminal to invoke it:
+    ```shell
+    npx prisma studio
+    ```
+
 ## Prisma Schema
 - The Prisma schema is a file where you will define your models. For example, consider a message table in a chat app:
     ```
@@ -62,3 +118,4 @@
 - [Prisma website](https://www.prisma.io/orm)
 - [Prisma's "Getting Started" Guide](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch/relational-databases-node-postgresql)
 - [The Odin Project's Prisma Lesson](https://www.theodinproject.com/lessons/nodejs-prisma-orm)
+- [Prisma API Reference](https://www.prisma.io/docs/orm/prisma-client)
