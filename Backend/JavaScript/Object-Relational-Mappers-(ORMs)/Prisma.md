@@ -34,7 +34,7 @@
         - Creates the `.env` file in the root directory of the project, which is used for defining environment variables (such as your database connection)
 
         Note that the default schema created by `prisma init` uses PostgreSQL as the `provider`. If you didn't specify a provider with the `datasource-provider` option, you need to edit the `datasource` block to use the `postgresql` provider instead:
-        ```
+        ```prisma
         datasource db {
             provider = "postgresql"
             url      = env("DATABASE_URL")
@@ -62,7 +62,7 @@
 
 ## Prisma Schema
 - The Prisma schema is a file where you will define your models. For example, consider a message table in a chat app:
-    ```
+    ```prisma
     model Message {
         id        Int      @id @default(autoincrement())
         content   String   @db.VarChar(255) 
