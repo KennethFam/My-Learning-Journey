@@ -4,6 +4,11 @@
 - A popular and common organizational method for your APIs which corresponds with CRUD (Create, Read, Update, and Delete) actions.
 - [Here is the actual technical definition of REST.](https://en.wikipedia.org/wiki/Representational_state_transfer)
 
+## Guidelines
+
+### Accept and respond with JSON
+
+
 ## Why do we need it?
 - Following established patterns such as REST make your API more maintainable and make it easier for other developers to integrate with your API. Software development is often about clear communication which is aided by following expectations.
 
@@ -26,3 +31,4 @@
     - If you want to code along with the first article, please note this includes the body-parser middleware to parse JSON data on the request body, however since Express 4.16.0 this parsing functionality has been incorporated directly into the Express package itself.
 - [Setting up a REST API in Express](https://www.robinwieruch.de/node-express-server-rest-api/)
     - One of the best Express tutorials. It also talks about modular code organization, writing middleware, and links to some great extra info at the end.
+    - [REST-cURL-Intro-Project](https://github.com/KennethFam/REST-cURL-Intro-Project)
