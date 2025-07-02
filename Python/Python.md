@@ -3,11 +3,149 @@
 ## Background
 - For these notes, I'm starting off at Part 5 of [MOOC's 2025 Python Course](https://programming-25.mooc.fi/part-5), since I have already completed Parts 1-4 of the [2024 version](https://programming-24.mooc.fi/) a while back but never took notes. I may revisit those parts later on to make the notes complete.
 
-## Built-In Functions
+## Installation
+
+### Python
+- On Linux, Python3 is usually installed by default. If it is not, you can install it using the following command:
+    ```bash
+    sudo apt install python3
+    ```
+    - Note that python without the 3 typically refers to Python 2 on Linux.
+
+- On Windows, you can install Python on the [Python Website](https://www.python.org/downloads/windows/) or by using [Chocolatey](https://chocolatey.org/) and running the command:
+    ```
+    choco install python
+    ```
+
+### pip
+- pip is a Python package manager.
+
+- On Linux, pip is not installed. You can install it by running:
+    ```bash
+    sudo apt install python3-pip
+    ```
+
+- On Windows, pip should already be installed with Python.
+
+## Running Python 
+- Make sure you are in the same directory as the Python file that you want to run.
+
+- Let's say we have a file named `main.py` and want to run it. We can run it by using:
+    - `python3 main.py` on Linux
+    - `python main.py` on Windows.
+
+## Installing libraries using pip. 
+- Similar to running Python, Linux uses `pip3` while Windows uses `pip`.
+- If you try to install a package, you may run into this error:
+    ```
+    error: externally-managed-environment
+
+    × This environment is externally managed
+    ╰─> To install Python packages system-wide, try apt install
+        python3-xyz, where xyz is the package you are trying to
+        install.
+        
+        If you wish to install a non-Debian-packaged Python package,
+        create a virtual environment using python3 -m venv path/to/venv.
+        Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+        sure you have python3-full installed.
+        
+        If you wish to install a non-Debian packaged Python application,
+        it may be easiest to use pipx install xyz, which will manage a
+        virtual environment for you. Make sure you have pipx installed.
+        
+        See /usr/share/doc/python3.12/README.venv for more information.
+
+    note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+    hint: See PEP 668 for the detailed specification.
+    ```
+    - The error gives you two solutions: `venv` (virtual environment) is for libraries you would use in your code using `import` and `pipx` is for command-line tools. - [StackOverflow](https://stackoverflow.com/questions/75608323/how-do-i-solve-error-externally-managed-environment-every-time-i-use-pip-3)
+
+## Virtual Environments
+- My notes for virtual environments are based off of [this video](https://www.youtube.com/watch?v=Y21OR1OPC9A).
+
+- A virtual environment is a self-contained location that enables you to maintain separate and isolated environments for your Python projects.
+
+- Virtual environments let you manage dependencies, versions, and packages without conflicts across different projects.
+
+### Set-Up & Activation
+- To create a virtual environment, go to your project directory and run the command for your respective operating system.
+    - For Mac/Linux, run:
+        ```bash
+        python3 -m venv env
+        ```
+    - For Windows, run:
+        ```bash
+        python -m venv env
+        ```
+    - Note: `env` is simply the directory name. You can name it whatever you want.
+
+- To activate your virtual environment, run the command for your respective operating system.
+    - For Linux/Mac, run:
+        ```bash
+        source env/bin/activate
+        ```
+    - For Windows, run:
+        ```
+        env\Scripts\activate.bat
+        ```
+        - If this does not work, try removing the `.bat` extension.
+    - Note: If you named your environment something other than `env`, you'll have to swap `env` out of the path with the name that you assigned it.
+    - If the activation is successful, you should see `(env) ` prefixed to the normal line of your terminal.
+
+### Deactivation
+- To deactivate your virtual environment, simple input `deactivate`.
+    - If this worked, you should see that `(env) ` is no longer prefixed to the normal line of your terminal.
+
+### Dependencies/Packages
+
+#### Checking packages installed in virtual environment
+- On Linux/Mac, run:
+    ```bash
+    pip3 list
+    ```
+
+- On Windows, run:
+    ```bash
+    pip list
+    ```
+
+- Note: Running this command outside of the environment will result in a list of packages installed globally.
+
+#### Saving Dependencies
+- You should not be committing your whole environment directory onto GitHub. It should be apart of your `.gitignore` in the format `env_dir_name/`.
+
+- Instead, we save all of our dependencies into a `requirements.txt` file by running:
+    - On Linux/Mac:
+        ```
+        pip3 freeze > requirements.txt
+        ```
+    - On Windows:
+        ```
+        pip freeze > requirements.txt
+        ```
+    - The listed commands take the output of `pip freeze` (dependencies) and puts it into `requirements.txt`.
+
+#### Downloading dependencies for a project
+- If you downloaded a project off of GitHub or some other remote repository with a `requirements.txt` file, you can download the requirements by:
+    1. Setting up a virtual enviroment and entering it
+    2. Running:
+        - For Linux:
+            ```
+            pip3 install -r requirements.txt
+            ```
+        - For Windows:
+            ```
+            pip install -r requirements.txt
+            ```
+
+## Language Syntax
+
+### Built-In Functions
 - `sum()` gets the sum of numeric values in an iterable.
 - `len()` gets the legnth of an iterable.
 
-## Lists
+### Lists
 - Instantiated using `[]`. Example:
     ```python
     names = ["Marlyn", "Ruth", "Paul"]
@@ -111,9 +249,9 @@
     ```
     - The for loop goes through the items in the outer list one by one. That is, each list containing information about a single person is, in turn, assigned to the variable `person`.
 
-## Functions
+### Functions
 
-### Using global variables within functions
+#### Using global variables within functions
 - We know it is possible to assign new variables within function definitions, but the function can also see variables assigned outside it, in the main function. Such variables are called `global variables`.
 - Using global variables from within functions is usually a bad idea. Among other issues, doing so may cause bugs which are difficult to trace.
 - Example:
@@ -144,7 +282,7 @@
     """
     ```
 
-## Scope
+### Scope
 - Example of Scrope bug:
     ```python
     def number_in_list(numbers: list, number: int):
@@ -162,3 +300,6 @@
                     return True
             return False
         ```
+
+## Links
+[pip Requirements File Format](https://pip.pypa.io/en/stable/reference/requirements-file-format/)
