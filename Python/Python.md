@@ -302,4 +302,4 @@
         ```
 
 ## Links
-[pip Requirements File Format](https://pip.pypa.io/en/stable/reference/requirements-file-format/)
+- [pip Requirements File Format](https://pip.pypa.io/en/stable/reference/requirements-file-format/)

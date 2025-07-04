@@ -49,3 +49,72 @@
         /bin/bash
         ```
         - This response shows the full execution path of the shell interpreter. Make sure that the "sha-bang" line at the beginning of your script, matches this same execution path.
+
+### Variables
+- Shell variables are created once they are assigned a value. A variable can contain a number, a character or a string of characters. Variable name is case sensitive and can consist of a combination of letters and the underscore `_`. Value assignment is done using the `=` sign. Note that no space permitted on either side of `=` sign when initializing variables. Here are some example variable declarations:
+    ```shell
+    PRICE_PER_APPLE=5
+    MyFirstLetters=ABC
+    greeting='Hello        world!'
+    ```
+
+- You can reference variables by putting a `$` in front of the variable name. In the case that you want to use `$` as a string, a `\` can be used to escape special character meaning. Example: 
+    ```shell
+    PRICE_PER_APPLE=5
+    echo "The price of an Apple today is: \$HK $PRICE_PER_APPLE" # The price of an Apple today is: $HK 5
+    ```
+    - Encapsulating the variable name with `${}` is used to avoid ambiguity. Example:
+        ```shell
+        MyFirstLetters=ABC
+        echo "The first 10 letters in the alphabet are: ${MyFirstLetters}DEFGHIJ" # The first 10 letters in the alphabet are: ABCDEFGHIJ
+        ```
+
+- Encapsulating the variable name with `""` will preserve any white space values. Example:
+    ```shell
+    greeting='Hello        world!'
+    echo $greeting" now with spaces: $greeting" # Hello world! now with spaces: Hello        world!
+    ```
+
+- Variables can be assigned with the value of a command output. This is referred to as substitution. Substitution can be done by encapsulating the command with ``` `` ``` (known as back-ticks) or with `$()`. Example, assuming the only file in the directory is `prog.sh` and the date is July 4, 2025:
+    ```shell
+    FILELIST=`ls`
+    FileWithTimeStamp=/tmp/my-dir/file_$(/bin/date +%Y-%m-%d).txt
+    echo $FILELIST # prog.sh
+    echo $FileWithTimeStamp # /tmp/my-dir/file_2025-07-04.txt
+    ```
+    - Note that when the script runs, it will run the command inside the $() parenthesis and capture its output.
+
+#### Exercise (Contains introduction to date command):
+- The target of this exercise is to create a string, an integer, and a complex variable using command substitution. The string should be named BIRTHDATE and should contain the text `"Jan 1, 2000"`. The integer should be named Presents and should contain the number `10`. The complex variable should be named BIRTHDAY and should contain the full weekday name of the day matching the date in variable BIRTHDATE e.g. Saturday. Note that the `date` command can be used to convert a date format into a different date format. For example, to convert date value, `$date1`, to day of the week of `date1`, use:
+    ```shell
+    date -d "$date1" +%A
+    ```
+    - Solution: 
+        ```shell
+        #!/bin/bash
+        # Change this code
+        BIRTHDATE="Jan 1, 2000"
+        Presents=10
+        BIRTHDAY=`date -d "$BIRTHDATE" +%A`
+
+
+        # Testing code - do not change it
+
+        if [ "$BIRTHDATE" == "Jan 1, 2000" ] ; then
+            echo "BIRTHDATE is correct, it is $BIRTHDATE"
+        else
+            echo "BIRTHDATE is incorrect - please retry"
+        fi
+        if [ $Presents == 10 ] ; then
+            echo "I have received $Presents presents"
+        else
+            echo "Presents is incorrect - please retry"
+        fi
+        if [ "$BIRTHDAY" == "Saturday" ] ; then
+            echo "I was born on a $BIRTHDAY"
+        else
+            echo "BIRTHDAY is incorrect - please retry"
+        fi
+        ```
+
+### Passing Arguments to the Script
