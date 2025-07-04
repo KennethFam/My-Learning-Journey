@@ -16,6 +16,10 @@
         ```shell
         ./HelloWorld.sh
         ```
+        or
+        ```shell
+        bash HelloWorld.sh
+        ```
     - Note: If you are not in the same file directory as the script, you'll need to replace the file name with the directory.
 
 ## Shell Scripting
@@ -84,7 +88,9 @@
     ```
     - Note that when the script runs, it will run the command inside the $() parenthesis and capture its output.
 
-#### Exercise (Contains introduction to date command):
+<details>
+<summary><strong> Exercise (Contains introduction to date command): </strong></summary>
+
 - The target of this exercise is to create a string, an integer, and a complex variable using command substitution. The string should be named BIRTHDATE and should contain the text `"Jan 1, 2000"`. The integer should be named Presents and should contain the number `10`. The complex variable should be named BIRTHDAY and should contain the full weekday name of the day matching the date in variable BIRTHDATE e.g. Saturday. Note that the `date` command can be used to convert a date format into a different date format. For example, to convert date value, `$date1`, to day of the week of `date1`, use:
     ```shell
     date -d "$date1" +%A
@@ -116,5 +122,72 @@
             echo "BIRTHDAY is incorrect - please retry"
         fi
         ```
+</details>
 
 ### Passing Arguments to the Script
+- Arguments can be passed to the script when it is executed, by writing them as a space-delimited list following the script file name. Inside the script, the $1 variable references the first argument in the command line, $2 the second argument and so forth. The variable $0 references to the current script. In the following example, the script name is followed by 6 arguments. `my_shopping.sh` file contains below code:
+    ```shell
+    #!/bin/bash
+    echo "File name is "$0 # holds the current script
+    echo $3 # $3 holds banana
+    Data=$5
+    echo "A $Data costs just $6."
+    echo $#
+    ```
+    - Executing the script on terminal as `bash my_shopping.sh apple 5 banana 8 "Fruit Basket" 15` results in:
+        ```shell
+        File name is my_shopping.sh
+
+        banana
+
+        A Fruit Basket costs just 15
+
+        6
+        ```
+        - The variable `$#` holds the number of arguments passed to the script.
+        - The variable `$@` holds a space delimited string of all arguments passed to the script.
+            - If we were to echo it out, it would produce `apple 5 banana 8 Fruit Basket 15`.
+
+<details>
+<sumary><strong> Exercise (Contains introduction to running a script inside the script itself) </strong></summary>
+
+- Pass "Shell is fun" (3 arguments) to the script(prog.sh) as an arguments and print the length of the arguments. Here is the script that you need to edit:
+    ```shell
+    #!/bin/bash
+    function File {
+        # think you are inside the file
+        # Change here
+        echo "print the arguments"
+    }
+
+    # Do not change anything
+    if [ ! $# -lt 1 ]; then
+        File $*
+        exit 0
+    fi
+
+    # change here
+    # here you can pass the arguments
+    bash test.sh arguments
+    ```
+    - Solution:
+        ```shell
+        #!/bin/bash
+        function File {
+            # think you are inside the file
+            # Change Here
+            echo $#
+        }
+
+        # Do not change anything
+        if [ ! $# -lt 1 ]; then
+            File $*
+            exit 0
+        fi
+
+        # change here
+        # here you can pass the arguments
+        bash prog.sh Shell is fun
+        ```
+
+</details>
