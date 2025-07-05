@@ -191,3 +191,117 @@
         ```
 
 </details>
+
+### Arrays
+- An array can hold several values under one name. Array naming is the same as variables naming. An array is initialized by assigning space-delimited values enclosed in `()`. When using `echo`, use `"${array_name[@]}"` to print to the whole array. Without brackets, bash will interpret it as the first element followed by `[@]`. Simply using `echo` on `array_name` only prints the first element. Array members need not be consecutive or contiguous. Some members of the array can be left uninitialized. Example
+    ```shell
+    my_array=(apple banana "Fruit Basket" orange) # array declaration
+    echo $my_array # only prints the first element: apple
+    echo "${my_array[@]}" # prints whole array: apple banana Fruit Basket orange 
+    new_array[2]=apricot # creates an array with only the 3rd element initiated
+    echo "${new_array[@]}" # apricot
+    ```
+
+- The total number of elements in the array is referenced by `${#arrayname[@]}`. Example:
+    ```shell
+    my_array=(apple banana "Fruit Basket" orange)
+    echo  ${#my_array[@]}                   # 4
+    ```
+
+- The array elements can be accessed with their numeric index. The index of the first element is 0 (0-indexed). Example:
+    ```shell
+    my_array=(apple banana "Fruit Basket" orange)
+    echo ${my_array[3]}                     # orange - note that curly brackets are needed
+    # adding another array element
+    my_array[4]="carrot"                    # value assignment without a $ and curly brackets
+    echo ${#my_array[@]}                    # 5
+    echo ${my_array[${#my_array[@]}-1]}     # carrot
+    ```
+
+<details>
+<summary><strong> Exercise </strong></summary>
+
+- In this exercise, you will need to add numbers and strings to the correct arrays. You must add the numbers 1,2, and 3 to the "numbers" array, and the words 'hello' and 'world' to the strings array.
+
+    You will also have to correct the values of the variable NumberOfNames and the variable second_name. NumberOfNames should hold the total number of names in the NAMES array, using the $# special variable. Variable second_name should hold the second name in the NAMES array, using the brackets operator [ ]. Note that the index is zero-based, so if you want to access the second item in the list, its index will be 1.
+
+    ```shell
+    #!/bin/bash
+    NAMES=( John Eric Jessica )
+    # write your code here
+    NUMBERS=()
+    STRINGS=()
+    NumberOfNames=0
+    second_name='Vladimir'
+    ```
+
+    - Solution:
+        ```shell
+        #!/bin/bash
+        #!/bin/bash
+        NAMES=( John Eric Jessica )
+        # write your code here
+        NUMBERS=( 1 2 3 )
+        STRINGS=( "hello" "world" ) # note that STRINGS=(hello world) would have produced the same result since we want "hello" and "world" to be separate words
+        NumberOfNames=${#NAMES[@]}
+        second_name=${NAMES[1]}
+        echo ${NUMBERS[@]}
+        echo ${STRINGS[@]}
+        echo "The number of names listed in the NAMES array: $NumberOfNames"
+        echo "The second name on the NAMES list is:" ${second_name}
+        ```
+
+</details>
+
+### Basic Arithmetic Operators
+- Simple arithmetics on variables can be done using the arithmetic expression: `$((expression))`. Example:
+    ```shell
+    A=3
+    B=$((100 * $A + 5)) # 305
+    ```
+
+- Basic operators:
+    - a + b addition (a plus b)
+    - a - b substraction (a minus b)
+    - a * b multiplication (a times b)
+    - a / b division (integer) (a divided by b)
+    - a % b modulo (the integer remainder of a divided by b)
+    - a ** b exponentiation (a to the power of b)
+
+<details>
+<summary><strong> Exercise </strong></summary>
+
+- In this exercise, you will need to calculate the total cost (variable `TOTAL`) of a fruit basket, which contains 1 pineapple, 2 bananas and 3 watermelons. Don't forget to include the cost of the basket...
+    ```shell
+    #!/bin/bash 
+
+    COST_PINEAPPLE=50
+
+    COST_BANANA=4
+
+    COST_WATERMELON=23
+
+    COST_BASKET=1
+
+    TOTAL= ?
+
+    echo "Total Cost is $TOTAL"
+    ```
+    - Solution
+        ```shell
+        #!/bin/bash 
+
+        COST_PINEAPPLE=50
+
+        COST_BANANA=4
+
+        COST_WATERMELON=23
+
+        COST_BASKET=1
+
+        TOTAL=$(($COST_PINEAPPLE + 2 * $COST_BANANA + 3 * $COST_WATERMELON + $COST_BASKET)) 
+
+        echo "Total Cost is $TOTAL" # 128
+        ```
+
+</details>
