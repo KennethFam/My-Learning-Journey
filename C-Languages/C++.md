@@ -28,7 +28,7 @@
 - ![alt text](images/cpp_dev.png)
     - Read about steps 1-3 [here](https://www.learncpp.com/cpp-tutorial/introduction-to-cpp-development/) and steps 4-7 [here](https://www.learncpp.com/cpp-tutorial/introduction-to-the-compiler-linker-and-libraries/).
 
-# IDEs (Integrated Development Environments) for C++
+## IDEs (Integrated Development Environments) for C++
 - [VS Code](https://code.visualstudio.com/docs/cpp/config-linux)
     - You can follow the steps to compile your program from here or you can use the terminal and do this:
         ```shell
@@ -47,4 +47,7 @@
             ./new_name
             ```
             - Putting filename after g++ would work too.
+
 - [Other Options](https://www.learncpp.com/cpp-tutorial/installing-an-integrated-development-environment-ide/)
+
+- Find out how to start a C++ in one of the IDEs listed [here](https://www.learncpp.com/cpp-tutorial/compiling-your-first-program/).
