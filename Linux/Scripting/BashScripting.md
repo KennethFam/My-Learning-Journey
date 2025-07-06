@@ -196,7 +196,7 @@
             - If we were to echo it out, it would produce `apple 5 banana 8 Fruit Basket 15`.
 
 <details>
-<sumary><strong> Exercise (Contains introduction to running a script inside the script itself) </strong></summary>
+<summary><strong> Exercise (Contains introduction to running a script inside the script itself)</strong></summary>
 
 - Pass "Shell is fun" (3 arguments) to the script(prog.sh) as an arguments and print the length of the arguments. Here is the script that you need to edit:
     ```shell
@@ -804,6 +804,144 @@
                 echo $gg
             fi
         done
+        ```
+
+</details>
+
+### Array Comparison
+- An array is a variable containing multiple values. Any variable may be used as an array. There is no maximum limit to the size of an array, nor any requirement that member variables be indexed or assigned contiguously. Arrays are zero-based: the first element is indexed with the number 0.
+    ```shell
+    # basic construct
+    # array=(value1 value2 ... valueN)
+    array=(23 45 34 1 2 3)
+    #To refer to a particular value (e.g. : to refer 3rd value)
+    echo ${array[2]}
+
+    #To refer to all the array values
+    echo ${array[@]}
+
+    #To evaluate the number of elements in an array
+    echo ${#array[@]}
+    ```
+
+<details>
+<summary><strong> Exercise </strong></summary>
+
+- In this exercise, you will need to compare three list of arrays and write the common elements of all the three arrays:
+    `a=(3 5 8 10 6)`, `b=(6 5 4 12)`, `c=(14 7 5 7)` result is the common element `5`.
+    ```shell
+    #!/bin/bash
+	# enter your array comparison code here
+    ```
+    **Expected Output**:
+    ```shell
+    5
+    ```
+    - **Solution**:
+        ```shell
+        #!/bin/bash
+        # enter your array comparison code here
+        # initialize arrays a b c
+        a=(3 5 8 10 6) 
+        b=(6 5 4 12) 
+        c=(14 7 5 7)
+        # comparison of first two arrays a and b
+        # note the difference between space syntax for '=' between conditionals and assignment
+        for x in "${a[@]}"; do 
+            for y in "${b[@]}"; do 
+                if [ $x = $y ];then 
+                    # assigning the matching results to new array z
+                    # no need for declaration, just start assigning
+                    z[${#z[@]}]=$x
+                fi
+            done 
+        done
+        # comparison of third array c with new array z
+        for i in "${c[@]}"; do 
+            for k in "${z[@]}"; do
+                if [ $i = $k ];then
+                    # assigning the matching results to new array j
+                    j[${#j[@]}]=$i
+                fi
+            done 
+        done 
+        # print content of array j
+        echo ${j[@]}
+        ```
+
+</details>
+
+### Shell Functions
+- Like other programming languages, the shell may have functions. A function is a subroutine that implements a set of commands and operations. It is useful for repeated tasks.
+    ```shell
+    # basic construct
+    function function_name {
+        command...
+    }
+    ```
+
+- Functions are called simply by writing their names. A function call is equivalent to a command. Parameters may be passed to a function, by specifying them after the function name. The first parameter is referred to in the function as `$1`, the second as `$2` etc.
+    ```shell
+    function function_B {
+        echo "Function B."
+    }
+    function function_A {
+        echo "$1"
+    }
+    function adder {
+        echo "$(($1 + $2))"
+    }
+
+    # FUNCTION CALLS
+    # Pass parameter to function A
+    function_A "Function A."     # Function A.
+    function_B                   # Function B.
+    # Pass two parameters to function adder
+    adder 12 56                  # 68
+    ```
+
+<details>
+<summary><strong> Exercise </strong></summary>
+
+- In this exercise, you will need to write a function called ENGLISH_CALC which can process sentences such as:
+    `3 plus 5`, `5 minus 1` or `4 times 6` and print the results as: `3 + 5 = 8`, `5 - 1 = 4` or `4 * 6 = 24` respectively.
+    ```shell
+    #!/bin/bash
+    # enter your function code here
+
+    # testing code
+    ENGLISH_CALC 3 plus 5
+    ENGLISH_CALC 5 minus 1
+    ENGLISH_CALC 4 times 6
+    ```
+    **Expected Output**:
+    ```shell
+    3 + 5 = 8
+    5 - 1 = 4
+    4 * 6 = 24
+    ```
+    - **Solution**:
+        ```shell
+        #!/bin/bash
+        # enter your function code here
+
+        function ENGLISH_CALC {
+        a=$1
+        b=$3
+        signn=$2
+        if [ $signn == "plus" ]; then
+            echo "$a + $b = $(($a+$b))"
+        elif [ $signn == "minus" ]; then
+            echo "$a - $b = $(($a-$b))"
+        elif [ $signn == "times" ]; then
+            echo "$a * $b = $(($a*$b))" # if you don't use "", you'll need to \ (escape) the *
+        fi
+        }
+
+        # testing code
+        ENGLISH_CALC 3 plus 5
+        ENGLISH_CALC 5 minus 1
+        ENGLISH_CALC 4 times 6
         ```
 
 </details>
