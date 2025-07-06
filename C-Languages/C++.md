@@ -54,3 +54,10 @@
 
 ## Common C++ Problems/Errors
 - Common problems/errors and their solutions can be found [here](https://www.learncpp.com/cpp-tutorial/a-few-common-cpp-problems/).
+
+## Compiler Configuration
+- Use the `debug` build configuration when developing your programs. When you’re ready to release your executable to others, or want to test performance, use the `release` build configuration.
+
+- More on setting compiler configurations [here](https://www.learncpp.com/cpp-tutorial/configuring-your-compiler-build-configurations/).
+
+- Whenever you update your project settings, make the change for all build configurations (unless it’s not appropriate for some reason).
