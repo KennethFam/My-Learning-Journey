@@ -51,3 +51,6 @@
 - [Other Options](https://www.learncpp.com/cpp-tutorial/installing-an-integrated-development-environment-ide/)
 
 - Find out how to start a C++ in one of the IDEs listed [here](https://www.learncpp.com/cpp-tutorial/compiling-your-first-program/).
+
+## Common C++ Problems/Errors
+- Common problems/errors and their solutions can be found [here](https://www.learncpp.com/cpp-tutorial/a-few-common-cpp-problems/).
