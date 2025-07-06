@@ -1,7 +1,17 @@
 # Bash Scripting
 
 <details>
-<summary><strong></strong></summary>
+<summary><strong> Exercise </strong></summary>
+
+- 
+    ```shell
+    ```
+    **Expected Output**:
+    ```shell
+    ```
+    - **Solution**:
+        ```shell
+        ```
 
 </details>
 
@@ -495,6 +505,156 @@
         echo $BUFFETT
         echo "and I say:"
         echo "$ISAY"
+        ```
+
+</details>
+
+### Decision Making
+- The basic conditional decision making construct is:
+    ```shell
+    if [ expression ]; then
+        # code if 'expression' is true
+    fi
+    ```
+    - Example:
+        ```shell
+        NAME="John"
+        if [ "$NAME" = "John" ]; then
+            echo "True - my name is indeed John"
+        fi
+        ```
+
+- Expansion of conditional statement using `else`:
+    ```shell
+    NAME="Bill"
+    if [ "$NAME" = "John" ]; then
+        echo "True - my name is indeed John"
+    else
+        echo "False"
+        echo "You must mistaken me for $NAME"
+    fi
+    ```
+
+- Expansion of conditional statement using `elif` (else-if):
+    ```shell
+    NAME="George"
+    if [ "$NAME" = "John" ]; then
+        echo "John Lennon"
+    elif [ "$NAME" = "George" ]; then
+        echo "George Harrison"
+    else
+        echo "This leaves us with Paul and Ringo"
+    fi
+    ```
+
+- The expression used by the conditional construct is evaluated to either true or false. The expression can be a single string or variable. A empty string or a string consisting of spaces or an undefined variable name, are evaluated as false. The expression can be a logical combination of comparisons: negation is denoted by `!`, logical AND (conjunction) is denoted by `&&`, and logical OR (disjunction) is denoted by `||`. Conditional expressions should be surrounded by double brackets `[[ ]]`.
+
+- Types of numeric comparisons:
+    ```shell
+    comparison    Evaluated to true when
+    $a -lt $b    $a < $b
+    $a -gt $b    $a > $b
+    $a -le $b    $a <= $b
+    $a -ge $b    $a >= $b
+    $a -eq $b    $a is equal to $b
+    $a -ne $b    $a is not equal to $b
+    ```
+
+- Types of string comparisons:
+    ```
+    comparison    Evaluated to true when
+    "$a" = "$b"     $a is the same as $b    no patten matching, POSIX compliant
+    "$a" == "$b"    $a is the same as $b    supports pattern matching like "hello" == h* -> true
+    "$a" != "$b"    $a is different from $b
+    -z "$a"         $a is empty
+    ```
+    - note1: whitespace around `=` is required
+    - note2: use `""` around string variables to avoid shell expansion of special characters as `*`
+
+- Logical combinations:
+    ```shell
+    if [[ $VAR_A[0] -eq 1 && ($VAR_B = "bee" || $VAR_T = "tee") ]] ; then
+        # command...
+    fi
+    ```
+
+- Case structure:
+    ```
+    case "$variable" in
+    "$condition1" )
+        command...
+    ;;
+    "$condition2" )
+        command...
+    ;;
+    esac
+    ```
+    - Example:
+        ```shell
+        mycase=1
+        case $mycase in
+            1) echo "You selected bash";;
+            2) echo "You selected perl";;
+            3) echo "You selected phyton";;
+            4) echo "You selected c++";;
+            5) exit
+        esac
+        ```
+        - No default keyword, but you can use `*` to pattern match everything else.
+
+<details>
+<summary><strong> Exercise </strong></summary>
+
+- Change the variables in the first section, so that each if statement resolves as True.
+    ```shell
+    #!/bin/bash
+    # change these variables
+    NUMBER=10
+    APPLES=12
+    KING=GEORGE
+    # modify above variables
+    # to make all decisions below TRUE
+    if [ $NUMBER -gt 15 ] ; then
+        echo 1
+    fi
+    if [ $NUMBER -eq $APPLES ] ; then
+        echo 2
+    fi
+    if [[ ($APPLES -eq 12) || ("$KING" = "LUIS") ]] ; then
+        echo 3
+    fi
+    if [[ $(($NUMBER + $APPLES)) -le 32 ]] ; then
+        echo 4
+    fi
+    ```
+    **Expected Output**:
+    ```shell
+    1
+    2
+    3
+    4
+    ```
+    - **Solution**:
+        ```shell
+        #!/bin/bash
+        # change these variables
+        NUMBER=16
+        APPLES=16
+        KING="LUIS"
+        # modify above variables
+        # to make all decisions below TRUE
+        if [ $NUMBER -gt 15 ] ; then
+            echo 1
+        fi
+        if [ $NUMBER -eq $APPLES ] ; then
+            echo 2
+        fi
+        if [[ ($APPLES -eq 12) || ("$KING" = "LUIS") ]] ; then
+            echo 3
+        fi
+        if [[ $(($NUMBER + $APPLES)) -le 32 ]] ; then
+            echo 4
+        fi
         ```
 
 </details>
