@@ -197,3 +197,29 @@
     }
     ```
 </details>
+
+## Vocabulary
+- statement: an instruction in a computer program that tells the computer to perform an action. Most (but not all) statements in C++ end in a semicolon. If you see a line that ends in a semicolon, it’s probably a statement.
+
+- function: collection of statements that executes sequentially
+    - When discussing functions, it’s fairly common shorthand to append a pair of parenthesis to the end of the function’s name. For example, if you see the term `main()` or `doSomething()`, this is shorthand for functions named `main` or `doSomething` respectively. This helps differentiate functions from other things with names (such as variables) without having to write the word “function” each time.
+
+- identifier: name of a function (or object, type, template, etc…)
+
+- character: a written symbol or mark, such as a letter, digit, punctuation mark, or mathematical symbol
+
+- string/text: a sequence of characters
+    - Conventionally, the term “text” is also used to mean plain text, which is text that contains only characters that appear on a standard keyboard, with no special formatting or styling. For example, plain text cannot represent bold words, as that requires styling.
+
+- control character: characters that have special meaning to the computer system, but either aren’t intended to be displayed, or display as something other than a single visible symbol. Examples of well-known control characters include “escape” (which doesn’t display anything), “tab” (which displays as some number of spaces), and “backspace” (which erases the previous character).
+
+- syntax error: error that occurs when your program violates the grammar rules of the C++ language
+
+## Syntax
+
+### The `main` function
+- Every C++ program must have a special function named `main` (all lower case letters).
+
+- When the program is run, the statements inside of `main` are executed in sequential order.
+
+- Programs typically terminate (finish running) after the last statement inside function main has been executed (though programs may abort early in some circumstances, or do some cleanup afterwards).
