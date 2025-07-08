@@ -125,6 +125,7 @@
         pip freeze > requirements.txt
         ```
     - The listed commands take the output of `pip freeze` (dependencies) and puts it into `requirements.txt`.
+    - [pip Requirements File Format](https://pip.pypa.io/en/stable/reference/requirements-file-format/)
 
 #### Downloading dependencies for a project
 - If you downloaded a project off of GitHub or some other remote repository with a `requirements.txt` file, you can download the requirements by:
@@ -475,6 +476,7 @@
     - `int`
     - `float` 
     - `bool`
+    - `tuple`
 
 - Example: 
     ```python
@@ -489,5 +491,382 @@
 
 - It is good to keep in mind that almost everything is a reference in Python, but all this is rarely relevant to everyday programming tasks.
 
-## Links
-- [pip Requirements File Format](https://pip.pypa.io/en/stable/reference/requirements-file-format/)
+### Dictionary
+- In a dictionary, the items are indexed by keys. Each key maps to a value. The values stored in the dictionary can be accessed and changed using the key.
+
+#### Using a dictionary
+- The following example shows you how the dictionary data structure works. Here is a simple dictionary from Finnish to English:
+    ```python
+    my_dictionary = {}
+
+    my_dictionary["apina"] = "monkey"
+    my_dictionary["banaani"] = "banana"
+    my_dictionary["cembalo"] = "harpsichord"
+
+    print(len(my_dictionary)) # 3
+    print(my_dictionary) # {'apina': 'monkey', 'banaani': 'banana', 'cembalo': 'harpsichord'}
+    print(my_dictionary["apina"]) # monkey
+    ```
+    - The notation `{}` creates an empty dictionary, to which we can now add content. Three key-value pairs are added:`"apina"` maps to `"monkey"`, `"banaani"` maps to `"banana"`, and `"cembalo"` maps to `"harpsichord"`. Finally, the number of key-value pairs in the dictionary is printed, along with the entire dictionary, and the value mapped to the key `"apina"`.
+
+    - After defining the dictionary we could also use it with user input:
+        ```python
+        word = input("Please type in a word: ")
+        if word in my_dictionary:
+            print("Translation: ", my_dictionary[word])
+        else:
+            print("Word not found")
+        ```
+        - Notice the use of the `in` operator above. When used on a variable of type dictionary, it checks whether the first operand is among the keys stored in the dictionary. Given different inputs, this program might print out the following:
+            ```shell
+            Please type in a word: apina
+            Translation: monkey
+            ```
+            ```shell
+            Please type in a word: pöllö
+            Word not found
+            ```
+
+#### What can be stored in a dictionary?
+- The data type is called dictionary, but it does not have to contain only strings. For example, in the following dictionary the keys are strings, but the values are integers:
+    ```python
+    results = {}
+    results["Mary"] = 4
+    results["Alice"] = 5
+    results["Larry"] = 2
+    ```
+
+- Here the keys are integers and the values are lists:
+    ```python
+    lists = {}
+    lists[5] = [1, 2, 3]
+    lists[42] = [5, 4, 5, 4, 5]
+    lists[100] = [5, 2, 3]
+    ```
+
+#### How keys and values work
+- Each key can appear only once in the dictionary. If you add an entry using a key that already exists in the dictionary, the original value mapped to that key is replaced with the new value:
+    ```python
+    my_dictionary["suuri"] = "big"
+    my_dictionary["suuri"] = "large"
+    print(my_dictionary["suuri"])
+    ```
+    ```
+    large
+    ```
+
+- All keys in a dictionary must be immutable. So, a list cannot be used as a key, because it can be changed. For example, executing the following code causes an error:
+    ```python
+    my_dictionary[[1, 2, 3]] = 5
+    ```
+    ```
+    TypeError: unhashable type: 'list'
+    ```
+    - Notice the word 'unhashable' in the error message above. This is a reference to the inner workings of the dictionary data type. Python stores the contents of a dictionary in a hash table. Each key is reduced to a hash value, which determines where the key is stored in computer memory. The error message above indicates that a list cannot be processed into a hash value, so it cannot be used as a key in a dictionary.
+
+- Unlike keys, the values stored in a dictionary can change, so any type of data is acceptable as a value. A value can also be mapped to more than one key in the same dictionary.
+
+#### Traversing a dictionary
+- The familiar for item in collection loop can be used to traverse a dictionary, too. When used on the dictionary directly, the loop goes through the keys stored in the dictionary, one by one. In the following example, all keys and values stored in the dictionary are printed out:
+    ```python
+    my_dictionary = {}
+
+    my_dictionary["apina"] = "monkey"
+    my_dictionary["banaani"] = "banana"
+    my_dictionary["cembalo"] = "harpsichord"
+
+    for key in my_dictionary:
+        print("key:", key)
+        print("value:", my_dictionary[key])
+    ```
+    Output:
+    ```shell
+    key: apina
+    value: monkey
+    key: banaani
+    value: banana
+    key: cembalo
+    value: harpsichord
+    ```
+
+- Sometimes you need to traverse the entire contents of a dictionary. The method `items` returns all the keys and values stored in the dictionary, one pair at a time:
+    ```python
+    for key, value in my_dictionary.items():
+        print("key:", key)
+        print("value:", value)
+    ```
+    - In the examples above, you may have noticed that the keys are processed in the same order as they were added to the dictionary. As the keys are processed based on a hash value, the order should not usually matter in applications. In fact, in many older versions of Python the order is not guaranteed to follow the time of insertion.
+
+#### Some more advanced ways to use dictionaries
+- Let's have a look at a list of words:
+    ```python
+    word_list = [
+    "banana", "milk", "beer", "cheese", "sourmilk", "juice", "sausage",
+    "tomato", "cucumber", "butter", "margarine", "cheese", "sausage",
+    "beer", "sourmilk", "sourmilk", "butter", "beer", "chocolate"
+    ]
+    ```
+    - We would like to analyze this list of words in different ways. For instance, we would like to know how many times each word appears in the list. A dictionary can be a useful tool in managing this kind of information. In the example below, we go through the items in the list one by one. Using the words in the list as keys in a new dictionary, the value mapped to each key is the number of times the word has appeared:
+        ```python
+        def counts(my_list):
+            words = {}
+            for word in my_list:
+                # if the word is not yet in the dictionary, initialize the value to zero
+                if word not in words:
+                    words[word] = 0
+                # increment the value
+                words[word] += 1
+            return words
+
+        # call the function
+        print(counts(word_list))
+        ```
+        Output:
+        ```
+        {'banana': 1, 'milk': 1, 'beer': 3, 'cheese': 2, 'sourmilk': 3, 'juice': 1, 'sausage': 2, 'tomato': 1, 'cucumber': 1, 'butter': 2, 'margarine': 1, 'chocolate': 1}
+        ```
+
+- What if we wanted to categorize the words based on the initial letter in each word? One way to accomplish this would be to use dictionaries:
+    ```python
+    def categorize_by_initial(my_list):
+        groups = {}
+        for word in my_list:
+            initial = word[0]
+            # initialize a new list when the letter is first encountered
+            if initial not in groups:
+                groups[initial] = []
+            # add the word to the appropriate list
+            groups[initial].append(word)
+        return groups
+
+    groups = categorize_by_initial(word_list)
+
+    for key, value in groups.items():
+        print(f"words beginning with {key}:")
+        for word in value:
+            print(word)
+    ```
+    Output:
+    ```
+    words beginning with b:
+    banana
+    beer
+    butter
+    beer
+    butter
+    beer
+    words beginning with m:
+    milk
+    margarine
+    words beginning with c:
+    cheese
+    cucumber
+    cheese
+    chocolate
+    words beginning with s:
+    sourmilk
+    sausage
+    sausage
+    sourmilk
+    sourmilk
+    words beginning with j:
+    juice
+    words beginning with t:
+    tomato
+    ```
+
+#### Removing keys and values from a dictionary
+- It is naturally possible to also remove key-value pairs from the dictionary. There are two ways to accomplish this. The first is the command `del`:
+    ```python
+    staff = {"Alan": "lecturer", "Emily": "professor", "David": "lecturer"}
+    del staff["David"]
+    print(staff) # {'Alan': 'lecturer', 'Emily': 'professor'}
+    ```
+    - If you try to use the del command to delete a key which doesn't exist in the dictionary, there will be an error:
+        ```python
+        staff = {"Alan": "lecturer", "Emily": "professor", "David": "lecturer"}
+        del staff["Paul"]
+        ```
+        Output:
+        ```
+        >>> del staff["Paul"]
+        Traceback (most recent call last):
+        File "", line 1, in 
+        KeyError: 'Paul'
+        ```
+        - So, before deleting a key you should check if it is present in the dictionary:
+            ```python
+            staff = {"Alan": "lecturer", "Emily": "professor", "David": "lecturer"}
+            if "Paul" in staff:
+                del staff["Paul"]
+                print("Deleted")
+            else:
+                print("This person is not a staff member")
+            ```
+            - As you can see above, `pop` also returns the value from the deleted entry.
+            - By default, pop will also cause an error if you try to delete a key which is not present in the dictionary. It is possible to avoid this by giving the method a second argument, which contains a default return value. This value is returned in case the key is not found in the dictionary. The special Python value `None` will work here:
+                ```python
+                staff = {"Alan": "lecturer", "Emily": "professor", "David": "lecturer"}
+                deleted = staff.pop("Paul", None)
+                if deleted == None:
+                    print("This person is not a staff member")
+                else:
+                    print(deleted, "deleted")
+                ```
+                Output:
+                ```
+                This person is not a staff member
+                ```
+
+- Note: If you need to delete the contents of the entire dictionary, and try to do it with a for loop, like so:
+    ```python
+    staff = {"Alan": "lecturer", "Emily": "professor", "David": "lecturer"}
+    for key in staff:
+        del staff[key]
+    ```
+    You will receive an error message:
+    ```
+    RuntimeError: dictionary changed size during iteration
+    ```
+    - When traversing a collection with a `for` loop, the contents may not change while the loop is in progress. Luckily, there is a dictionary method for just this purpose:
+        ```python
+        staff.clear()
+        ```
+
+- The other way to delete entries in a dictionary is the method `pop`:
+    ```python
+    staff = {"Alan": "lecturer", "Emily": "professor", "David": "lecturer"}
+    deleted = staff.pop("David")
+    print(staff)    # {'Alan': 'lecturer', 'Emily': 'professor'}
+    print(deleted, "deleted") # lecturer deleted
+    ```
+
+#### Using dictionaries for structured data
+- Dictionaries are very useful for structuring data. The following code will create a dictionary which contains some personal data:
+    ```python
+    person = {"name": "Pippa Python", "height": 154, "weight": 61, "age": 44}
+    ```
+    This means that we have here a person named Pippa Python, whose height is 154, weight 61, and age 44. The same information could just as well be stored in variables:
+    ```
+    name = "Pippa Python"
+    height = 154
+    weight = 61
+    age = 44
+    ```
+
+- The advantage of a dictionary is that it is a collection. It collects related data under one variable, so it is easy to access the different components. This same advantage is offered by a list:
+    ```python
+    person = ["Pippa Python", 153, 61, 44]
+    ```
+    - With lists, the programmer will have to remember what is stored at each index in the list. There is nothing to indicate that `person[2]` contains the weight and `person[3]` the age of the person. When using a dictionary this problem is avoided, as each bit of data is accessed through a named key. 
+    - Assuming we have defined multiple people using the same format, we can access their data in the following manner:
+        ```python
+        person1 = {"name": "Pippa Python", "height": 154, "weight": 61, "age": 44}
+        person2 = {"name": "Peter Pythons", "height": 174, "weight": 103, "age": 31}
+        person3 = {"name": "Pedro Python", "height": 191, "weight": 71, "age": 14}
+
+        people = [person1, person2, person3]
+
+        for person in people:
+            print(person["name"])
+
+        combined_height = 0
+        for person in people:
+            combined_height += person["height"]
+
+        print("The average height is", combined_height / len(people))
+        ```
+        Output:
+        ```
+        Pippa Python
+        Peter Pythons
+        Pedro Python
+        The average height is 173.0
+        ```
+
+### Tuple
+- Tuple is a data structure which is, in many ways, similar to a list. The most important differences between the two are:
+    - Tuples are enclosed in parentheses `()`, while lists are enclosed in square brackets `[]`
+    - Tuples are immutable, while the contents of a list may change
+
+- The items stored in a tuple are accessed by index, just like the items stored in a list:
+    ```python
+    point = (10, 20)
+    print("x coordinate:", point[0]) # x coordinate: 10
+    print("y coordinate:", point[1]) # y coordinate: 20
+    ```
+
+- The values stored in a tuple cannot be changed after the tuple has been defined. The following will not work:
+    ```python
+    point = (10, 20)
+    point[0] = 15
+    ```
+    Output:
+    ```
+    TypeError: 'tuple' object does not support item assignment
+    ```
+
+#### What is the purpose of a tuple?
+- Tuples are ideal for when there is a set collection of values which are in some way connected. For example, when there is a need to handle the x and y coordinates of a point, a tuple is a natural choice, because coordinates will always consist of two values:
+    ```python
+    point = (10, 20)
+    ```
+    Technically it is of course possible to also use a list to store these:
+    ```python
+    point = [10, 20]
+    ```
+    A list is a collection of consecutive items in a certain order. The size of a list may also change. When we are storing the coordinates of a point, we want to store the x and y coordinates specifically, not an arbitrary list containing those values.
+
+- Because tuples are immutable, unlike lists, they can be used as keys in a dictionary. The following bit of code creates a dictionary, where the keys are coordinate points:
+    ```python
+    points = {}
+    points[(3, 5)] = "monkey"
+    points[(5, 0)] = "banana"
+    points[(1, 2)] = "harpsichord"
+    print(points[(3, 5)])
+    ```
+
+#### Tuples without parentheses
+- The parentheses are not strictly necessary when defining tuples. The following two variable assignments are identical in their results:
+    ```python
+    numbers = (1, 2, 3)
+    ```
+    ```python
+    numbers = 1, 2, 3
+    ```
+
+- This means we can also easily return multiple values using tuples. Let's have alook at he following example:
+    ```python
+    def minmax(my_list):
+        return min(my_list), max(my_list)
+
+    my_list = [33, 5, 21, 7, 88, 312, 5]
+
+    min_value, max_value = minmax(my_list)
+    print(f"The smallest item is {min_value} and the greatest item is {max_value}")
+    ```
+    Output:
+    ```
+    The smallest item is 5 and the greatest item is 312
+    ```
+    - This function returns two values in a tuple. The return value is assigned to two variables at once:
+        ```python
+        min_value, max_value = minmax(my_list)
+        ```
+    - Using parentheses may make the notation more clear. On the left hand side of the assignment statement we also have a tuple, which contains two variable names. The values contained within the tuple returned by the function are assigned to these two variables.
+        ```python
+        (min_value, max_value) = minmax(my_list)
+        ```
+
+- The method `my_dictionary.items()` returns each key-value pair as a tuple, where the first item is the key and the second item is the value.
+
+- Another common use case for tuples is swapping the values of two variables:
+    ```python
+    number1, number2 = number2, number1
+    ```
+    - The assignment statement above swaps the values stored in the variables `number1` and `number2`. The result is identical to what is achieved with the following bit of code, using a helper variable:
+        ```python
+        helper_var = number1
+        number1 = number2
+        number2 = helper_var
+        ```
