@@ -301,5 +301,193 @@
             return False
         ```
 
+### References
+- Thus far we have thought of a variable as a sort of a "box" which contains the value of the variable. Technically this is not true in Python. What is stored in a variable is not the value per se, but a reference to the object which is the actual value of the variable. The object can be e.g. a number, a string or a list.
+
+    In practice, this means that the value of the variable is not stored in the variable itself. Instead, there is information about the location in computer memory where the value can be found.
+
+    A reference is often represented by an arrow from the variable to the actual value in memory:
+    <p align="center">
+        <img src="images/reference.png">
+    </p>
+
+- So, a reference tells us where the value can be found. The function `id` can be used to find out the exact location the variable points to:
+    ```python
+    a = [1, 2, 3]
+    print(id(a))    # sample output: 4538357072
+    b = "This is a reference, too"
+    print(id(b))    # sample output: 4537788912
+    ```
+    - The reference, or the ID of the variable, is an integer, which can be thought of as the address in computer memory where the value of the variable is stored. If you execute the above code on your own computer, the result will likely be different, as your variables will point to different locations - the references will be different.
+
+#### Multiple references to the same list and how to copy a list
+- What is happening in this code:
+    ```python
+    a = [1, 2, 3]
+    b = a
+    b[0] = 10
+    print(a) # [10, 2, 3]
+    print(b) # [10, 2, 3]
+    ```
+    - The assignment `b = a` copies the value stored in variable `a` to the variable `b`. However, the value stored in `a` is not the list itself, but a reference to the list. So, the assignment `b = a` copies the reference. As a result there are now two references to the same memory location containing the list.
+    - This means that the list (`[1, 2, 3]`) can be accessed through `a` or `b`.
+    - If there is more than one reference to the same list, any one of the references can be used to access the list. On the other hand, a change made through any one of the references affects also the other references, as their target is the same.
+    - If you want to create an actual separate copy of a list, you can create a new list and add each item from the original list in turn:
+        ```python
+        my_list = [1, 2, 3, 3, 5]
+
+        new_list = []
+        for item in my_list:
+            new_list.append(item)
+
+        new_list[0] = 10
+        new_list.append(6)
+        print("the original:", my_list) # the original: [1, 2, 3, 3, 5]
+        print("the copy:", new_list) # the copy: [10, 2, 3, 3, 5, 6]
+        ```
+        - The variable `new_list` points to a different list than the variable `my_list`.
+        - An easier way to copy a list is the bracket operator `[]`, which we used for slices previously. The notation `[:]` selects all items in the collection. As a side effect, it creates a copy of the list:
+            ```python
+            my_list = [1,2,3,4]
+            new_list = my_list[:]
+
+            my_list[0] = 10
+            new_list[1] = 20
+
+            print(my_list) # [10, 2, 3, 4]
+            print(new_list) # [1, 20, 3, 4]
+            ```
+
+- To copy a 2D list/matrix, you would need to do something like this:
+    ```python
+    matrix = [[1, 2, 3], [4, 5, 6]]
+    res = []
+    for r in matrix:
+        res.append(r[:])
+    return res
+    ```
+
+#### Using lists as parameters in functions
+- When you pass a list as an argument to a function, you are passing a reference to that list. This means that the function can modify the list directly.
+    - The following function takes a list as an argument and adds a new item to the end of the list:
+        ```python
+        def add_item(my_list: list):
+            new_item = 10
+            my_list.append(new_item)
+
+        a_list = [1,2,3]
+        print(a_list)   # [1, 2, 3]
+        add_item(a_list)
+        print(a_list)   # [1, 2, 3, 10]
+        ```
+        <p align="center">
+            <img src="images/list_in_fn.png">
+        </p>
+        - Global frame refers to the variables defined in the main function, whereas the add_item frame with a blue background represents the parameters and variables within that function. As you can see from the visualisation, the `add_item` function refers to the very same list as the main function. The changes made within the `add_item` function also affect the main function.
+        - Another way to implement this functionality would be to create a new list within the function, and return that:
+            ```python
+            def add_item(my_list: list) -> list:
+                new_item = 10
+                my_list_copy = my_list[:]
+                my_list_copy.append(new_item)
+                return my_list_copy
+
+            numbers = [1, 2, 3]
+            numbers2 = add_item(numbers)
+
+            print("original list:", numbers) # original list: [1, 2, 3]
+            print("new list:", numbers2) # new list: [1, 2, 3, 10]
+            ```
+
+#### Editing a list given as an argument
+- The following is an attempt at a function which should augment each item in a list by ten:
+    ```python
+    def augment_all(my_list: list):
+        new_list = []
+        for item in my_list:
+            new_list.append(item + 10)
+        my_list = new_list
+
+    numbers = [1, 2, 3]
+    print("in the beginning:", numbers) # in the beginning: [1, 2, 3]
+    augment_all(numbers)
+    print("after the function is executed:", numbers) # after the function is executed: [1, 2, 3]
+    ```
+    - The function takes a reference to a list as an argument. This is stored in the variable `my_list`. The assignment `my_list = new_list` assigns a new value to that same variable. The variable `my_list` now points to the new list created inside the function, and the reference to the original list is no longer available within the function. This assignment has no effect outside the function, however.
+    - Furthermore, the variable `new_list`, which contains the new, augmented values, is not accessible from outside the function. It is "lost" as the execution of the function finishes, and focus returns to the main function. The variable `numbers` in the main function always points to the original list.
+    <p align="center">
+        <img src="images/list_as_arg.png">
+    </p>
+    - One way to fix this is to copy all the items from the new list to the old list, one by one:
+        ```python
+        def augment_all(my_list: list):
+            new_list = []
+            for item in my_list:
+                new_list.append(item + 10)
+
+            # copy items from the new list into the old list
+            for i in range(len(my_list)):
+                my_list[i] = new_list[i]
+        ```
+        - Python also has a nifty shorthand for assigning multiple items in a collection at once:
+            ```shell
+            >>> my_list = [1, 2, 3, 4]
+            >>> my_list[1:3] = [10, 20]
+            >>> my_list
+            [1, 10, 20, 4]
+            ```
+            We can include the entire collection:
+            ```shell
+            >>> my_list = [1, 2, 3, 4]
+            >>> my_list[:] = [100, 99, 98, 97]
+            >>> my_list
+            [100, 99, 98, 97]
+            ```
+        - You could also use the `[:]` shorthand:
+            ```python
+            def augment_all(my_list: list):
+                new_list = []
+                for item in my_list:
+                    new_list.append(item + 10)
+
+                my_list[:] = new_list
+            ```
+        - We can also just assign the new values directly into the list:
+            ```python
+            def augment_all(my_list: list):
+                for i in range(len(my_list)):
+                    my_list[i] += 10
+            ```
+
+#### Side effects of functions
+- side effect of a function: Unintentional modifications to an object accessed through a reference
+
+- pure functions: functions free of side effects
+    - When adhering to a functional programming style, this is a common ideal to follow.
+
+#### Immutable Types
+- immutable: value of the object, or any part of it, cannot change. 
+
+- Immutable type's value can be replaced with a new value.
+
+- Some immutabled types in Python are: 
+    - `str`
+    - `int`
+    - `float` 
+    - `bool`
+
+- Example: 
+    ```python
+    number = 1
+    print(id(number)) # sample output: 4535856912
+    number += 10
+    print(id(number)) # sample output: 4535856944
+    a = 1
+    print(id(a)) # sample output: 4535856912
+    ```
+    - Note how when `a` is set to 1, it has the same reference as when `number` was equal to 1. So, Python has stored the value 1 at that memory location.
+
+- It is good to keep in mind that almost everything is a reference in Python, but all this is rarely relevant to everyday programming tasks.
+
 ## Links
 - [pip Requirements File Format](https://pip.pypa.io/en/stable/reference/requirements-file-format/)
