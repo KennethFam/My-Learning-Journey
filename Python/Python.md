@@ -870,3 +870,348 @@
         number1 = number2
         number2 = helper_var
         ```
+
+### Reading files
+- A very common use case for programming is handling data stored in files. Programs can read data from files and write the computed results to files. Even large amounts of data become easy to process automatically when files are used.
+
+#### Reading data from a file
+- Let's first work with a file called `example.txt`, with the following contents:
+    ```
+    Hello there!
+    This example file contains three lines of text.
+    This is the last line.
+    ```
+
+- A simple way to include files in a Python program is to use the `with` statement. The header line opens the file, and the block where the file can be accessed follows. After the block the file is automatically closed, and can no longer be accessed. So, the following code opens the file, reads the contents, prints them out, and then closes the file:
+    ```python
+    with open("example.txt") as new_file:
+        contents = new_file.read()
+        print(contents)
+    ```
+    ```output
+    Hello there!
+    This example file contains three lines of text.
+    This is the last line.
+    ```
+    - Note: `with` can be used with any context manager. Context managers in Python offer a structured approach to resource management within a with statement, ensuring proper allocation and deallocation of resources
+    - The variable `new_file` above is a file handle. Through it the file can accessed while it is still open. Here we used the method `read`, which returns the contents of the file as a single string. So, in this case the string returned by `read` would be:
+    ```
+    "Hello there!\nThis example file contains three lines of text.\nThis is the last line."
+    ```
+
+#### Going through the contents of a file
+- The `read` method is useful for printing out the contents of the entire file, but more often we will want to go through the file line by line. Text files can be thought of as lists of strings, each string representing a single line in the file. We can go through the list with a `for` loop. The following example reads our example file using a `for` loop, removes line breaks from the end of each line, counts the number of lines, and prints each line with its line number. It also keeps track of the length of the lines:
+    ```py
+    with open("example.txt") as new_file:
+        count = 0
+        total_length = 0
+
+        for line in new_file:
+            line = line.replace("\n", "")
+            count += 1
+            print("Line", count, line)
+            length = len(line)
+            total_length += length
+
+    print("Total length of lines:", total_length)
+    ```
+    Output:
+    ```
+    Line 1 Hello there!
+    Line 2 This example file contains three lines of text.
+    Line 3 This is the last line.
+    Total length of lines: 81
+    ```
+    - There is a line break `\n` at the end of each line in the file, but the `print` function also adds a line break by default. There are no extra line breaks in the printout above, because the line breaks at the ends of the lines are removed with the `replace` method. It replaces each line break character with an empty string. This way the lengths of the lines are also calculated correctly.
+
+#### Reading CSV files
+- A CSV file, short for comma-separated Values, is a text file which contains data separated by a predetermined character. The most common characters used for this purpose are the comma `,` and the semicolon `;`, but any character is, in principle, possible.
+
+- CSV files are commonly used to store records of different kinds. Many database and spreadsheet programs, such as Excel, can import and export data in CSV format, which makes data exchange between different systems easy.
+
+- We already learnt we can go through the lines in a file with a for loop, but how can we separate the different fields on a single line? Python has a string method `split` for just this purpose. The method takes the separator character(s) as a string argument, and returns the contents of the target string as a list of strings, separated at the separator.
+    - An example of how the method works:
+        ```py
+        text = "monkey,banana,harpsichord"
+        words = text.split(",")
+        for word in words:
+            print(word)
+        ```
+        Output:
+        ```
+        monkey
+        banana
+        harpsichord
+        ```
+    - The following program goes through the file line by line, splits each line into its separate parts, and prints out the name and grades of each student.
+        ```py
+        with open("grades.csv") as new_file:
+        for line in new_file:
+            line = line.replace("\n", "")
+            parts = line.split(";")
+            name = parts[0]
+            grades = parts[1:]
+            print("Name:", name)
+            print("Grades:", grades)
+        ```
+        Output:
+        ```
+        Name: Paul
+        Grades: ['5', '4', '5', '3', '4', '5', '5', '4', '2', '4']
+        Name: Beth
+        Grades: ['3', '4', '2', '4', '4', '2', '3', '1', '3', '3']
+        Name: Ruth
+        Grades: ['4', '5', '5', '4', '5', '5', '4', '5', '4', '4']
+        ```
+    - The opposite of split would be `join`. Example:
+        ```py
+        res = ['a', 'b', 'c']
+        print("".join(res)) # abc
+        ```
+
+#### Reading the same file multiple times
+- Sometimes it is necessary to process the contents of a file more than once in a single program. Let's have a look at a program which works with some personal data stored in a CSV file:
+    ```
+    Peter;40;Helsinki
+    Emily;34;Espoo
+    Eric;42;London
+    Adam;100;Amsterdam
+    Alice;58;Paris
+    ```
+    ```py
+    with open("people.csv") as new_file:
+        # print out the names
+        for line in new_file:
+            parts = line.split(";")
+            print("Name:", parts[0])
+
+        # find the oldest
+        age_of_oldest = -1
+        for line in new_file:
+            parts = line.split(";")
+            name = parts[0]
+            age = int(parts[1])
+            if age > age_of_oldest:
+                age_of_oldest = age
+                oldest = name
+        print("the oldest is", oldest)
+    ```
+    Running this will result in a somewhat cryptic error message:
+    ```py
+    Traceback (most recent call last):
+        print("the oldest is"; oldest)
+    UnboundLocalError: local variable 'oldest' referenced before assignment
+    ```
+    - The reason this happens is that the latter `for` loop is not executed at all, beacuse the file can only be processed once. Once the last line is read, the file handle rests at the end of the file, and the data in the file can no longer be accessed.
+    - If we want to access the contents in the second `for` loop, we will have to `open` the file a second time:
+        ```py
+        with open("people.csv") as new_file:
+            # print out the names
+            for line in new_file:
+                parts = line.split(";")
+                print("Name:", parts[0])
+
+        with open("people.csv") as new_file:
+            # find the oldest
+            age_of_oldest = -1
+            for line in new_file:
+                parts = line.split(";")
+                name = parts[0]
+                age = int(parts[1])
+                if age > age_of_oldest:
+                    age_of_oldest = age
+                    oldest = name
+            print("the oldest is", oldest)
+        ```
+        - While the above code would work, it contains unnecessary repetition. It is usually best to read the file just once, and store its contents in an appropriate format for further processing:
+            ```py
+            people = []
+            # read the contents of the file and store it in a list
+            with open("people.csv") as new_file:
+                for line in new_file:
+                    parts = line.split(";")
+                    people.append((parts[0], int(parts[1]), parts[2]))
+
+            # print out the names
+            for person in people:
+                print("Name:", person[0])
+
+            # find the oldest
+            age_of_oldest = -1
+            for person in people:
+                name = person[0]
+                age = person[1]
+                if age > age_of_oldest:
+                    age_of_oldest = age
+                    oldest = name
+            print("the oldest is", oldest)
+            ```
+
+#### More CSV file processing
+- Let's continue with the file `grades.csv`, which has the following contents:
+    ```
+    Paul;5;4;5;3;4;5;5;4;2;4
+    Beth;3;4;2;4;4;2;3;1;3;3
+    Ruth;4;5;5;4;5;5;4;5;4;4
+    ```
+    This following program creates a dictionary `grades` based on the contents of the file. The keys are the names of the students, and the value attached to each key is the list of grades attained by the student. The program converts the grades to integer values, so they can be processed easier.
+    ```py
+    grades = {}
+    with open("grades.csv") as new_file:
+        for line in new_file:
+            line = line.replace("\n", "")
+            parts = line.split(";")
+            name = parts[0]
+            grades[name] = []
+            for grade in parts[1:]:
+                grades[name].append(int(grade))
+
+    print(grades)
+    ```
+    Output:
+    ```
+    {'Paul': [5, 4, 5, 3, 4, 5, 5, 4, 2, 4], 'Beth': [3, 4, 2, 4, 4, 2, 3, 1, 3, 3], 'Ruth': [4, 5, 5, 4, 5, 5, 4, 5, 4, 4]}
+    ```
+    Now we can print out some statistics on each student based on the contents of the dictionary `grades`:
+    ```py
+    for name, grade_list in grades.items():
+        best = max(grade_list)
+        average = sum(grade_list) / len(grade_list)
+        print(f"{name}: best grade {best}, average {average:.2f}")
+    ```
+    ```
+    Paul: best grade 5, average 4.10
+    Beth: best grade 4, average 2.90
+    Ruth: best grade 5, average 4.50
+    ```
+    
+#### Removing unnecessary lines, spaces and line breaks
+- Let's assume we have a CSV file containing some names, which has been exported from Excel:
+    ```
+    first; last
+    Paul; Python
+    Jean; Java
+    Harry; Haskell
+    ```
+    Excel is notorious for adding extra whitespace. Here we have an extra space character between the items, after each semicolon.
+    
+    We would like to print out the last names of each person on the list. The first line contains the headers for the data, and it can be safely ignored:
+    ```py
+    last_names = []
+    with open("people.csv") as new_file:
+        for line in new_file:
+            parts = line.split(";")
+            # ignore the header line
+            if parts[0] == "first":
+                continue
+            last_names.append(parts[1])
+
+    print(last_names)
+    ```
+    Exectuing this would print out:
+    ```
+    [' Python\n', ' Java\n', ' Haskell']
+    ```
+    - The first two items have a line break character at the end, and all three have an extra leading space character.
+    - We have already used the `replace` method to remove extra whitespace, but a more efficient solution is to use the Python string method `strip`, which removes whitespace from the beginning and end of a string. It removes all spaces, line breaks, tabs and other characters which would not normally be printed out. 
+        - You can try it out in the Python console:
+            ```shell
+            >>> " tryout ".strip()
+            'tryout'
+            >>> "\n\ntest\n".strip()
+            'test'
+            >>>
+            ```
+        - Stripping the string requires only a small change to the program:
+            ```py
+            last_names = []
+            with open("people.csv") as new_file:
+                for line in new_file:
+                    parts = line.split(';')
+                    if parts[0] == "first":
+                        continue # this was the header line, so it is ignored
+                    last_names.append(parts[1].strip())
+            print(last_names)
+            ```
+            Now we have the desired tidy printout:
+            ```
+            ['Python', 'Java', 'Haskell']
+            ```
+        - There are also the related string methods `lstrip` and `rstrip`. They remove only the leading or trailing unprintable characters, l for the left edge of the string and r for the right:
+            ```shell
+            >>> " teststring  ".rstrip()
+            ' teststring'
+            >>> " teststring  ".lstrip()
+            'teststring  '
+            ```
+
+#### Combining data from different files
+- It is very common for the data processed by a program to be scattered in multiple files. Lets have a look at a situation where the personal details of the personnel of a company are stored in a file called `employees.csv`:
+    ```
+    pic;name;address;city
+    080488-123X;Pekka Mikkola;Vilppulantie 7;00700 Helsinki
+    290274-044S;Liisa Marttinen;Mannerheimintie 100 A 10;00100 Helsinki
+    010479-007Z;Arto Vihavainen;Pihapolku 4;01010 Kerava
+    010499-345K;Leevi Hellas;Tapiolantie 11 B;02000 Espoo
+    ```
+    The salaries are stored in a separate file `salaries.csv`:
+    ```
+    pic;salary;bonus
+    080488-123X;3300;0
+    290274-044S;4150;200
+    010479-007Z;1300;1200
+    ```
+    Each data line in both files contains the *personal identity code*, which identifies whose data we are dealing with. Using the personal identity code as a common factor, it is easy to connect the names and salaries of each employee. We can, for example, print out the following list of monthly incomes:
+    ```
+    incomes:
+    Pekka Mikkola    3300 euros
+    Liisa Marttinen  4350 euros
+    Arto Vihavainen  2500 euros
+    ```
+    This program uses two dictionaries as helper data structures: `names` and `salaries`. Both use the PIC as key:
+    ```py
+    names = {}
+
+    with open("employees.csv") as new_file:
+        for line in new_file:
+            parts = line.split(';')
+            if parts[0] == "pic":
+                continue
+            names[parts[0]] = parts[1]
+
+    salaries = {}
+
+    with open("salaries.csv") as new_file:
+        for line in new_file:
+            parts = line.split(';')
+            if parts[0] == "pic":
+                continue
+            salaries[parts[0]] = int(parts[1]) +int(parts[2])
+
+    print("incomes:")
+
+    for pic, name in names.items():
+        if pic in salaries:
+            salary = salaries[pic]
+            print(f"{name:16} {salary} euros")
+        else:
+            print(f"{name:16} 0 euros")
+    ```
+    - First the program produces the dictionaries `names` and `salaries`. They have the following contents:
+        ```py
+        {
+            '080488-123X': 'Pekka Mikkola',
+            '290274-044S': 'Liisa Marttinen',
+            '010479-007Z': 'Arto Vihavainen',
+            '010499-345K': 'Leevi Hellas'
+        }
+
+        {
+            '080488-123X': 3300,
+            '290274-044S': 4350,
+            '010479-007Z': 2500
+        }
+        ```
+    - The `for` loop at the end of the program combines the names of the employees with their respective salaries.
+    - The program also takes care of situations where the employee's pic is not present in the salary file.
+    - Remember, the order in which items are stored in a dictionary does not matter, as the keys are processed based on hash values.
