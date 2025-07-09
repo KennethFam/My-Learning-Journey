@@ -37,7 +37,7 @@
         ```
     - Note: If you are not in the same file directory as the script, you'll need to replace the file name with the directory.
 
-## Shell Scripting
+## Shell Scripting Syntax
 
 ### The basics of a shell script file
 - The first line of the shell script file begins with a "sha-bang" (`#!`) which is not read as a comment, followed by the full path where the shell interpreter is located. This path, tells the operating system that this file is a set of commands to be fed into the interpreter indicated. Note that if the path given at the "sha-bang" is incorrect, then an error message e.g. "Command not found.", may be the result of the script execution. It is common to name the shell script with the `.sh` extension. The first line may look like this:
@@ -1009,3 +1009,56 @@
             - `$*`
                 - Unquoted: Unquoted $* splits all positional parameters into words, using $IFS (default is space). Each resulting word becomes a separate string.
                 - Quoted: All arguments are wrapped into a single string.
+
+### Bash Trap Command
+- It often comes the situations that you want to catch a special signal/interruption/user input in your script to prevent the unpredictables. `trap` is your command to try:
+    ```shell
+    trap <arg/function> <signal>
+    ```
+    - Do not include `<>` in the actual code. They just represent arguments that you have to pass.
+
+- Example: 
+    ```shell
+    #!/bin/bash
+
+    trap "echo Booh!" SIGINT SIGTERM
+    echo "it's going to run until you hit Ctrl+Z"
+    echo "hit Ctrl+C to be blown away!"
+
+    while true        
+    do
+        sleep 60       
+    done
+    ```
+    - Note that you can catch multiple signals with 1 trap command.
+    - Surely you can substitute the `"echo Booh!"` with a function:
+        ```bash
+        function booh {
+            echo "booh!"
+        }
+        ```
+        and call it in trap:
+        ```bash
+        trap booh SIGINT SIGTERM
+        ```
+
+- Some of the common signal types you can trap:
+    - `SIGINT`: user sends an interrupt signal (Ctrl + C)
+    - `SIGQUIT`: user sends a quit signal (Ctrl + D)
+    - `SIGFPE`: attempted an illegal mathematical operation
+    - You can check out all signal types by entering the following command:
+        ```shell
+        kill -l
+        ```
+        - Notice the numbers before each signal name, you can use that number to avoid typing long strings in trap:
+            ```shell
+            #2 corresponds to SIGINT and 15 corresponds to SIGTERM
+            trap booh 2 15
+            ```
+
+- One of the common usage of trap is to do cleanup temporary files:
+    ```shell
+    trap "rm -f folder; exit" 2
+    ```
+
+### File Testing
