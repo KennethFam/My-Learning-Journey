@@ -1062,3 +1062,109 @@
     ```
 
 ### File Testing
+- Often you will want to do some file tests on the file system you are running. In this case, shell will provide you with several useful commands to achieve it.
+
+- The command looks like the following:
+    - `-<command> [filename]`
+    - `[filename1] -<command> [filename2]`
+    - Replace the contents with `<>` and `[]` with the command and filename respectively for your use case.
+    - Note that the commands shown below will work with respect to the directory. If you want to check a file in another directory, you will need to provide a path.
+
+- Examples:
+    - use `-e` to test if file exist
+        ```bash
+        #!/bin/bash
+        filename="sample.md"
+        if [ -e "$filename" ]; then
+            echo "$filename exists as a file"
+        fi
+        ```
+    - use `-d` to test if directory exists
+        ```bash
+        #!/bin/bash
+        directory_name="test_directory"
+        if [ -d "$directory_name" ]; then
+            echo "$directory_name exists as a directory"
+        fi
+        ```
+    - use `-r` to test if file has read permission for the user running the script/test
+        ```shell
+        #!/bin/bash
+        filename="sample.md"
+        if [ ! -f "$filename" ]; then
+            touch "$filename"
+        fi
+        if [ -r "$filename" ]; then
+            echo "you are allowed to read $filename"
+        else
+            echo "you are not allowed to read $filename"
+        fi
+        ```
+    - Note that the commands shown will work with respect to the directory. If you want to check a file in another directory, you will need to provide a path like so:
+        ```bash
+        #!/bin/bash
+        filename="sample.md"
+        if [ ! -f "../$filename" ]; then
+            touch "../$filename"
+        fi
+        if [ -r "$filename" ]; then
+            echo "you are allowed to read $filename"
+        else
+            echo "you are not allowed to read $filename"
+        fi
+        ```
+        - This script will create a path in the parent directory is the current directory. 
+
+### Piplines
+- Pipelines, often called pipes, is a way to chain commands and connect output from one command to the input of the next. A pipeline is represented by the pipe character: `|`. It's particularly handy when a complex or long input is required for a command.
+    Format:
+    ```shell
+    command1 | command2
+    ```
+
+- By default, pipelines redirects only the standard output, if you want to include the standard error you need to use the form `|&` which is a short hand for `2>&1 |`.
+
+- Example(s): 
+    - Imagine you quickly want to know the number of entries in a directory, you can use a pipe to redirect the output of the `ls` command to the `wc` command with option `-l`.
+        ```shell
+        ls / | wc -l
+        ```
+        Then if you want to see only the first 10 results:
+        ```shell
+        ls / | head
+        ```
+        - Note: `head` outputs the first 10 lines by default, use option `-n` to change this behavior.
+    - `grep` searches for patterns in each file. Patterns is one or more patterns separated by newline characters, and `grep` prints each line that matches a pattern. Typically patterns should be quoted when `grep` is used in a shell command.
+        Format:
+        ```shell
+        ls / | grep  # This will grab any line/file that has a matching pattern in it
+        ```
+        Example use:
+        ```shell
+        ls / | grep -E '^(dev|etc|usr)$' # Matches exactly dev, etc, or usr — nothing else.
+        ```
+
+<details>
+<summary><strong> Exercise </strong></summary>
+
+- In this exercise, you will need to print the number of processors based on the information in the cpuinfo file (/proc/cpuinfo)
+    - Hint 1: each processor has a unique number, for instance the first processor will contain the line `processor: 0`
+    Hint 2: you can chain together more than two commands in a row
+    ```shell
+    #!/bin/bash
+    cat /proc/cpuinfo | 
+    ```
+    **Expected Output**:
+    ```shell
+    8
+    ```
+    - **Solution**:
+        ```shell
+        #!/bin/bash
+        cat /proc/cpuinfo | grep processor | wc -l
+        ```
+        - `cat` gets the contents of `/proc/cpuinfo`
+        - `grep` matches the entries with `processor` (in this case, it matches the entries in `/proc/cpuinfo`)
+        - `wc -l` counts the entries (in this case, it counts the entries resulting from the `grep` call)
+
+</details>

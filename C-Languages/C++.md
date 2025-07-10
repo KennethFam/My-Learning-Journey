@@ -198,23 +198,6 @@
     ```
 </details>
 
-## Vocabulary
-- statement: an instruction in a computer program that tells the computer to perform an action. Most (but not all) statements in C++ end in a semicolon. If you see a line that ends in a semicolon, it’s probably a statement.
-
-- function: collection of statements that executes sequentially
-    - When discussing functions, it’s fairly common shorthand to append a pair of parenthesis to the end of the function’s name. For example, if you see the term `main()` or `doSomething()`, this is shorthand for functions named `main` or `doSomething` respectively. This helps differentiate functions from other things with names (such as variables) without having to write the word “function” each time.
-
-- identifier: name of a function (or object, type, template, etc…)
-
-- character: a written symbol or mark, such as a letter, digit, punctuation mark, or mathematical symbol
-
-- string/text: a sequence of characters
-    - Conventionally, the term “text” is also used to mean plain text, which is text that contains only characters that appear on a standard keyboard, with no special formatting or styling. For example, plain text cannot represent bold words, as that requires styling.
-
-- control character: characters that have special meaning to the computer system, but either aren’t intended to be displayed, or display as something other than a single visible symbol. Examples of well-known control characters include “escape” (which doesn’t display anything), “tab” (which displays as some number of spaces), and “backspace” (which erases the previous character).
-
-- syntax error: error that occurs when your program violates the grammar rules of the C++ language
-
 ## Syntax
 
 ### The `main` function
@@ -369,3 +352,140 @@
 - At the library, program, or function level, use comments to describe what.
 - Inside the library, program, or function, use comments to describe how.
 - At the statement level, use comments to describe why.
+
+### Data and values
+- Programs are collections of instructions that manipulate data to produce a desired result. In computing, data is any information that can be moved, processed, or stored by a computer.
+
+- In programming, a single piece of data is called a value (sometimes called a data value). Common examples of values include:
+    - Numbers (e.g. `5` or `-6.7`).
+    - Characters, which are placed between single-quotes (e.g. `'H'` or `'$'`). Only a single symbol may be used.
+    - Text, which must be placed between double-quotes (e.g. `"Hello"` or `"H"`). Text can contain 0 or more characters.
+    - In general, values placed in single-quotes are interpreted by the compiler as character values, values placed in double-quotes are interpreted by the compiler as text values, and numeric values are not quoted.
+
+- Values that are placed directly into the source code are called literals.
+
+- If a character value or text value is not properly quoted, the compiler will try to interpret that value as if it were C++ code. That will almost always result in a compilation error.
+
+- Literals are the easiest way to provide values for your program, but they have some shortcomings. Literals are read-only values, so their values can’t be modified. Thus, if we want to store data in memory, we need some other way to do this.
+
+#### Random Access Memory (RAM)
+- The main memory in a computer is called **Random Access Memory** (often called **RAM** for short). When we run a program, the operating system loads the program into RAM. Any data that is hardcoded into the program itself (e.g. text such as “Hello, world!”) is loaded at this point.
+
+- The operating system also reserves some additional RAM for the program to use while it is running. Common uses for this memory are to store values entered by the user, to store data read in from a file or network, or to store values calculated while the program is running (e.g. the sum of two values) so they can be used again later.
+
+- You can think of RAM as a series of numbered boxes that can be used to store data while the program is running.
+
+#### Objects and variables
+- An object is used to store a value in memory. It represents a region of storage that can hold a value. Although objects in C++ can be unnamed (anonymous), more often we name our objects using an identifier. A variable is an object that has a name (identifier).
+
+- In general programming, the term object typically refers to an unnamed object in memory, a variable, or a function. In C++, the term object has a narrower definition that excludes functions. When we use the term object in this tutorial series, this narrower C++ definition is the one we mean.
+
+#### Variable definition
+- In order to use a variable in our program, we need to tell the compiler that we want one. The most common way to do this is by use of a special kind of declaration statement called a definition. Here’s an example of defining a variable named `x`:
+    ```cpp
+    int x; // define a variable named x (of type int)
+    ```
+    - At **compile-time** (when the program is being compiled), when encountering this statement, the compiler makes a note to itself that we want a variable with the name `x`, and that the variable has the data type int. From that point forward (with some limitations based on scope), whenever we use the identifier x in our code, the compiler will know that we are referring to this variable. The compiler handles all of the other details about this variable for us, including determining how much memory the object will need, in what kind of storage the object will be placed (e.g. in RAM or a CPU register), where it will be placed relative to other objects, when it will be created and destroyed, etc.
+
+- A variable created via a definition statement is said to be defined at the point where the definition statement is placed.
+
+#### Variable Creation
+- At **runtime** (when the program is loaded into memory and run), each object is given an actual storage location (such as RAM, or a CPU register) that it can use to store values. The process of reserving storage for an object’s use is called **allocation**. Once allocation has occurred, the object has been created and can be used. For example, let’s say that variable `x` is instantiated at memory location 140. Whenever the program uses variable `x`, it will access the value in memory location 140.
+
+#### Data types
+- A **data type** (more commonly just called a **type**) determines what kind of value (e.g. a number, a letter, text, etc…) the object will store.
+
+- `int` is short for integer and is a data type in C++. An integer is a number that can be written without a fractional component, such as `4`, `27`, `0`, `-2`, or `-12`. Defining an integer named `x` would look like this:
+    ```cpp
+    int x
+    ```
+
+- The data type of an object must be known at compile-time (so the compiler knows how much memory that object requires). In C++, that type can not be changed without recompiling the program. This means an integer variable can only hold integer values. If you want to store some other kind of value, you’ll need to use a different type.
+
+- `double` is a data type in C++ that can store numbers with fractional components. Defining an double named `x` would look like this:
+    ```cpp
+    double x
+    ```
+
+#### Defining multiple variables
+- It is possible to define multiple variables of the same type in a single statement by separating the names with a comma. The following code snippet:
+    ```cpp
+    int a;
+    int b;
+    ```
+    is effectively the same as this one:
+    ```cpp
+    int a, b;
+    ```
+
+- When defining multiple variables this way, there are three common mistakes that new programmers tend to make (neither serious, since the compiler will catch these and ask you to fix them):
+    1. Giving each variable a type when defining variables in sequence
+        ```cpp
+        int a, int b; // wrong (compiler error)
+
+        int a, b; // correct
+        ```
+    2. Trying to define variables of different types in the same statement, which is not allowed. Variables of different types must be defined in separate statements.
+        ```cpp
+        int a, double b; // wrong (compiler error)
+
+        int a; double b; // correct (but not recommended)
+
+        // correct and recommended (easier to read)
+        int a;
+        double b;
+        ```
+    - We’ll discuss the third issue next lesson, when we cover initialization of variables.
+
+- Best practice: Although the language allows you to do so, avoid defining multiple variables of the same type in a single statement. Instead, define each variable in a separate statement on its own line (and then use a single-line comment to document what it is used for).
+
+#### Summary 
+- In C++, we use objects to access memory. A named object is called a variable. Each variable has an identifier, a type, and a value (and some other attributes that aren’t relevant here). A variable’s type is used to determine how the value in memory should be interpreted.
+
+- Variables are actually created at runtime, when memory is allocated for their use.
+
+## Vocabulary
+- statement: an instruction in a computer program that tells the computer to perform an action. Most (but not all) statements in C++ end in a semicolon. If you see a line that ends in a semicolon, it’s probably a statement.
+
+- function: collection of statements that executes sequentially
+    - When discussing functions, it’s fairly common shorthand to append a pair of parenthesis to the end of the function’s name. For example, if you see the term `main()` or `doSomething()`, this is shorthand for functions named `main` or `doSomething` respectively. This helps differentiate functions from other things with names (such as variables) without having to write the word “function” each time.
+
+- identifier: name of a function (or object, type, template, etc…)
+
+- character: a written symbol or mark, such as a letter, digit, punctuation mark, or mathematical symbol
+
+- string/text: a sequence of characters
+    - Conventionally, the term “text” is also used to mean plain text, which is text that contains only characters that appear on a standard keyboard, with no special formatting or styling. For example, plain text cannot represent bold words, as that requires styling.
+
+- control character: characters that have special meaning to the computer system, but either aren’t intended to be displayed, or display as something other than a single visible symbol. Examples of well-known control characters include “escape” (which doesn’t display anything), “tab” (which displays as some number of spaces), and “backspace” (which erases the previous character).
+
+- syntax error: error that occurs when your program violates the grammar rules of the C++ language
+
+- data: any information that can be moved, processed, or stored by a computer
+
+- program: collections of instructions that manipulate data to produce a desired result
+
+- value (sometimes called a data value): a single piece of data
+
+- literals: values that are placed directly into the source code
+
+- RAM (Random Access Memory): main memory in a computer. When we run a program, the operating system loads the program into RAM. Any data that is hardcoded into the program itself (e.g. text such as “Hello, world!”) is loaded at this point.
+
+- object: used to store a value in memory. It represents a region of storage that can hold a value.
+
+- variable: object that has a name (identifier). Each variable has an identifier, a type, and a value (and some other attributes that aren’t relevant here). A variable’s type is used to determine how the value in memory should be interpreted. Variables are actually created at runtime, when memory is allocated for their use.
+
+- definition statement: used to tell the compiler that we want to use a variable in our program
+
+- compile time: when the program is being compiled
+
+- runtime: when the program is loaded into memory and run
+
+- allocation: process of reserving storage for an object’s use
+
+- data type (more commonly just called a type): determines what kind of value (e.g. a number, a letter, text, etc…) the object will store
+
+- integer: a number that can be written without a fractional component, such as `4`, `27`, `0`, `-2`, or `-12`
+
+## Best Practices
+- Although the language allows you to do so, avoid defining multiple variables of the same type in a single statement. Instead, define each variable in a separate statement on its own line (and then use a single-line comment to document what it is used for).

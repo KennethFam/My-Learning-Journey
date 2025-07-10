@@ -1215,3 +1215,9 @@
     - The `for` loop at the end of the program combines the names of the employees with their respective salaries.
     - The program also takes care of situations where the employee's pic is not present in the salary file.
     - Remember, the order in which items are stored in a dictionary does not matter, as the keys are processed based on hash values.
+
+### Writing Files
+- Typically a program processes data and stores the results in a file, so they can be used later or processed further by some other program. We can create a new file every time we want to write data to a file, but we can also append new data to the end of an existing file. In both cases we use the `open` function from the previous section. For writing files the function requires a second argument.
+
+#### Creating a new file
+- 
