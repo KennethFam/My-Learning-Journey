@@ -1220,4 +1220,416 @@
 - Typically a program processes data and stores the results in a file, so they can be used later or processed further by some other program. We can create a new file every time we want to write data to a file, but we can also append new data to the end of an existing file. In both cases we use the `open` function from the previous section. For writing files the function requires a second argument.
 
 #### Creating a new file
-- 
+- If you want to create a new file, you would call the open function with the additional argument `w`, to signify that the file should be opened in write mode. So, the function call could look like this:
+    ```py
+    with open("new_file.txt", "w") as my_file:
+        # code to write something to the file
+    ```
+    - Note: If the file already exists, all the contents will be overwritten. It pays to be very careful when creating new files.
+    - With the file open you can write data to it. You can use the method `write`, which takes the string that is to be written as its argument.
+        ```py
+        with open("new_file.txt", "w") as my_file:
+            my_file.write("Hello there!")
+        ```
+        - When you execute the program, a new file named `new_file.txt` appears in the directory. The contents would look like this:
+            ```
+            Hello there!
+            ```
+
+- If you want line breaks in the file, you will have to add them by hand - the `write` function doesn't work exactly like the more familiar `print` function, though they are similar. So, the following program:
+    ```py 
+    with open("new_file.txt", "w") as my_file:
+        my_file.write("Hello there!")
+        my_file.write("This is the second line")
+        my_file.write("This is the last line")
+    ```
+    would result in a file with these contents:
+    ```
+    Hello there!This is the second lineThis is the last line
+    ```
+    - Line breaks are achieved by adding new line characters `\n` to the argument strings:
+        ```py
+        with open("new_file.txt", "w") as my_file:
+            my_file.write("Hello there!\n")
+            my_file.write("This is the second line\n")
+            my_file.write("This is the last line\n")
+        ```
+        Now the contents of `new_file.txt` would look like this:
+        ```
+        Hello there!
+        This is the second line
+        This is the last line
+        ```
+
+#### Appending data to an existing file
+- If you want to append data to the end of a file, instead of overwriting the entire file, you should open the file in append mode with the argument `a`.
+    - If the file doesn't yet exist, append mode works exactly like write mode.
+
+- The following program opens the file `new_file.txt` and appends a couple of lines of text to the end:
+    ```py
+    with open("new_file.txt", "a") as my_file:
+        my_file.write("This is the 4th line\n")
+        my_file.write("And yet another line.\n")
+    ```
+    After this program is executed the contents of the file would look like this:
+    ```
+    Hello there!
+    This is the second line
+    This is the last line
+    This is the 4th line
+    And yet another line.
+    ```
+
+- In programming practice, appending data to files is not a very common task. More often a file is read, processed and overwritten in its entirety. For example, when the contents should change in the middle of the file, it is usually easiest to overwrite the entire file.
+
+#### Writing CSV files
+- CSV files can be written line by line with the `write` method just like any other file. The following example creates the file `coders.csv`, with each line containing the name, working environment, favourite language and years of experience of a single programmer. The fields are separated by a semicolon.
+    ```py
+    with open("coders.csv", "w") as my_file:
+        my_file.write("Eric;Windows;Pascal;10\n")
+        my_file.write("Matt;Linux;PHP;2\n")
+        my_file.write("Alan;Linux;Java;17\n")
+        my_file.write("Emily;Mac;Cobol;9\n")
+    ```
+    Executing this program would result in the following file:
+    ```
+    Eric;Windows;Pascal;10
+    Matt;Linux;PHP;2
+    Alan;Linux;Java;17
+    Emily;Mac;Cobol;9
+    ```
+
+- What if the data to be written is stored in computer memory in a list?
+    ```py
+    coders = []
+    coders.append(["Eric", "Windows", "Pascal", 10])
+    coders.append(["Matt", "Linux", "PHP", 2])
+    coders.append(["Alan", "Linux", "Java", 17])
+    coders.append(["Emily", "Mac", "Cobol", 9])
+    ```
+    We can build the string we want to write as an f-string, and write the ready line to the file like so:
+    ```py
+    with open("coders.csv", "w") as my_file:
+        for coder in coders:
+            line = f"{coder[0]};{coder[1]};{coder[2]};{coder[3]}"
+            my_file.write(line+"\n")
+    ```
+    - If each list of coder data was very long, with many more items, building the string by hand would be quite cumbersome. We can use a `for` loop to build the string instead:
+        ```py
+        with open("coders.csv", "w") as my_file:
+            for coder in coders:
+                line = ""
+                for value in coder:
+                    line += f"{value};"
+                line = line[:-1]
+                my_file.write(line+"\n")
+        ```
+        - `line = line[:-1]` removes the last semicolon.
+
+#### Clearing file contents and deleting files
+- Sometimes it is necessary to clear the contents of an existing file. Opening the file in write mode and closing the file immediately will achieve just this:
+    ```py
+    with open("file_to_be_cleared.txt", "w") as my_file:
+        pass
+    ```
+    - Now the `with` block only contains the command `pass`, which doesn't actually do anything. Python does not allow empty blocks, so the command is necessary here.
+    - It is possible to also bypass the `with` block by using the following oneliner:
+        ```py
+        open('file_to_be_cleared.txt', 'w').close()
+        ```
+
+- You can also delete a file entirely. We will have to ask for help from the operating system to achieve this:
+    ```py
+    # the command to delete files is in the os module
+    import os
+
+    os.remove("unnecessary_file.csv")
+    ```
+    
+#### Handling data in a CSV format
+- Let's write a program which assesses students' performance on a course. The program reads a CSV file, which contains weekly exercise points received by the students. The program then calculates the points total and determines the grade attained by each student. Finally, the program creates a CSV file containing the points total and grade for each student.
+    - The CSV file given as input to the program looks like this:
+        ```
+        Peter;4;2;3;5;4;0;0
+        Paula;7;2;8;3;5;4;5
+        Susan;3;4;3;5;3;4;4
+        Emily;6;6;5;5;0;4;8
+        ```
+    - The program logic is divided into three functions: reading the file and processing the contents into an accessible format, determining the grade, and writing the file.
+    - The file is read following the principles covered in the previous section. The data is stored in a dictionary, where the key is the student's name, and the value is a list of the points received by the student, in integer format:
+        ```py
+        def read_weekly_points(filename):
+            weekly_points = {}
+            with open(filename) as my_file:
+                for line in my_file:
+                    parts = line.split(";")
+                    point_list = []
+                    for points in parts[1:]:
+                        point_list.append(int(points))
+                    weekly_points[parts[0]] = point_list
+
+            return weekly_points
+        ```
+    - The second function is for determining the grade based on the points received. This function is in turn used by the third function, which writes the results to the file.
+        ```py
+        def grade(points):
+            if points < 20:
+                return 0
+            elif points < 25:
+                return 1
+            elif points < 30:
+                return 2
+            elif points < 35:
+                return 3
+            elif points < 40:
+                return 4
+            else:
+                return 5
+
+        def save_results(filename, weekly_points):
+            with open(filename, "w") as my_file:
+                for name, point_list in weekly_points.items():
+                    point_sum = sum(point_list)
+                    my_file.write(f"{name};{point_sum};{grade(point_sum)}\n")
+        ```
+    - This structure lets us write a very simple main function. Notice how the filenames for the files which are read and written are given as arguments in the main function:
+        ```py
+        weekly_points = read_weekly_points("weekly_points.csv")
+        save_results("results.csv", weekly_points)
+        ```
+        - When the main function is executed, the contents of the file `results.csv` created as a result looks like this:
+            ```
+            Peter;18;0
+            Paula;34;3
+            Susan;26;2
+            Emily;41;5
+            ```
+    - Notice how each function defined above is relatively simple, and they all have a single responsibility. This is a common and advisable approach when programming larger wholes. The single reponsibility principle makes verifying functionality easier. It also makes it easier to make changes to the program later, and to add new features.
+        - Say we wanted to add a function for printing out the grade for a single student. We already have a function which determines the student's grade, so we can use this in our new function:
+            ```py
+            def get_grade(student_name, weekly_points):
+                for name, point_list in weekly_points.items():
+                    if name == student_name:
+                        return grade(sum(point_list))
+
+
+            weekly_points = read_weekly_points("weekly_points.csv")
+            print(get_grade("Paula", weekly_points)) # 3
+            ```
+    - If we determine a certain functionality in the program needs fixing, in a well designed program the change will affect only some select sections of code, and it will be easier to determine where the changes should be made. For example, if we wanted to change the grade boundaries, we'd only need to implement the change in the function for determining the grade, and it would work also in all the other functions utilizing this function. If the code for this single functionality was implemented in multiple places, there would be a definite risk that we would not remember to change all the instances when changing the functionality.
+
+### Handling errors
+- The are two basic categories of errors that come up in programming contexts:
+    1. Syntax errors, which prevent the execution of the program
+    2. Runtime errors, which halt the execution
+    - Errors in category 1 are usually easy to fix, as the Python interpreter flags the error location when attempting to execute the program. Common syntax errors include a missing colon at the end of a header line, or a missing quotation mark at the end of a string.
+    - Errors in category 2 can be harder to spot, as it may happen that they only occur at a certain point in the execution of a program, and only in certain circumstances. The program may work just fine in most situations, but halt due to an error in a specific marginal case. We will now concentrate on handling these types of errors.
+
+#### Input validation
+- Many errors that come up during the execution of a program have to do with invalid input. Some examples include:
+    - missing or empty input values in mandatory fields, such as empty strings when the length of the string is critical
+    - negative values where only positive values are accepted, such as -15 as the amount of an ingredient in a recipe
+    - missing files or typos in filenames
+    - values that are too small or too large, for example when working with dates and times
+    - invalid indexes, such as trying to access index 3 in the string "hey"
+    - values of a wrong type, such as strings when integers are expected
+
+- Fortunately, we as programmers can prepare for most errors. Let's have a look at a program which asks the user for their age, and makes sure it is an acceptable number (between 0 and 150, in this case):
+    ```py
+    age = int(input("Please type in your age: "))
+    if age >= 0 and age <= 150:
+        print("That is a fine age")
+    else:
+        print("This is not a valid age")
+    ```
+    Sample Output(s):
+    ```
+    Please type in your age: 25
+    That is a fine age
+    ```
+    ```
+    Please type in your age: -3
+    This is not a valid age
+    ```
+    - As long as the user types in an integer value, our input validation seems to work fine. But what if they type in a string?
+        ```
+        Please type in your age: twenty-three
+        ValueError: invalid literal for int() with base 10: 'twenty-three'
+        ```
+        - The `int` function is unable to parse the input string `twenty-three` as a valid integer value. The execution halts and the above error message is printed.
+
+#### Exceptions
+- Errors that occur while the program is already running are called *exceptions*. It is possible to prepare for exceptions, and handle them so that the execution continues despite them occurring.
+
+- Exception handling in Python is accomplished with `try` and `except` statements. The idea is that if something within a `try` block causes an exception, Python checks if there is a corresponding `except` block. If such a block exists, it is executed and the program then continues as if nothing happened.
+
+- Let's change the above example so that the program is prepared for the `ValueError` exception:
+    ```py
+    try:
+    age = int(input("Please type in your age: "))
+    except ValueError:
+        age = -1
+
+    if age >= 0 and age <= 150:
+        print("That is a fine age")
+    else:
+        print("This is not a valid age")
+    ```
+    ```
+    Please type in your age: twenty-three
+    This is not a valid age
+    ```
+    - We can use the `try` block to flag that the code within the block may cause an error. In the `except` statement directly after the block the relevant error is mentioned. In the above example we covered only a `ValueError` exception. If the exception had some other cause, the execution would still have halted, despite the `try` and `except` blocks.
+    - In the above example, if the error is caught, the value of `age` is set to -1. This is an invalid input value which we have already programmed behaviour for, as the program expects the age of the user to be greater than 0.
+
+- In the following example we have a function `read_integer`, which asks the user to type in an integer value, but the function is also prepared for invalid input. The function keeps asking for integers until the user types in a valid input value.
+    ```py
+    def read_integer():
+        while True:
+            try:
+                input_str = input("Please type in an integer: ")
+                return int(input_str)
+            except ValueError:
+                print("This input is invalid")
+
+    number = read_integer()
+    print("Thank you!")
+    print(number, "to the power of three is", number**3)
+    ```
+    ```
+    Sample output
+    Please type in an integer: three
+    This input is invalid
+    Please type in an integer: aybabtu
+    This input is invalid
+    Please type in an integer: 5
+    Thank you!
+    5 to the power of three is 125
+    ```
+
+- Sometimes it is enough to catch exceptions with a try-except structure, without doing anything about them. That is, we can just ignore the situation in the `except` block. If we were to change the above example so that we only accepted integers smaller than 100, the results could look like this:
+    ```py
+    def read_small_integer():
+        while True:
+            try:
+                input_str = input("Please type in an integer: ")
+                number = int(input_str)
+                if number < 100:
+                    return number
+            except ValueError:
+                pass # this command doesn't actually do anything
+
+            print("This input is invalid")
+
+    number = read_small_integer()
+    print(number, "to the power of three is", number**3)
+    ```
+    ```
+    Please type in an integer: three
+    This input is invalid
+    Please type in an integer: 1000
+    This input is invalid
+    Please type in an integer: 5
+    Thank you!
+    5 to the power of three is 125
+    ```
+    - Now the `except` block only contains the command `pass`, which doesn't do anything. Python does not allow empty blocks, so the command is necessary.
+
+#### Typical errors
+- Here is a selection of typical errors you will likely come across, along with some situations where they may occur.
+
+- Value Error
+    - This error is often thrown when the argument passed to a function is somehow invalid. For example, the function call `float("1,23")` causes an error, because decimals are always separated by a point in Python, and here we have a comma.
+
+- TypeError
+    - This error occurs when a value is of the wrong type. For example, the function call `len(10)` causes a `TypeError`, because the function `len` requires a value whose length can be calculated, such as a string or a list.
+
+- IndexError
+    - This common error occurs when trying to refer to an index which doesn't exist. For example, the expression `"abc"[5]` causes an `IndexError`, because the string in question has no index 5.
+
+- ZeroDivisionError
+    - As the name implies, this error is thrown when trying to divide by zero, which we know from mathematics to always be a bad idea. For example, if we try to determine the arithmetic mean of values in a list with the formula `sum(my_list) / len(my_list)`, but our list has length zero, this error will occur.
+
+- Exceptions in file handling
+    - Some common errors when working with files are **FileNotFoundError** (when trying to access a file which doesn't exist), **io.UnsupportedOperation** (when trying to perform an operation on a file which is not supported by the mode in which the file is opened) or **PermissionError** (the program lacks necessary permissions to access the file).
+
+#### Handling multiple exceptions at once
+- There may be more than one `except` block attached to each `try` block. For example, the following program can handle both a `FileNotFoundException` and a `PermissionError`:
+    ```py
+    try:
+        with open("example.txt") as my_file:
+            for line in my_file:
+                print(line)
+    except FileNotFoundError:
+        print("The file example.txt was not found")
+    except PermissionError:
+        print("No permission to access the file example.txt")
+    ```
+
+- Sometimes it is not necessary to specify the error the program prepares for. Especially when dealing with files, it is often enough to know that an error has occurred, and safely exit the program. It is not always necessary to know why the error occurred. If we need to cover for all possible exceptions, we can use the `except` block without specifying the error:
+    ```py
+    try:
+        with open("example.txt") as my_file:
+            for line in my_file:
+                print(line)
+    except:
+        print("There was an error when reading the file.")
+    ```
+    - The `except` statement here covers all possible errors, even those caused by the programming mistakes. Only syntax errors will not be caught by this, as they prevent the code from being executed in the first place.
+
+- For example, the following program will always throw an error, because the variable name `my_file` is written as `myfile` on the third line.
+    ```py
+    try:
+        with open("example.txt") as my_file:
+            for line in myfile:
+                print(line)
+    except:
+        print("There was an error when reading the file.")
+    ```
+    - An `except` block can hide the actual error: the problem here was not caused by file handling as such, but by the variable name which was misspelled. Without the `except` block the error thrown would be shown, and the cause could be found more easily. Therefore it is usually a good idea to use only `except` blocks specifically declared for certain error types.
+
+#### Passing exceptions
+- If executing a function causes an exception, and this exception is not handled, it is passed on to the section of code which called the function, and so forth up the call chain, until it reaches the main function level. If it is not handled there, either, the execution of the program halts, and the exception is usually printed out for the user to see.
+
+- In the following example we have the function `testing`. If it causes an exception, this is not handled within the function itself, but in the main function:
+    ```py
+    def testing(x):
+        print(int(x) + 1)
+
+    try:
+        number = input("Please type in a number: ")
+        testing(number)
+    except:
+        print("Something went wrong")
+    ```
+    ```
+    Please type in a number: three
+    Something went wrong
+    ```
+
+#### Raising exceptions
+- You can also raise exceptions, with the command `raise`. It may seem like an odd idea to purposefully cause errors in your programs, but it can, in fact, be a very useful mechanism. For instance, it can sometimes be a good idea to raise an error when detecting invalid parameters. So far we have usually printed out messages when validating input, but if we are writing a function which is executed from elsewhere, just printing something out can go unnoticed when the function is called. Raising an error can make debugging easier. In the following example we have a function which calculates factorials (for example, the factorial of the number 5 is 1 * 2 * 3 * 4 * 5). If the argument passed to the function is negative, the function raises an error:
+    ```py
+    def factorial(n):
+        if n < 0:
+            raise ValueError("The input was negative: " + str(n))
+        k = 1
+        for i in range(2, n + 1):
+            k *= i
+        return k
+
+    print(factorial(3))
+    print(factorial(6))
+    print(factorial(-1))
+    ```
+    ```
+    Sample output
+    6
+    720
+    Traceback (most recent call last):
+    File "test.py", line 11, in 
+    print(factorial(-1))
+    File "test.py", line 3, in factorial
+    raise ValueError("The input was negative: " + str(n))
+    ValueError: The input was negative: -1
+    ```
