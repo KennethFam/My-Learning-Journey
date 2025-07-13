@@ -1825,4 +1825,71 @@
         # run the main function
         main()
         ```
-        
+
+### Modules
+
+#### Debugging revisited
+- Python version 3.7 brought yet another easy and useful tool for debugging programs: the `breakpoint()` command. You can add this command to any point in your code (within normal syntactic rules, of course). When the program is run, the execution halts at the point where you inserted the `breakpoint` command. Here is an example of debugging efforts when completing one of the exercises from the previous part (please ignore the Finnish variable names in the images, and concentrate on the functionality):
+    ![alt text](images/breakpoint.png)
+    - When the execution halts at the `breakpoint` command, an interactive console window is opened. Here you can write any code just as you would in a normal Python console, and see how the code works at exactly that point in the program.
+    - The `breakpoint` command is especially useful when you know that some line of code causes an error, but you are not quite sure why that is. Add a breakpoint just before the problematic line of code and run your program. Now you can try out different options in the interactive console window, and figure out the correct commands to include in your program.
+    - It is also possible to continue execution from where it halted. The command `continue`, or the shorthand `c`, typed into the debugging console will resume execution until the next breakpoint is reached. The following picture depicts a situation where the loop has already been executed a few times:
+    ![alt text](images/continue.png)
+        - There are also some other commands available in the debugging console. You may find them [here](https://docs.python.org/3/library/pdb.html#debugger-commands), or else you can type in *help* in the debugging console:
+        ![alt text](images/help.png)
+            - The command `exit` finishes the execution of the program.
+    - When you are done debugging, remember to remove the `breakpoint` commands from your code!
+
+#### Using modules
+- The Python standard library is a collection of standardised functions and objects, which can be used to expand the expressive power of Python in many ways. 
+
+- The standard library is comprised of modules, which contain functions and classes grouped around different themes and functionalities. 
+
+- The command `import` makes the contents of the given module accessible in the current program. Let's have a closer look at working with the `math` module. It contains the definitions of some mathematical functions, such as `sqrt` for square root and `log` for logarithm.
+    ```py
+    import math
+
+    # The square root of the number 5
+    print(math.sqrt(5))
+    # the base 2 logarithm of the number 8
+    print(math.log(8, 2))
+    ```
+    ```
+    2.23606797749979
+    3.0
+    ```
+    - The functions are defined in the `math` module, so they must be referred to as `math.sqrt` and `math.log` in the program code.
+
+#### Selecting distinct sections from a module
+- Another way to use modules is to select a distinct entity from the module with the `from` command. In case we want to use just the functions `sqrt` and `log` from the module `math`, we can do the following:
+    ```py
+    from math import sqrt, log
+
+    print(sqrt(5))
+    print(log(5,2))
+    ```
+    - As you can see above, we do not need the `math` prefix when using the functions imported in this manner.
+
+- Sometimes a handy shortcut is to import all the contents of a module with the star notation:
+    ```py
+    from math import *
+
+    print(sqrt(5))
+    print(log(5,2))
+    ```
+    - Importing modules with the star notation can be useful when testing and in some smaller projects, but it can pose some new problems, too. We will come across these later.
+
+#### The contents of a module
+- The Python documentation has extensive resources on each module in the Python standard library. The documentation contains information on the functions and methods defined in the module, and how the module can be used. For example, [here is the link](https://docs.python.org/3/library/math.html) to the documentation for the `math` module.
+
+- We can also have a look at the contents of the module with the function `dir`:
+    ```py
+    import math
+
+    print(dir(math))
+    ```
+    - The function returns a list of names defined by the module. These may be, for example, names of classes, constant values or functions:
+    ```
+    ['__doc__', '__name__', '__package__', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 'ceil', 'copysign', 'cos', 'cosh', 'degrees', 'e', 'erf', 'erfc', 'exp', 'expm1', 'fabs', 'factorial', 'floor', 'fmod', 'frexp', 'fsum', 'gamma', 'hypot', 'isinf', 'isnan', 'ldexp', 'lgamma', 'log', 'log10', 'log1p', 'modf', 'pi', 'pow', 'radians', 'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'trunc']
+    ```
+
