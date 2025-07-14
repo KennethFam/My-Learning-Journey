@@ -1893,3 +1893,362 @@
     ['__doc__', '__name__', '__package__', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 'ceil', 'copysign', 'cos', 'cosh', 'degrees', 'e', 'erf', 'erfc', 'exp', 'expm1', 'fabs', 'factorial', 'floor', 'fmod', 'frexp', 'fsum', 'gamma', 'hypot', 'isinf', 'isnan', 'ldexp', 'lgamma', 'log', 'log10', 'log1p', 'modf', 'pi', 'pow', 'radians', 'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'trunc']
     ```
 
+### Randomness
+- This section concentrates on the module [random](https://docs.python.org/3/library/random.html?highlight=random#module-random) from the Python standard library. It contains tools for generating random numbers and other randomized functionality.
+
+#### Generating a random number
+- The function [randint(a, b)](https://docs.python.org/3/library/random.html?highlight=random#random.randint) returns a random integer value between `a` and `b`, inclusive. For example, the following program works like a generic die:
+    ```py
+    from random import randint
+
+    print("The result of the throw:", randint(1, 6))
+    ```
+    Executing this could print out:
+    ```
+    The result of the throw: 4
+    ```
+
+- The following program throws the die ten times:
+    ```py
+    from random import randint
+
+    for i in range(10):
+        print("The result of the throw:", randint(1, 6))
+    ```
+    Running the above could print out:
+    ```
+    The result of the throw: 5
+    The result of the throw: 4
+    The result of the throw: 3
+    The result of the throw: 2
+    The result of the throw: 3
+    The result of the throw: 4
+    The result of the throw: 6
+    The result of the throw: 4
+    The result of the throw: 4
+    The result of the throw: 3
+    ```
+
+#### More randomizing functions
+- The function [shuffle](https://docs.python.org/3/library/random.html?highlight=random#random.shuffle) will shuffle any data structure passed as an argument, in place. For example, the following program shuffles a list of words:
+    ```py
+    from random import shuffle
+
+    words = ["atlas", "banana", "carrot"]
+    shuffle(words)
+    print(words)
+    ```
+    Possible Output:
+    ```
+    ['banana', 'atlas', 'carrot']
+    ```
+
+- The function `choice` returns a randomly picked item from a data structure:
+    ```py
+    from random import choice
+
+    words = ["atlas", "banana", "carrot"]
+    print(choice(words))
+    ```
+    Possible Output:
+    ```
+    `carrot`
+    ```
+
+#### Lottery numbers
+- A common example for studying randomness is the case of lottery numbers. Let's try and draw some lottery numbers. In Finland the national lottery consists of a pool of 40 numbers, 7 of which are chosen for each week's draw. A first attempt at drawing a set of numbers could look like this:
+    ```py
+    from random import randint
+
+    for i in range(7):
+        print(randint(1, 40))
+    ```
+    - This would not work in the long run, however, as the same number may appear twice in a single weekly draw of seven numbers. We need a way to make sure the numbers drawn are all unique. One possibility is to store the drawn numbers in a list, and only add a number if it is not already on the list. This can be repeated until the length of the list is seven:
+        ```py
+        from random import randint
+
+        weekly_draw = []
+        while len(weekly_draw) < 7:
+            new_rnd = randint(1, 40)
+            if new_rnd not in weekly_draw:
+                weekly_draw.append(new_rnd)
+
+        print(weekly_draw)
+        ```
+        - A more compact approach would be to use the shuffle function:
+            ```py
+            from random import shuffle
+
+            number_pool = list(range(1, 41))
+            shuffle(number_pool)
+            weekly_draw = number_pool[0:7]
+            print(weekly_draw)
+            ```
+            - Here the idea is that we first create a list containing the available numbers 1 to 40, rather like the balls in a lottery machine. The pool of numbers is then shuffled, and the first seven numbers chosen for the weekly draw. This saves us the trouble of writing a loop.
+            - In fact, the `random` module contains an even easier way to select lottery numbers: the [sample](https://docs.python.org/3/library/random.html?highlight=random#random.sample) function. It returns a random selection of a specified size from a given data structure:
+                ```py
+                from random import sample
+
+                number_pool = list(range(1, 41))
+                weekly_draw = sample(number_pool, 7)
+                print(weekly_draw)
+                ```
+
+#### Where do these random numbers come from?
+- The features of the module [random](https://docs.python.org/3/library/random.html) are based on an algorithm which produces random numbers based on a specific initialization value and some arithmetic operations. The initialization value is often called a *seed value*. The seed value can be supplied by the user with the [seed](https://docs.python.org/3/library/random.html?highlight=random#random.seed) function:
+    ```py
+    from random import randint, seed
+
+    seed(1337)
+    # this will always produce the same "random" number
+    print(randint(1, 100))
+    ```
+
+- If we have functions which rely on randomization, and we set seed value, the function will produce the same result each time it is executed. The result may be different with different Python versions, but in essence randomness is lost by setting a seed value. This can be a useful feature when testing a program, for example.
+
+- True randomness
+    - To be specific, the numbers provided by the `random` module are not truly random. Instead, they are pseudorandom. Computers are, in essence, deterministic machines. In an ideal situation, it should be possible to foretell the way they function down to the last bit. Therefore it is very difficult to create truly random numbers with a computer. For many applications, however, pseudorandom numbers are good enough. When true random numbers are required, the seed value is usually generated by some source outside the computer, for example background radiation, noise levels, or lava [lamps](https://blog.cloudflare.com/randomness-101-lavarand-in-production/).
+
+### Times and dates
+
+#### The datetime object 
+- The Python [datetime](https://docs.python.org/3/library/datetime.html?highlight=datetime#datetime.datetime) module includes the function [now](https://docs.python.org/3/library/datetime.html?highlight=datetime#datetime.datetime.now), which returns a datetime object containing the current date and time. The default printout of a datetime object looks like this:
+    ```py
+    from datetime import datetime
+
+    my_time = datetime.now()
+    print(my_time)
+    ```
+    ```
+    2021-10-19 08:46:49.311393
+    ```
+
+- You can also define the object yourself:
+    ```py
+    from datetime import datetime
+
+    my_time = datetime(1952, 12, 24)
+    print(my_time)
+    ```
+    ```
+    1952-12-24 00:00:00
+    ```
+    - By default, the time is set to midnight, as we did not give a time of day in the example above.
+    - Different elements of the datetime object can be accessed in the following manner:
+        ```py
+        from datetime import datetime
+
+        my_time = datetime(1952, 12, 24)
+        print("Day:", my_time.day)
+        print("Month:", my_time.month)
+        print("Year:", my_time.year)
+        ```
+        ```
+        Day: 24
+        Month: 12
+        Year: 1952
+        ```
+
+- A time of day can also be specified. The precision can vary, as you can see below:
+    ```py
+    from datetime import datetime
+
+    pv1 = datetime(2021, 6, 30, 13)     # 30.6.2021 at 1PM
+    pv2 = datetime(2021, 6, 30, 18, 45) # 30.6.2021 at 6.45PM
+    ```
+
+#### Compare times and calculate differences between them
+- The familiar comparison operators work also on datetime objects:
+    ```py
+    from datetime import datetime
+
+    time_now = datetime.now()
+    midsummer = datetime(2021, 6, 26)
+
+    if time_now < midsummer:
+        print("It is not yet Midsummer")
+    elif time_now == midsummer:
+        print("Happy Midsummer!")
+    elif time_now > midsummer:
+        print("It is past Midsummer")
+    ```
+    ```
+    It is past Midsummer
+    ```
+    - The difference between two datetime objects can be calculated simply with the subtraction operator:
+        ```py
+        from datetime import datetime
+
+        time_now = datetime.now()
+        midsummer = datetime(2021, 6, 26)
+
+        difference = midsummer - time_now
+        print("Midsummer is", difference.days, "days away")
+        ```
+        ```
+        Midsummer is -116 days away
+        ```
+        - Note: The result of the datetime subtraction is a [timedelta](https://docs.python.org/3/library/datetime.html?highlight=datetime#timedelta-objects) object. It is less versatile than the datetime object. For instance, you can access the number of days in a `timedelta` object, but not the number of years, as the length of a year varies. A `timedelta` object contains the attributes `days`, `seconds` and `microseconds`. Other measures can be passed as arguments, but they will be converted internally.
+
+- Similarly, addition is available between `datetime` and `timedelta` objects. The result will be the `datetime` produced when the specified number of days (or weeks, seconds, etc) is added to a `datetime` object:
+    ```py
+    from datetime import datetime, timedelta
+    midsummer = datetime(2021, 6, 26)
+
+    one_week = timedelta(days=7)
+    week_from_date = midsummer + one_week
+
+    print("A week after Midsummer it will be", week_from_date)
+
+    long_time = timedelta(weeks=32, days=15)
+
+    print("32 weeks and 15 days after Midsummer it will be", midsummer + long_time)
+    ```
+    ```
+    Sample output
+    A week after Midsummer it will be 2021-07-03 00:00:00
+    32 weeks and 15 days after Midsummer it will be 2022-02-20 00:00:00
+    ```
+
+- Let's see how a higher precision works:
+    ```py
+    time_now = datetime.now()
+    midnight = datetime(2021, 6, 30)
+    difference = midnight - time_now
+    print(f"Midnight is still {difference.seconds} seconds away")
+    ```
+    ```
+    Midnight is still 8188 seconds away
+    ```
+
+#### Formatting times and dates
+- The `datetime` module contains a handy method [strftime](https://docs.python.org/3/library/datetime.html?highlight=datetime#datetime.date.strftime) for formatting the string representation of a datetime object. For example, the following code will print the current date in the format `dd.mm.yyyy`, and then the date and time in a different format:
+    ```py
+    19.10.2021
+    19/10/2021 09:31
+    ```
+
+- Time formatting uses specific characters to signify specific formats. The following is a list of a few of them (please see the Python [documentation](https://docs.python.org/3/library/time.html#time.strftime) for a complete list):
+    ![alt text](images/datetime_notation.png)
+
+- You can also specify the delimiter between the different elements, as seen in the examples above.
+
+- Datetime formatting works in the reverse direction as well, in case you need to parse a datetime object from a string given by the user. The method [strptime](https://docs.python.org/3/library/datetime.html?highlight=datetime#datetime.datetime.strptime) will do just that:
+    ```py
+    from datetime import datetime
+
+    birthday = input("Please type in your birthday in the format dd.mm.yyyy: ")
+    my_time = datetime.strptime(birthday, "%d.%m.%Y")
+
+    if my_time < datetime(2000, 1, 1):
+        print("You were born in the previous millennium")
+    else:
+        print("You were born during this millennium")
+    ```
+    ```
+    Please type in your birthday in the format dd.mm.yyyy: 5.11.1986
+    You were born in the previous millennium
+    ```
+
+### Data Processing
+
+#### Reading CSV files
+- There is a ready-made module in the Python standard library for working with CSV files: [csv](https://docs.python.org/3/library/csv.html). It works like this:
+    ```py
+    import csv
+
+    with open("test.csv") as my_file:
+        for line in csv.reader(my_file, delimiter=";"):
+            print(line)
+    ```
+    - The above code reads all lines in the CSV file test.csv, separates the contents of each line into a list using the delimiter ;, and prints each list. So, assuming the contents of the line are as follows:
+        ```
+        012121212;5
+        012345678;2
+        015151515;4
+        ```
+        The code would print out this:
+        ```
+        ['012121212', '5']
+        ['012345678', '2']
+        ['015151515', '4']
+        ```
+
+- Since the CSV format is so simple, what's the use of having a separate module when we can just as well use the `split` function? Well, for one, the way the module is built, it will also work correctly if the values in the file are strings, which may also contain the delimiter character. If some line in the file looked like this:
+    ```
+    "aaa;bbb";"ccc;ddd"
+    ```
+    the above code would produce this:
+    ```
+    ['aaa;bbb', 'ccc;ddd']
+    ```
+    - Using the `split` function would also split within the strings, which would likely break the data, and our program in the process.
+
+#### Reading JSON files
+- CSV is just one of many machine-readable data formats. [JSON](https://www.json.org/json-en.html) is another, and it is used often when data has to be transferred between applications.
+
+- JSON files are text files with a strict format, which is perhaps a little less accessible to the human eye than the CSV format. The following example uses the file `courses.json`, which contains information about some courses:
+    ```json
+    [
+        {
+            "name": "Introduction to Programming",
+            "abbreviation": "ItP",
+            "periods": [1, 3]
+        },
+        {
+            "name": "Advanced Course in Programming",
+            "abbreviation": "ACiP",
+            "periods": [2, 4]
+        },
+        {
+            "name": "Database Application",
+            "abbreviation": "DbApp",
+            "periods": [1, 2, 3, 4]
+        }
+    ]
+    ```
+    - The structure of a JSON file might look quite familiar to you by now. The JSON file above looks exactly like a Python list, which contains three Python dictionaries.
+
+- The standard library has a module for working with JSON files: [json](https://docs.python.org/3/library/json.html). The function `loads` takes any argument passed in a JSON format and transforms it into a Python data structure. So, processing the `courses.json` file with the code below:
+    ```py
+    import json
+
+    with open("courses.json") as my_file:
+        data = my_file.read()
+
+    courses = json.loads(data)
+    print(courses)
+    ```
+    would print out the following:
+    ```
+    [{'name': 'Introduction to Programming', 'abbreviation': 'ItP', 'periods': [1, 3]}, {'name': 'Advanced Course in Programming', 'abbreviation': 'ACiP', 'periods': [2, 4]}, {'name': 'Database Application', 'abbreviation': 'DbApp', 'periods': [1, 2, 3, 4]}]
+    ```
+    - If we also wanted to print out the name of each course, we could expand our program with a `for` loop:
+        ```py
+        for course in courses:
+            print(course["name"])
+        ```
+        ```
+        Introduction to Programming
+        Advanced Course in Programming
+        Database Application
+        ```
+
+#### Retrieving a file from the internet
+- The Python standard library also contains modules for dealing with online content, and one useful function is [urllib.request.urlopen](https://docs.python.org/3/library/urllib.request.html#urllib.request.urlopen). You are encouraged to have a look at the entire module, but the following example should be enough for you to get to grips with the function. It can be used to retrieve content from the internet, so it can be processed in your programs. The following code would print out the contents of the University of Helsinki front page:
+    ```py
+    import urllib.request
+
+    my_request = urllib.request.urlopen("https://helsinki.fi")
+    print(my_request.read())
+    ```
+    - Pages intended for human eyes do not usually look very pretty when their code is printed out. In the following examples, however, we will work with machine-readable data from an online source. Much of the machine-readable data available online is in JSON format.
+
+#### Looking for modules
+- The [official Python documentation](https://docs.python.org/3/library/) contains information on all modules available in the standard library.
+
+- In addition to the standard library, the internet is full of freely available Python modules for different purposes. Some commonly used modules are listed here:
+    - [https://wiki.python.org/moin/UsefulModules](https://wiki.python.org/moin/UsefulModules)
+
+### Creating your own modules
+
