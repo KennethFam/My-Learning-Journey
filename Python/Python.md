@@ -2385,3 +2385,97 @@
                 ```
 
 ### More Python features
+
+#### Single line conditionals
+- The following two statements produce the exact same results:
+    ```py
+    if x%2 == 0:
+        print("even")
+    else:
+        print("odd")
+    ```
+    ```py
+    print("even" if x%2 == 0 else "odd")
+    ```
+    - In the latter example we have a conditional expression on a single line: `a if [condition] else b`. The value of this expression evaluates to `a` if the condition is true, and `b` if it is false. This structure is sometimes referred to as a *ternary operator*.
+
+- Conditional expressions can be very useful when you need to assign something conditionally. For example, if you had the variables `x` and `y`, and you wanted to either increment or set the value of `y` depending on the parity of `x`, you could write it in a normal `if else` statement, like so:
+    ```py
+    if x%2 == 0:
+        y += 1
+    else:
+        y = 0
+    ```
+    - The same could be achieved with a nifty one-liner:
+        ```py
+        y = y + 1 if x%2 == 0 else 0
+        ```
+
+#### An "empty" block
+- You may remember from the previous part that you are not allowed to have an empty block in a Python program. If you need to have a block of code which does nothing, for example when testing some other functionality, the pass command will let you do this. You could, for instance, write a function which does nothing:
+    ```py
+    def testing():
+        pass
+    ```
+    - This function would simply return immediately. Leaving the `pass` command out, i.e. having a completely empty block, would produce an error.
+        ```py
+        def testing():  # this causes an error!
+        ```
+
+#### Loops with else blocks
+- In Python, loops can have `else` blocks, too. This section of code is executed if the loop finishes normally. For example, in the following example we are looking through a list of numbers. If there is an even number on the list, the program prints out a message and the loop is broken. If there are no even numbers, the loop finishes normally, but a different message is then printed out.
+    ```py
+    my_list = [3,5,2,8,1]
+    for x in my_list:
+        if x%2 == 0:
+            print("found an even number", x)
+            break
+    else:
+        print("there were no even numbers")
+    ```
+    - A more traditional way to achieve this would be to use a helper variable to remember whether the desired item was found:
+        ```py
+        my_list = [3,5,2,8,1]
+        found = False
+        for x in my_list:
+            if x%2 == 0:
+                print("found an even number", x)
+                found = True
+                break
+        if not found:
+            print("there were no even numbers")
+        ```
+        - Using a `for else` statement saves us the trouble of writing a separate variable.
+
+#### Default parameter value
+- A Python function can have a default parameter value. It is used whenever no argument is passed to the function. See the following example:
+    ```py
+    def say_hello(name="Emily"):
+        print("Hi there,", name)
+
+    say_hello()
+    say_hello("Eric")
+    say_hello("Matthew")
+    say_hello("")
+    ```
+    ```
+    Hi there, Emily
+    Hi there, Eric
+    Hi there, Matthew
+    Hi there,
+    ```
+    - An empty string is still a string, so the default parameter is not used if an empty string is passed to the function.
+
+#### A variable number of parameters
+- You can also define a function with a variable number of parameters, by adding a star before the parameter name. All the remaining arguments passed to the function are contained in a tuple, and can be accessed through the named parameter. The following function counts the number and sum of its arguments:
+    ```py
+    def testing(*my_args):
+        print("You passed", len(my_args), "arguments")
+        print("The sum of the arguments is", sum(my_args))
+
+    testing(1, 2, 3, 4, 5)
+    ```
+    ```
+    You passed 5 arguments
+    The sum of the arguments is 15
+    ```
