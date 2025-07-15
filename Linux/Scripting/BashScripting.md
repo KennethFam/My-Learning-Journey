@@ -550,9 +550,9 @@
     fi
     ```
 
-- Note that the spacing in the `if`, `elif`, and `else` conditions are required by syntax.
+- Note that the spacing in the `if` and `elif` conditions are required by syntax.
 
-- The expression used by the conditional construct is evaluated to either true or false. The expression can be a single string or variable. A empty string or a string consisting of spaces or an undefined variable name, are evaluated as false. The expression can be a logical combination of comparisons: negation is denoted by `!`, logical AND (conjunction) is denoted by `&&`, and logical OR (disjunction) is denoted by `||`. Conditional expressions should be surrounded by double brackets `[[ ]]`.
+- The expression used by the conditional construct is evaluated to either true or false. The expression can be a single string or variable. An empty string or a string consisting of spaces or an undefined variable name, are evaluated as false. The expression can be a logical combination of comparisons: negation is denoted by `!`, logical AND (conjunction) is denoted by `&&`, and logical OR (disjunction) is denoted by `||`. Conditional expressions should be surrounded by double brackets `[[ ]]`.
 
 - Types of numeric comparisons:
     ```shell
