@@ -952,8 +952,8 @@
 ### Special Variables
 
 - `$0` - The filename of the current script.
-- `$n` - The Nth argument passed to script was invoked or function was called.
-- `$#` - The number of argument passed to script or function.
+- `$n` - The Nth argument passed to script was invoked or function was called. `n` simply represents a number here.
+- `$#` - The number of argument(s) passed to script or function.
 - `$@` - All arguments passed to script or function.
 - `$*` - All arguments passed to script or function.
 - `$?` - The exit status of the last command executed.
@@ -1059,7 +1059,7 @@
             trap booh 2 15
             ```
 
-- One of the common usage of trap is to do cleanup temporary files:
+- One of the common usage of trap is to cleanup temporary files:
     ```shell
     trap "rm -f folder; exit" 2
     ```
@@ -1116,9 +1116,9 @@
             echo "you are not allowed to read $filename"
         fi
         ```
-        - This script will create a path in the parent directory is the current directory. 
+        - This script will create a file in the parent directory of the current directory. 
 
-### Piplines
+### Pipelines
 - Pipelines, often called pipes, is a way to chain commands and connect output from one command to the input of the next. A pipeline is represented by the pipe character: `|`. It's particularly handy when a complex or long input is required for a command.
     Format:
     ```shell
