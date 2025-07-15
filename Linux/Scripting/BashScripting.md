@@ -390,7 +390,7 @@
     expr index "$STRING" "$SUBSTRING"     # 1 is the position after the first 't' in $STRING
     ```
     - If we used `echo` instead, we'd need to do `echo $((index "$STRING" "$SUBSTRING"))`.
-    - Note that `index "$STRING" "$SUBSTRING" ` is what's actually returning `1`.
+    - Note that `index "$STRING" "$SUBSTRING"` is what's actually returning `1`.
 
 - Extract substring of length `$LEN` from `$STRING` starting after position `$POS`. Note that first position is 0.
     ```shell
@@ -437,7 +437,7 @@
         STRING="to be or not to be"
         echo ${STRING[@]// not/}        # to be or to be
         ```
-        - Result would be the same with/without space before `not`. The thing is that without the space, it will match all occurances of `not`. With the space, it will match all occurances of ` not`.
+        - Result would be the same with/without space before `not`. The thing is that without the space, it will match all occurances of `not`. With the space, it will match all occurances of `not` with a space in the beginning.
         - To replace only the first occurance, use `/ not/` instead of `// not/`.
     - Replace occurrence of substring if at the beginning of $STRING:
         ```shell
