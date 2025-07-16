@@ -737,6 +737,33 @@
 
 - instance: instantiated object. Most often, this term is applied to class type objects, but it is occasionally applied to objects of other types as well.
 
+- encapsulation: combining a number of items, such as variables and functions, into a single package such as an object of a class
+
+- volatile: a type qualifier that informs the compiler that a variable's value can be modified by external factors, such as hardware, interrupt service routines (ISRs), or another thread, in ways the compiler cannot predict.
+
+- atomic: feature designed for thread-safe operations on shared data in a multi-threaded environment. It ensures that operations on atomic variables are performed as a single, indivisible unit, preventing data races and ensuring memory consistency across threads.
+
+- pointer: a variable that holds the memory address of another variable. A pointer needs to be dereferenced with the * operator to access the memory location it points to. 
+
+- reference: an alias, that is, another name for an already existing variable. A reference, like a pointer, is also implemented by storing the address of an object. A reference can be thought of as a constant pointer (not to be confused with a pointer to a constant value!) with automatic indirection, i.e., the compiler will apply the * operator for you. 
+
+- dangling pointer: pointer that has had the `delete` operation done on it. It is simply an undefined pointer.
+
+- function redefined: derived class has same number and type of parameters.
+
+- overloaded function: has different number and/or type of parameters than the base class.
+
+- function signature: function's name with the sequence of types in the paramter list, not including any const or '&'.
+
+- polymorphism - refers to the ability to associate multiple meanings with one function name using a mechanism called *late binding*
+
+- 3 key components of object oriented programming: encapsulation, inheritance, polymorphism
+
+- late binding: basically when you create a virtual function, which tells the compiler that you don't know how the function is implemented and to wait until the function is used in a program, then get the implementation from the object.
+
+## Extra Notes:
+- Big 3 for dynamic usage in classes are copy constructor, assignment operator, and destructor. If you need one, you need the rest.
+
 ## Best Practices
 - Although the language allows you to do so, avoid defining multiple variables of the same type in a single statement. Instead, define each variable in a separate statement on its own line (and then use a single-line comment to document what it is used for).
 
