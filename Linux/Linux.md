@@ -378,6 +378,7 @@
 
 - Adding the `-i` flag like many of the other commands, will give you a prompt on whether you want to actually remove the files or directories.
     ```bash
+    rm -i file
     ```
 
 - You can’t just `rm` a directory by default, you’ll need to add the `-r` flag (recursive) to remove all the files and any subdirectories it may have.
