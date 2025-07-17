@@ -1,5 +1,13 @@
 # Linux
 
+<details>
+<summary><strong> Exercise </strong></summary>
+
+- 
+    - Ans: 
+
+</details>
+
 ## Basic Keybinds
 - Copy: `ctrl` + `shift` + `c`
 - Patse: `ctrl` + `shift` + `v`
@@ -459,6 +467,509 @@
     $ logout
     ```
     Or if you are working out of a terminal GUI, you can just close the terminal.
+
+### Text Manipulation and Navigation
+
+#### stdout (Standard Out)
+- Let's run the following command and we'll discuss how this works.
+    ```bash
+    $ echo Hello World > peanuts.txt
+    ```
+    - What just happened? Well check the directory where you ran that command and lo and behold you should see a file called peanuts.txt, look inside that file and you should see the text Hello World. Lots of things just happened in one command so let's break it down.
+        - First let's break down the first part:
+            ```bash
+            $ echo Hello World
+            ```
+            We know this prints out Hello World to the screen, but how? Processes use I/O streams to receive input and return output. By default the echo command takes the input (standard input or stdin) from the keyboard and returns the output (standard output or stdout) to the screen. So that's why when you type echo Hello World in your shell, you get Hello World on the screen. However, I/O redirection allows us to change this default behavior giving us greater file flexibility.
+        - Let's proceed to the next part of the command:
+            ```bash
+            >
+            ```
+            - The `>` is a redirection operator that allows us the change where standard output goes. It allows us to send the output of echo Hello World to a file instead of the screen. If the file does not already exist it will create it for us. However, if it does exist it will overwrite it (you can add a shell flag to prevent this depending on what shell you are using).
+        - And that's basically how stdout redirection works!
+        - Well let's say I didn't want to overwrite my `peanuts.txt`, luckily there is a redirection operator for that as well, `>>`:
+            ```bash
+            $ echo Hello World >> peanuts.txt
+            ```
+            This will append Hello World to the end of the peanuts.txt file, if the file doesn't already exist it will create it for us like it did with the `>` redirector!
+
+#### stdin (Standard In)
+- In our previous lesson we learned that we have different stdout streams we can use, such as a file or the screen. Well there are also different standard input (stdin) streams we can use as well. We know that we have stdin from devices like the keyboard, but we can use files, output from other processes and the terminal as well, let's see an example.
+
+- Let's use the peanuts.txt file in the previous lesson for this example, remember it had the text Hello World in it.
+    ```bash
+    $ cat < peanuts.txt > banana.txt 
+    ```
+    - Just like we had `>` for stdout redirection, we can use `<` for stdin redirection.
+    - Normally in the cat command, you send a file to it and that file becomes the stdin, in this case, we redirected peanuts.txt to be our stdin. Then the output of cat peanuts.txt which would be `Hello World`, gets redirected to another file called banana.txt.
+
+#### stderr (Standard Error)
+- Let's try something a little different now, let's try to list the contents of a directory that doesn't exist on your system and redirect the output to the peanuts.txt file again.
+    ```bash
+    $ ls /fake/directory > peanuts.txt 
+    ```
+    - What you should see is:
+        ```bash
+        ls: cannot access /fake/directory: No such file or directory
+        ```
+        - Now you're probably thinking, shouldn't that message have been sent to the file? There is actually another I/O stream in play here called standard error (stderr). By default, stderr sends its output to the screen as well, it's a completely different stream than stdout. So you'll need to redirect its output a different way.
+            
+            Unfortunately the redirector is not as nice as using `<` or `>` but it's pretty close. We will have to use file descriptors. A file descriptor is a non-negative number that is used to access a file or stream. We will go in depth about this later, but for now know that the file descriptor for stdin, stdout and stderr is `0`, `1`, and `2` respectively.
+
+            So now if we want to redirect our stderr to the file we can do this:
+
+            ```bash
+            $ ls /fake/directory 2> peanuts.txt
+            ```
+
+            You should see just the stderr messages in peanuts.txt.
+
+- Now what if I wanted to see both stderr and stdout in the peanuts.txt file? It's possible to do this with file descriptors as well:
+    ```bash
+    $ ls /fake/directory > peanuts.txt 2>&1
+    ```
+    - This sends the results of `ls /fake/directory` to the peanuts.txt file and then it redirects stderr to the `stdout` via `2>&1`. The order of operations here matters, `2>&1` sends `stderr` to whatever `stdout` is pointing to. In this case `stdout` is pointing to a file, so `2>&1` also sends `stderr` to a file. So if you open up that `peanuts.txt` file you should see both `stderr` and `stdout`. In our case, the above command only outputs `stderr`.
+    - Try `(ls && ls /fake/directory) > peanuts.txt 2>&1`. This should send an output to `stdout` and `stderr`, which will be written in `peanuts.txt`.
+
+- There is a shorter way to redirect both `stdout` and `stderr` to a file using `&>`:
+    ```bash
+    $ ls /fake/directory &> peanuts.txt
+    ```
+    ```bash
+    (ls && ls /fake/directory) &> peanuts.txt
+    ```
+
+- Now what if I don't want any of that cruft and want to get rid of stderr messages completely? Well you can also redirect output to a special file call /dev/null and it will discard any input.
+    ```bash
+    $ ls /fake/directory 2> /dev/null
+    ```
+
+#### pipe and tee
+- Let's try a command:
+    ```bash
+    $ ls -la /etc
+    ```
+    - You should see a very long list of items, it's a little hard to read actually. Instead of redirecting this output to a file, wouldn't it be nice if we could just see the output in another command like `less`? Well we can!
+        ```bash
+        $ ls -la /etc | less 
+        ```
+        The pipe operator `|`, represented by a vertical bar, allows us to get the `stdout` of a command and make that the `stdin` to another process. In this case, we took the `stdout` of `ls -la /etc` and then piped it to the `less` command. The pipe command is extremely useful and we will continue to use it for all eternity.
+
+- Well what if I wanted to write the output of my command to two different streams? That's possible with the tee command:
+    ```bash
+    $ ls | tee peanuts.txt
+    ```
+    - You should see the output of ls on your screen and if you open up the peanuts.txt file you should see the same information!
+    - Note that you can list multiple files by using a space to separate them.
+
+#### env (Environment)
+- Run the following command:
+    ```bash
+    $ echo $HOME
+    ```
+    - You should see the path to your home directory which is usually in the format `/home/username`.
+
+- What about this command?
+    ```bash
+    $ echo $USER 
+    ```
+    - You should see your username!
+
+- Where is this information coming from? It's coming from your environment variables. You can view these by typing:
+    ```bash
+    $ env 
+    ```
+    - This outputs a whole lot of information about the environment variables you currently have set. These variables contain useful information that the shell and other processes can use. Here is a short example:
+        ```bash
+        PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/bin
+
+        PWD=/home/user
+
+        USER=pete
+        ```
+        - One particularly important variable is the `PATH` Variable. You can access these variables by sticking a $ infront of the variable name like so:
+            ```bash
+            $ echo $PATH
+            ```
+            Example Output:
+            ```
+            /usr/local/sbin:/usr/local/bin:/usr/sbin:/bin
+            ```
+            - This returns a list of paths separated by a colon that your system searches when it runs a command. Let's say you manually download and install a package from the internet and put it in to a non standard directory and want to run that command, you type `$ coolcommand` and the prompt says command not found. Well that's silly you are looking at the binary in a folder and know it exists. What is happening is that `$PATH` variable doesn't check that directory for this binary so it's throwing an error. Let's say you had tons of binaries you wanted to run out of that directory, you can just modify the PATH variable to include that directory in your PATH environment variable.
+
+#### cut
+- We're gonna learn a couple of useful commands that you can use to process text. Before we get started, let's create a file that we'll be working with. Copy and paste the following command, once you do that add a `TAB` in between lazy and dog (hold down `Ctrl-v` + `TAB`).
+    ```bash
+    $ echo 'The quick brown; fox jumps over the lazy  dog' > sample.txt
+    ```
+
+- First command we'll be learning about is the `cut` command. It extracts portions of text from a file.
+    - To extract contents by a list of characters:
+        ```bash
+        $ cut -c 5 sample.txt
+        ```
+        - This outputs the 5th character in each line of the file. In this case it is "q", note that the space also counts as a character.
+    - To extract the contents by a field, we'll need to do a little modification to the above command:
+        ```bash
+        $ cut -f 2 sample.txt
+        ```
+        - The `-f` or field flag cuts text based off of fields, by default it uses `TAB`s as delimiters, so everything separated by a `TAB` is considered a field. You should see `dog` as your output.
+        - If `1` was used instead of `2`, `The quick brown; fox jumps over the lazy` would be outputted. Since we used `2`, it will return the next set of characters before the next tab (or whatever is left if there is no other tab).
+    - You can combine the field flag with the delimiter flag to extract the contents by a custom delimiter:
+        ```bash
+        $ cut -f 1 -d ";" sample.txt
+        ```
+        - This will change the `TAB` delimiter to a `;` delimiter and since we are cutting the first field, the result should be `The quick brown`.
+    - You can adjust the which characters you want:
+        - `5-10` will grab charcters 5 through 10.
+        - `-5` will grab the first 5 characters.
+        - `5-` will grab the every character starting from the 5th one. 
+    - Note that cut performs the operation on every line not just the first one.
+
+#### paste 
+- The `paste` command is similar to the `cat` command, it merges lines together in a file. Let's create a new file, `sample2.txt`, with the following contents:
+    ```
+    The
+
+    quick
+
+    brown
+
+    fox
+    ```
+    - Let's combine all these lines into one line:
+        ```bash
+        $ paste -s sample2.txt
+        ```
+        Output:
+        ```
+        The             quick           brown           fox 
+        ```
+        - The `-s` flag makes everything go on one line.
+        - The default delimiter for paste is `TAB`, so now there is one line with `TAB`s separating each word. Let's change this delimiter (`-d`) to something a little more readable:
+            ```bash
+            $ paste -d ' ' -s sample2.txt
+            ```
+            Output:
+            ```
+            ```
+            - Now everything should be on one line delimited by spaces.
+    - You can use `paste` on multiple files at once by seperating the file names with a space. The result will be the contents of both files being shown on the standard input after the operation is done.
+
+#### head
+- Let's say we have a very long file, in fact we have many to choose from, go ahead and `cat /var/log/syslog`. You should see pages upon pages of text. What if I just wanted to see the first couple of lines in this text file? Well we can do that with the `head` command, by default the `head` command will show you the first 10 lines in a file.
+    ```bash
+    $ head /var/log/syslog
+    ```
+
+- You can also modify the line count to whatever you choose, let's say I wanted to see the first 15 lines instead
+    ```bash
+    $ head -n 15 /var/log/syslog
+    ```
+    - The `-n` flag stands for number of lines.
+
+- You can also modify the number of characters `head` shows using the `-c` flag.
+    ```bash
+    $ head -c 15 /var/log/syslog
+    ```
+    - This will display the first 15 (bytes) characters in `/var/log/syslog`.
+
+#### tail
+- Similar to the head command, the tail command lets you see the last 10 lines of a file by default.
+    ```bash
+    $ tail /var/log/syslog
+    ```
+
+- Along with head you can change the number of lines you want to see.
+    ```bash
+    $ tail -n 10 /var/log/syslog
+    ```
+
+- Another great option you can use is the `-f` (follow) flag, this will follow the file as it grows. Give it a try and see what happens.
+    ```bash
+    $ tail -f /var/log/syslog
+    ```
+    - Your syslog file will be continually changing while you interact with your system and using tail -f you can see everything that is getting added to that file.
+
+#### expand and unexpand
+- In our lesson on the cut command, we had our `sample.txt` file that contained a tab. Normally `TAB`s would usually show a noticeable difference but some text files don't show that well enough. Having `TAB`s in a text file may not be the desired spacing you want. To change your `TAB`s to spaces, use the `expand` command.
+    ```bash
+    $ expand sample.txt
+    ```
+    - The command above will print output with each TAB converted into a group of spaces. To save this output in a file, use output redirection like below.
+        ```bash
+        $ expand sample.txt > result.txt
+        ```
+
+- Opposite to expand, we can convert back each group of spaces to a TAB with the unexpand command:
+    ```bash
+    $ unexpand -a result.txt
+    ```
+
+- Both of these commands will read standard input if no file is given as an argument.
+
+#### join and split
+- The `join` command allows you to join multiple files together by a common field:
+
+- Let's say I had two files that I wanted to join together:
+    
+    `file1.txt`
+    ```
+    1 John
+    2 Jane
+    3 Mary
+    ```
+    `file2.txt`
+    ```
+    1 Doe
+    2 Doe
+    3 Sue
+    ```
+    Bash shell:
+    ```
+    $ join file1.txt file2.txt
+    ```
+    Output:
+    ```
+    1 John Doe
+    2 Jane Doe
+    3 Mary Sue
+    ```
+    - See how it joined together my files? They are joined together by the first field by default and the fields have to be identical, if they are not you can sort them, so in this case the files are joined via 1, 2, 3. How would we join the following files?
+
+    `file1.txt`
+    ```
+    John 1
+    Jane 2
+    Mary 3
+    ```
+    `file2.txt`
+    ```
+    1 Doe
+    2 Doe
+    3 Sue
+    ```
+    - To join these files you need to specify which fields you are joining, in this case we want field 2 on `file1.txt` and field 1 on `file2.txt`, so the command would look like this:
+        ```bash
+        $ join -1 2 -2 1 file1.txt file2.txt
+        ```
+        Output:
+        ```
+        1 John Doe
+        2 Jane Doe
+        3 Mary Sue
+        ```
+        - -1 refers to file1.txt and -2 refers to file2.txt.
+    - If one file has more lines than the other, the extra lines are not outputted.
+    - You can join more than 2 files at once.
+
+- You can also split a file up into different files with the `split` command:
+    ```bash
+    $ split somefile
+    ```
+    - This will split it into different files, by default it will split them once they reach a 1000 line limit. The files are named x** by default. The original file will not be changed.
+
+#### sort
+- The `sort` command is useful for sorting lines.
+    `file1.txt`
+    ```
+    dog
+    cow
+    cat
+    elephant
+    bird
+    ```
+    Bash shell:
+    ```
+    $ sort file1.txt
+    ```
+    Output:
+    ```
+    bird
+    cat
+    cow
+    dog
+    elephant
+    ```
+
+- You can also do a reverse `sort`:
+    ```bash
+    $ sort -r file1.txt
+    ```
+    Output:
+    ```
+    elephant
+    dog
+    cow
+    cat
+    bird
+    ```
+
+- You can also `sort` via string numerical value:
+    ```
+    bird
+    cat
+    cow
+    elephant
+    dog
+    ```
+
+#### tr (Translate)
+- The `tr` (translate) command allows you to translate a set of characters into another set of characters. Let's try an example of translating all lower case characters to uppercase characters.
+    ```bash
+    $ tr a-z A-Z
+    hello
+    HELLO
+    ```
+    - As you can see we made the ranges of `a-z` into `A-Z` and all text we type that is lowercase gets uppercased.
+
+- Another example use case:
+    ```bash
+    $ tr -d ello
+    hello
+    h
+    ```
+    - `ello` is deleted from `hello`.
+
+#### uniq (Unique)
+- The `uniq` (unique) command is another useful tool for parsing text.
+
+- Let's say you had a file with lots of duplicates:
+    `reading.txt`
+    ```
+    book
+    book
+    paper
+    paper
+    article
+    article
+    magazine
+    ```
+    - And you wanted to remove the duplicates, well you can use the `uniq` command:
+        ```bash
+        $ uniq reading.txt
+        book
+        paper
+        article
+        magazine
+        ```
+    - Let's get the count of how many occurrences of a line:
+        ```bash
+        $ uniq -c reading.txt
+        2 book
+        2 paper
+        2 article
+        1 magazine
+        ```
+    - Let's just get unique values (i.e. the value only appears once in the file):
+        ```bash
+        $ uniq -u reading.txt
+        magazine
+        ```
+    - Let's just get duplicate values:
+        ```bash
+        $ uniq -d reading.txt
+        book
+        paper
+        article
+        ```
+
+- Note : `uniq` does not detect duplicate lines unless they are adjacent. For example, let's say you had a file with duplicates which are not adjacent:
+    `reading.txt`
+    ```
+    book
+    paper
+    book
+    paper
+    article
+    magazine
+    article
+    ```
+    Bash shell:
+    ```bash
+    $ uniq reading.txt
+    reading.txt
+    book
+    paper
+    book
+    paper
+    article
+    magazine
+    article
+    ```
+    - The result returned by `uniq` will contain all the entries unlike the very first example. To overcome this limitation of `uniq` we can use `sort` in combination with `uniq`:
+        ```bash
+        $ sort reading.txt | uniq
+        article
+        book
+        magazine
+        paper
+        ```
+
+#### wc and nl
+- The `wc` (word count) command shows the total count of words in a file.
+    Bash shell:
+    ```bash
+    $ wc /etc/passwd
+    96     265    5925 /etc/passwd
+    ```
+    - It displays the number of lines, number of words and number of bytes, respectively.
+    - To just see just the count of a certain field, use the -l, -w, or -c respectively.
+        Bash Shell:
+        ```bash
+        $ wc -l /etc/passwd
+        96
+        ```
+
+- Another command you can use to check the count of lines on a file is the `nl` (number lines) command.
+    `file.txt`
+    ```
+    i
+    like
+    turtles
+    ```
+    Bash shell:
+    ```bash
+    $ nl file1.txt
+    1. i
+    2. like
+    3. turtles
+    ```
+
+<details>
+<summary><strong> Exercise </strong></summary>
+
+- How would you get the total count of lines by using the nl file without searching through the entire output? Hint: Use some of the other commands you learned in this course.
+    - Ans: `nl filename | tail -n 1`
+
+</details>
+
+#### grep
+- The `grep` command is quite possibly the most common text processing command you will use. It allows you to search files for characters that match a certain pattern. What if you wanted to know if a file existed in a certain directory or if you wanted to see if a string was found in a file? You certainly wouldn't dig through every line of text, you would use `grep`!
+
+- Let's use our sample.txt file as an example:
+    ```bash
+    $ grep fox sample.txt
+    ```
+    - You should see that `grep` found fox in the sample.txt file.
+
+- You can also `grep` patterns that are case insensitive with the -i flag:
+    ```bash
+    $ grep -i somepattern somefile
+    ```
+
+- To get even more flexible with `grep` you can combine it with other commands with `|`.
+    ```bash
+    $ env | grep -i User
+    ```
+
+- `grep` is pretty versatile. You can even use regular expressions in your pattern:
+    ```bash
+    $ ls /somedir | grep '.txt$'
+    ```
+    - Should return all files ending with `.txt` in `somedir`.
+
+- You may have heard of `egrep` or `fgrep`, these are deprecated `grep` calls and have since been replaced by `grep -E` and `grep -F`. Read the `grep` manpage to learn more.
 
 ## Source(s)
 - [Linux Journey](https://linuxjourney.com/)
