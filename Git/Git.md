@@ -246,6 +246,10 @@ git config --get user.email
         git log
         ```
         - If your terminal is stuck in a screen with (END) at the bottom, just press “q” to escape.
+        - To get a flattened view, use: `git log --oneline --abbrev-commit --all`.
+            - The `--graph` option shows a more detailed version: `git log --oneline --abbrev-commit --all --graph`
+            - The `--decorate` option will show branch and tag labels: `git log --oneline --abbrev-commit --all --graph --decorate`.
+            - The `--color` option will pretty up the display a bit more: `git log --oneline --abbrev-commit --all --graph --decorate --color`
     - launching current directory in VSCode, not apart of Git
         ```
         code .
@@ -265,6 +269,45 @@ git config --get user.email
         ```
         git pull
         ```
+
+## Other Git Commands
+- garbage collection:
+    ```
+    git gc
+    ```
+    - Starting from every branch and every tag, Git walks back through the graph, building a list of every commit it can reach. Once it's reached the end of every path, it deletes all the commits it didn't visit.
+
+- Creating a new branch:
+    ```
+    git checkout -b new-branch-name
+    ```
+    - `-b` flag stands for "branch", and it ensures that you automatically switch to the new branch that was created.
+    - To switch back to the `main` branch or an existing branch, `-b` is not needed. Here's an example of switching back to the `main` branch:
+        ```
+        git checkout main
+        ```
+
+- Deleting a branch:
+    ```
+    git branch -d branch-name
+    ```
+
+- Hard resetting to a specific savepoint (branch/commit):
+    ```
+    git reset --hard savepoint
+    ```
+    - A savepoint can be anything that Git can turn into a SHA-1 hash. So you could use but are not limited to:
+        - Branch names
+        - Tags
+        - Relative references like HEAD^, HEAD^^, or HEAD~3
+        - partial SHA-1 hashes like 8d434382 (you just have to provide enough initial digits to be unique; Git will fill in the rest for you)
+        - SHA-1 hashes like 8d434382d9420940be260199a8a058cf468d9037 (these are very easy for Git to turn into SHA-1 hashes!). Note that you can obtain the SHA-1 hash of a commit using `git log`.
+
+- Building a new commit with the same change from another commit:
+    ```
+    git cherry-pick commit-id
+    ```
+    - [What `git cherry-pick` does, basically, is take a commit from somewhere else, and "play it back" wherever you are right now. Because this introduces the same change with a different parent, Git builds a new commit with a different ID.](https://think-like-a-git.net/sections/rebase-from-the-ground-up/cherry-picking-explained.html)
 
 ## Git Best Practices
 - Two helpful best practices to consider are atomic commits and leveraging those atomic commits to make your commit messages more useful to future collaborators.
@@ -444,3 +487,86 @@ git config --get user.email
 - [A deeper look at rebasing, how you should use it, what not to do, and steps to take after someone rebases the shared repository (which usually should not be done).](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)
 
 - [A deeper look at how reset and checkout work, what Git's 3 trees are (HEAD, Index, and Working Directory), and how they affect Git's 3 trees.](https://git-scm.com/book/en/v2/Git-Tools-Reset-Demystified)
+
+- [`git rebase`, when we use it with branches, is a shortcut that lets you pick up entire sections of a repository and move them somewhere else](https://think-like-a-git.net/sections/rebase-from-the-ground-up/using-git-cherry-pick-to-simulate-git-rebase.html)
+    - For example: 
+        ```
+        git checkout foo
+        git checkout -b newbar
+        git cherry-pick C D E
+        git checkout bar
+        git reset --hard newbar
+        git branch -d newbar
+        ```
+        is the same as:
+        ```
+        git rebase foo bar
+        ```
+        Think of it like this:
+        ```
+        git rebase first_this then_this
+        ```
+        where `first_this` is the place you start and `then_this` is the place you want to end up in.
+
+## Working with remote repsitories with other people
+
+- Workflow Diagram:
+    ![alt text](images/remote_workflow.png)
+
+### `git push --force` 
+- Let’s say you’re no longer working on a project all by yourself, but with someone else. You want to push a branch you’ve made changes on to a remote repository. Normally, Git will only let you push your changes if you’ve already updated your local branch with the latest commits from this remote. If you haven’t updated your local branch, and you’re attempting to `git push` a commit which would create a conflict on the remote repository, you’ll get an error message. This is actually a great thing! This is a safety mechanism to prevent you from overwriting commits created by the people you’re working with, which could be disastrous. You get the error because your history is outdated.
+
+    You might perform a brief query and find the command `git push --force`. This command overwrites the remote repository with your own local history. So what would happen if we used this while working with others? Well, let’s see what would happen when we’re working with ourselves. Type the following commands into your terminal, and when the interactive rebase tool pops up remove our commit for `Create fourth file`:
+
+    ```bash
+    git push origin main
+    git rebase -i --root
+    git push --force
+    git log
+    ```
+
+    Now, if we check our project directory and the remote GitHub repository, we will see that the fourth file is gone from both. This shows the potential risk of destroying your collaborators' work when using `git push --force`. `git push --force` **is a very dangerous command, and it should be used with caution when collaborating with others**. Instead, you can fix your outdated history error by updating your local history using `fetch`, `merge`, and then attempting to `push` again.
+
+### `git revert`
+- Let’s consider a different scenario:
+
+    ```bash
+    touch test4.md
+    git add test4.md && git commit -m "Create fifth file"
+    git push origin main
+    git log
+    ```
+
+    We look at our commit message and realize oops, we made a mistake. We want to undo this commit and are once again tempted to just force the push. But wait, remember, this is a very dangerous command. If we’re ever considering using it, always check if it’s appropriate and if we can use a safer command instead. If we’re collaborating with others and want to undo a commit we just made, we can instead use `git revert`!
+
+    ```bash
+    git revert HEAD
+    git push origin main
+    ```
+
+    Remember when we were working with HEAD, aka the current commit we’re viewing, while rebasing? What this would do is it would revert the changes to HEAD! Then we would push our new commit to whichever branch we’re working on, which in this example is main even though normally our work would most likely be on a feature-branch.
+
+### When to use `git push --force`
+- So now that we’ve learned about the various dangers of `git push --force`, you’re probably wondering why it exists and when to use it. A very common scenario in which developers use `git push --force` is updating pull requests. Collaborative work is covered more in depth in a separate lesson, but the take-away from this section should be that the `--force` option should be used only when you are certain that it is appropriate. There are also less common scenarios, such as when sensitive information is accidentally uploaded to a repository and you want to remove all occurrences of it.
+
+- It is worth giving special mention to `git push --force-with-lease`, a command which in some companies is the default option. The reason for this is that it’s a fail-safe! It checks if the branch you’re attempting to push to has been updated and sends you an error if it has. This gives you an opportunity to, as mentioned before, `fetch` the work and update your local repository.
+
+### Dangers and best practices 
+- `commit --amend`, `rebase`, `reset`, `push --force` are all especially dangerous when you’re collaborating with others. These commands can destroy work your coworkers have created. So keep that in mind. When attempting to rewrite history, always check the dangers of the particular command you’re using and follow these best practices for the commands we’ve covered:
+    1. If working on a team project, make sure rewriting history is safe to do and others know you’re doing it.
+    2. Ideally, stick to using these commands only on branches that you’re working with by yourself.
+    3. Using the `-f` flag to force something should scare you, and you better have a really good reason for using it.
+    4. Don’t push after every single commit, changing published history should be avoided when possible.
+    5. Regarding the specific commands we’ve covered:
+        1. For `git commit --amend` never amend commits that have been pushed to remote repositories.
+        2. For `git rebase` never rebase a repository that others may work off of.
+        3. For `git reset` never reset commits that have been pushed to remote repositories.
+        4. For `git push --force` only use it when appropriate, use it with caution, and preferably default to using `git push --force-with-lease`.
+
+### Merge Conflicts
+- [GitHub's documentation on merge conflicts](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/about-merge-conflicts)
+- [GitHub's documentation on resolving merge conflicts using the command line](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/resolving-a-merge-conflict-using-the-command-line?platform=linux)
+
+### More about Git
+- [Think Like (a) Git by GeekSam](https://think-like-a-git.net/sections/about-this-site.html). Very useful for getting an overview of how Git works.
+- [`git merge` usage patterns](https://think-like-a-git.net/sections/testing-out-merges.html)
