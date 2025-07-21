@@ -241,6 +241,7 @@ git config --get user.email
             ```
             - Once you run that command, you will be able to choose to use either `git commit -m "your message here"` or `git commit` to type your message with Visual Studio Code!
             - To make a commit with Visual Studio Code as the text editor, just type git commit. After you hit `Enter` a new tab in VS Code will open for you to write your commit message. You may provide more details on multiple lines as part of your commit message. After typing your commit message, save it `Ctrl` + `S` (Mac: `Cmd` + `S`) and close the tab. If you return to the command line, you will see your commit message and a summary of your changes.
+        - [Check out this document about conventions for commit messages].(https://www.conventionalcommits.org/en/v1.0.0/)
     - checking logs to see who has made commits, what commits they made, and when
         ```
         git log
@@ -388,6 +389,41 @@ git config --get user.email
 
 - [The gitignore(5) manual page.](https://git-scm.com/docs/gitignore)
 
+## Branching 
+- Branches in Git allow your repository to hold multiple alternate reality versions of your files at the same time. You’ve actually (sort of) been using branches since you made your first commit, you just might not have known it! When you ran `git config --global init.defaultBranch main` you were setting the name of what’s called the default branch for your repos. The default branch is just what we call the branch that is created when you make your first commit on a project, and in that command we set the name to be `main` as is the current standard. 
+
+- Like the branches in a tree (hence the name), all of the branches for a project stem off of a “trunk” (the `main` branch) or off of other branches.
+
+- When you make commits on a specific branch, those changes only exist on that branch, leaving all of your other branches exactly as they were when you branched off of them. This means that you can keep your `main` branch as a place for only finished features that you know are working properly, and add each feature to your project using dedicated branches which we call **feature branches**.
+
+### Using Branches
+- You can make new branches by using the command `git branch branch_name`. You can then change to your new branch using `git checkout branch_name`. You can also create a new branch and change to it in a single command by using the -b flag with checkout, in the form `git checkout -b branch_name`.
+
+- You can see all of your current branches using `git branch` with no other arguments. The branch that you’re currently on will be indicated with an asterisk. If you want to change back to `main` from any other branch, you can do so just like changing to any other branch using `git checkout main`.
+
+- Once you are done working on your feature branch and are ready to bring the commits that you’ve made on it to your main branch, you will need to perform what is known as a `merge`. Merges are done by using the command `git merge branch_name` which will take the changes you’ve committed in `branch_name` and add them to the branch that you’re currently on. You can see an example of a `develop` branch being created, committed to, and then merged to `main` in the diagram below.
+    ![alt text](images/merge_diagram.png)
+
+- Sometimes, the same lines in a file will have been changed by two different branches. When this happens, you will have a merge conflict when you try and merge those branches together. In order to finish merging the branches you will have to first resolve the conflict. This will be covered in the "Changing History" section.
+
+- When you don’t need a branch anymore, it can be deleted using `git branch -d branch_name` if the branch has already been merged into `main`, or with `git branch -D branch_name` if it hasn’t. You will usually want to delete branches when you’re done with them, otherwise they can pile up and make it more difficult to find the branch you’re looking for when you need it.
+
+### Sharing Code
+- Another great use case for branches is to share code with others that you might not want to commit to your main branch (or feature branch) at all.
+
+- For example: if you have a bug in a new feature you’re working on that you can’t figure out, and it causes your code to break, you don’t want to commit that broken code and have it in your project’s “permanent record”. You could instead create a new temporary branch, switch to it and commit your code to this new branch. If you then push this new temporary branch to GitHub you can share it with others that may be able to help solve your problem.
+
+### Pushing a branch onto your remote repository
+- To push a branch onto your remote respitory, use the command: `git push origin feature_branch_name`. If you're using GitHub, you should now see more than 1 branch on your repository.
+
+- If you want to add files, commit to this branch, and push changes to your repo, you'll need to use `git push origin feature_branch_name` instead of `git push origin main`, since we’re pushing to our new branch.
+    - If you're already in the feature branch, `git push` alone will suffice. To check if you're on feature branch, use `git branch`. Your current branch will have a `*` next to it.
+
+### Deleting a branch
+- To delete a branch from our local repository, use the command: `git branch -d feature_branch_name`
+
+- To delete a branch from the remote repository, use the command: `git push origin --delete feature_branch_name`
+
 ## Changing History
 - So let’s say you’re comfortable writing good commit messages and you’re working with branches to have a good Git workflow going. But nobody is perfect, and as you’re writing some beautiful code something goes wrong! Maybe you commit too early and are missing a file. Maybe you mess up one of your commit messages and omit a vital detail. Let’s look at some ways we can change recent and distant history to fit our needs. We’re going to cover how to:
     - Change our most recent commit
@@ -485,31 +521,14 @@ git config --get user.email
 
 ### More information about rebasing and reset
 - [A deeper look at rebasing, how you should use it, what not to do, and steps to take after someone rebases the shared repository (which usually should not be done).](https://git-scm.com/book/en/v2/Git-Branching-Rebasing)
+    - [This less on Git merging will help to better understand what rebase is doing.](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging#_basic_merging)
+        - For merges, you may want to first understand [`git merge` usage patterns](https://think-like-a-git.net/sections/testing-out-merges.html), which will go branch creation and deletion in subsequent lessons.
+    - [This rebasing example will also help a lot in understanding rebase. `git rebase`, when we use it with branches, is a shortcut that lets you pick up entire sections of a repository and move them somewhere else.](https://think-like-a-git.net/sections/rebase-from-the-ground-up/using-git-cherry-pick-to-simulate-git-rebase.html)
+        - Note that the braches that are `cherry-pick`ed are where the two paths deviated.
 
 - [A deeper look at how reset and checkout work, what Git's 3 trees are (HEAD, Index, and Working Directory), and how they affect Git's 3 trees.](https://git-scm.com/book/en/v2/Git-Tools-Reset-Demystified)
 
-- [`git rebase`, when we use it with branches, is a shortcut that lets you pick up entire sections of a repository and move them somewhere else](https://think-like-a-git.net/sections/rebase-from-the-ground-up/using-git-cherry-pick-to-simulate-git-rebase.html)
-    - For example: 
-        ```
-        git checkout foo
-        git checkout -b newbar
-        git cherry-pick C D E
-        git checkout bar
-        git reset --hard newbar
-        git branch -d newbar
-        ```
-        is the same as:
-        ```
-        git rebase foo bar
-        ```
-        Think of it like this:
-        ```
-        git rebase first_this then_this
-        ```
-        where `first_this` is the place you start and `then_this` is the place you want to end up in.
-
 ## Working with remote repsitories with other people
-
 - Workflow Diagram:
     ![alt text](images/remote_workflow.png)
 
@@ -569,4 +588,23 @@ git config --get user.email
 
 ### More about Git
 - [Think Like (a) Git by GeekSam](https://think-like-a-git.net/sections/about-this-site.html). Very useful for getting an overview of how Git works.
-- [`git merge` usage patterns](https://think-like-a-git.net/sections/testing-out-merges.html)
+
+## Contributing to a Repo
+- [Check out the steps for contributing to a repository that's not yours here](https://www.theodinproject.com/lessons/javascript-using-git-in-the-real-world).
+    - Important vocabulary:
+        - `upstream`: the original GitHub repository
+        - `origin`: your fork of the repo that you want to contribute to
+        - "local" repository: your local clone of `origin`
+    - Note(s):
+        - your “local” repository can only pull from upstream, not push
+    - Summary:
+        1. Check to see if the repository that you want to contribute to has any contribution guides and read it if there is one.
+        2. Fork the repository. On GitHub, there should be a fork button.
+        3. Clone the forked repository onto your workspace.
+        4. Change your directory to the project directory if you're not already in it, and set your upstream running this command: `git remote add upstream git@github.com:owner/repo.git`. The git@github url is only an example. You'll need to get the SSH url from the original repository.
+        5. Create a new branch for what you want to contribute, branch to that branch, and work on the feature.
+        6. When you're done with your fature, check the `upstream` to see if there's anything to be pulled by running: `git fetch upstream`.
+        7. If there are new changes, change back to the `main` branch (`git checkout main`) and then merge the upstream with the `main` branch (`git merge upstream/main`). You want to merge the upstream with the main branch because your feature branch is dirty (i.e. it has new files that have not yet been pushed to the `upstream`). You don’t know if it has any conflicts which might creep up. Any time you are merging in more “senior” branches (e.g. merging the feature into main), you want it to be a clean and conflict-free merge if possible. So you first merge the “senior” branch into your dirty branch to resolve those conflicts.
+        8. Run `git checkout your_feature_name` to jump back onto your feature branch, then `git merge main` to merge `main` into it. If you have merge conflicts, resolve them with the techniques discussed earlier.
+        9. Now you want to send your feature branch back up to your `origin` (your fork of the `upstream` repository). You can’t send directly to `upstream` because you don’t have access, so you’ll need to make a pull request. Use `git push origin your_feature_name` to ship your feature branch up to your fork on GitHub.
+        10. If you have completed an assigned issue, the final step is to submit a pull request to merge your feature branch into the original `upstream` repository’s `main` branch. This can be done using GitHub’s interface.
