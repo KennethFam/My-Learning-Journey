@@ -971,5 +971,244 @@
 
 - You may have heard of `egrep` or `fgrep`, these are deprecated `grep` calls and have since been replaced by `grep -E` and `grep -F`. Read the `grep` manpage to learn more.
 
+#### regex (Regular Expressions)
+- Regular expressions are a powerful tool to do pattern based selection. It uses special notations similar to those we've encountered already such as the `*` wildcard.
+
+- We'll go through a couple of the most common regular expressions, these are almost universal with any programming language. We'll use this phrase as our test string:
+    ```
+    sally sells seashells 
+    by the seashore
+    ```
+
+- Beginning of a line with `^`:
+    ```
+    ^by
+    ```
+    would match the line
+    ```
+    by the seashore
+    ```
+
+- End of a line with `$`
+    ```
+    seashore$
+    ```
+    would match the line
+    ```
+    by the seashore
+    ```
+
+- Matching any single character with `.`
+    ```
+    b.
+    ```
+    would match
+    ```
+    by
+    ```
+
+- Bracket notation with `[]`
+    - This can be a little tricky, brackets allow us to specify characters found within the bracket.
+        ```
+        d[iou]g
+        ```
+        would match words like
+        ```
+        dig, dog, dug
+        ```
+    - The previous anchor tag `^` when used in a bracket means anything except the characters within the bracket.
+        ```
+        d[^i]g
+        ```
+        would match words like
+        ```
+        dog, dug
+        ```
+        but not
+        ```
+        dig
+        ```
+    - Brackets can also use ranges to increase the amount of characters you want to use.
+        ```
+        d[a-c]g
+        ```
+        will match patterns like
+        ```
+        dag, dbg, and dcg
+        ```
+    - Be careful though as brackets are case sensitive:
+        ```
+        d[A-C]g
+        ```
+        will match
+        ```
+        dAg, dBg and dCg
+        ```
+        but not 
+        ```
+        dag, dbg and dcg
+        ```
+
+#### Text Editors
+- [Vim](http://www.vim.org/) and [emacs](https://www.gnu.org/software/emacs/) are popular text editors that are installed by default on most Linux distributions and they both have their pros and cons. If you want to get around your system like a ninja, you'll need to pick up one of these text editors to use. They are essentially coding, word document processing and basically all in one editors.
+
+##### Vim (Vi Improved)
+- Vim stands for vi (Improved) just like its name it stands for an improved version of the vi text editor command. It's super lightweight, opening and editing a file with vim is quick and easy. It's also almost always available, if you booted up a random Linux distribution, chances are vim is installed by default. To fire up vim just type:
+    ```bash
+    vim
+    ```
+
+###### Basic Vim Commands
+- To open a file, do:
+    ```
+    vim filename
+    ```
+
+- To use a command while a file is opened, make sure you're not in insert mode by clicking `esc`.
+
+
+###### Vim Search Patterns
+- To search for an expression just type the `/` key and then your search result while you are in a vim session. Once you hit enter, you can press `n` to go forward or `N` to go backward in your search results.
+    ```
+    My pretty file is very pretty.
+
+    /pretty
+
+    will find the pretty words in the text file.
+    ```
+
+- The `?` search command will search the text file backwards, so in the previous example, the last pretty would come up first.
+    ```
+    My pretty file is very pretty.
+
+    ?pretty
+
+    will find the pretty words in the text file.
+    ```
+
+- To exit the search command, type `/` or `?` before pressing `enter`.
+
+###### Vim Navigation
+- Now you may notice, the mouse is nowhere is use here. To navigate a text document in vim, use the following keys:
+    - `h` or the left arrow - will move you left one character
+    - `k` or the up arrow - will move you up one line
+    - `j` or the down arrow - will move you down one line
+    - `l` or the right arrow - will move you right one character
+
+###### Vim Appending Text
+- Now you may have noticed if you tried to type something you wouldn't be able to. That's because you are in command mode. This can get pretty confusing especially if you just want to open a file and enter text. The command mode is used for when you enter commands like h,j,k.l etc. To insert text you'll need to enter insert mode first.
+    - `i` - insert text before the cursor
+    - `O` - insert text on the previous line
+    - `o` - insert text on the next line
+    - `a` - append text after the cursor
+    - `A` - append text at the end of the line
+
+###### Vim Editing
+- Now that we have a couple of lines written, let's edit it a bit more and remove some cruft.
+    - `x` - used to cut the selected text also used for deleting characters
+    - `dd` - used to delete the current line
+    - `y` - yank or copy whatever is selected
+    - `yy` - yank or copy the current line
+    - `p` - paste the copied text before the cursor
+
+###### Vim Saving and Exiting
+- Now that you've done your editing it's time to actually save and quit out of vim:
+    - `:w` - writes or saves the file
+    - `:q` - quit out of vim
+    - `:wq` - write and then quit
+    - `:q!` - quit out of vim without saving the file
+    - `ZZ` - equivalent of :wq, but one character faster
+    - `u` - undo your last action
+    - `Ctrl`+`r` - redo your last action
+
+- You may not think `ZZ` is necessary, but you'll eventually see that your fingers may tend to lean towards this rather than `:wq`.
+
+##### Emacs
+- Emacs is for users who want an extremely powerful text editor, which may be an understatement because you essentially live in emacs. You can do all your code editing, file manipulation, etc. all within emacs. It's a bit slower to load up and the learning curve is a bit steeper than vim, but if you want a powerful editor that is extremely extensible, this is the one for you. When I say extensible, I literally mean you can write up scripts for emacs that extend its functionality.
+
+- To start emacs just use:
+    ```
+    emacs
+    ```
+    - You should be greeted with the default welcome buffer. Buffers in emacs is what your text resides in. So if you open up a file, a buffer is used to store that file's content. You can have multiple buffers open at the same time and you can easily switch between buffers.
+
+###### Emacs Manipulate Files
+- In a lot (if not all) of Emacs documentation, you will see the syntax C-[letter]. This just means hit the `Ctrl`-letter, but for shorthand purposes, we'll call `Ctrl` with `C`. If you see syntax such as `M`-[letter], that means use the `Meta` key, most commonly the `Alt` key.
+
+- Saving files
+    ```
+    C-x C-s - Save a file
+    C-x C-w - Save file as
+    C-x s - Save all
+    ```
+
+- Opening a file
+    ```
+    C-x C-f
+    ```
+    - This will prompt you to type a filename to open. If you do not have a file that already exists, it will create a new file. You can load up a directory as well.
+
+###### Emacs Buffer Navigation
+- To move around buffers (or files you're visiting) use the following commands:
+    - Switch buffers:
+        ```
+        C-x b - switch buffer
+        C-x right arrow - right-cycle through buffer
+        C-x left arrow - left-cycle through buffer
+        ```
+    - Close the buffer:
+        ```
+        C-x k
+        ```
+    - Split the current buffer:
+        ```
+        C-x 2
+        ```
+        - This allows you see multiple buffers on one screen. To move between these buffers use: `C-x o`.
+    - Set a single buffer as the current screen:
+        ```
+        C-x 1
+        ```
+
+###### Emacs Editing
+- Text navigation:
+    ```
+    C-up arrow : move up one paragraph
+    C-down arrow: move down one paragraph
+    C-left arrow: move one word left
+    C-right arrow: move one word right
+    M-> : move to the end of the buffer
+    ```
+    - With text navigation, your regular text buttons work as they should, home, end, page up, page down and the arrow keys, etc.
+
+- Cutting and Pasting
+    - To cut (kill) or paste (yank) in Emacs you'll need to be able to select text first. To select text, move your cursor to where you want to cut or paste and hit:
+        ```
+        C-space key
+        ```
+        then you can use the navigation keys to select the text you want. Now you can do the cut and paste like so:
+        ```
+        C-w : cut
+        C-y : yank
+        ```
+
+###### Emacs Exiting and Help
+- To close out of emacs:
+    ```
+    C-x C-c
+    ```
+    - If you have any open buffers, it will ask you to save it before closing out of emacs.
+
+- If you're confused or need help:
+    ```
+    C-h C-h : help menu
+    ```
+
+- Undo:
+    ```
+    C-x u
+    ```
+    - As you can see Emacs has more moving parts, so the learning curve is a little steeper. In exchange though, you get a very powerful text editor.
+
 ## Source(s)
 - [Linux Journey](https://linuxjourney.com/)
