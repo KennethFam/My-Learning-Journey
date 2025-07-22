@@ -271,14 +271,14 @@ git config --get user.email
         git pull
         ```
 
-## Other Git Commands
-- garbage collection:
+## Other Git Commands (Quick Reference)
+- Garbage collection:
     ```
     git gc
     ```
     - Starting from every branch and every tag, Git walks back through the graph, building a list of every commit it can reach. Once it's reached the end of every path, it deletes all the commits it didn't visit.
 
-- Creating a new branch:
+- Create a new branch:
     ```
     git checkout -b new-branch-name
     ```
@@ -287,28 +287,64 @@ git config --get user.email
         ```
         git checkout main
         ```
+    Or:
+    ```
+    git branch new-branch-name
+    ```
 
-- Deleting a branch:
+- Switch to another branch:
     ```
-    git branch -d branch-name
+    git checkout branch-name
     ```
 
-- Hard resetting to a specific savepoint (branch/commit):
+- Merge other branch into current branch:
     ```
-    git reset --hard savepoint
+    git merge other-branch
     ```
-    - A savepoint can be anything that Git can turn into a SHA-1 hash. So you could use but are not limited to:
-        - Branch names
-        - Tags
-        - Relative references like HEAD^, HEAD^^, or HEAD~3
-        - partial SHA-1 hashes like 8d434382 (you just have to provide enough initial digits to be unique; Git will fill in the rest for you)
-        - SHA-1 hashes like 8d434382d9420940be260199a8a058cf468d9037 (these are very easy for Git to turn into SHA-1 hashes!). Note that you can obtain the SHA-1 hash of a commit using `git log`.
+    - Make sure you're in the branch you want the other branch to merge into.
+
+- Delete a branch:
+    - For local repository:
+        ```
+        git branch -d branch-name
+        ```
+        - Use `-D` instead if the branch has not yet been merged into the `main` branch.
+    - For remote repository:
+        ```
+        git push origin --delete
+        ```
+
+- List all branches:
+    ```
+    git branch
+    ```
+    - The branch that you're in will have a `*` next to it.
+
+- Amend the last commit:
+    ```
+    git commit --amend
+    ```
+    - This should be run after you have added the other items that you want to add to the last commit to the staging area.
+
+- Commands that change history like `git revert`, `git push --force`, `git rebase` and `git reset` are very complex commands, so please check out the "Changing History" section for how they work and how to use them. That section will also cover `squash` and how to split commits. I will, however, show a quick reference for how to hard reset below:
+    - Hard reset to a specific savepoint (branch/commit):
+        ```
+        git reset --hard savepoint
+        ```
+        - A savepoint can be anything that Git can turn into a SHA-1 hash. So you could use but are not limited to:
+            - Branch names
+            - Tags
+            - Relative references like HEAD^, HEAD^^, or HEAD~3
+            - partial SHA-1 hashes like 8d434382 (you just have to provide enough initial digits to be unique; Git will fill in the rest for you)
+            - SHA-1 hashes like 8d434382d9420940be260199a8a058cf468d9037 (these are very easy for Git to turn into SHA-1 hashes!). Note that you can obtain the SHA-1 hash of a commit using `git log`.
 
 - Building a new commit with the same change from another commit:
     ```
     git cherry-pick commit-id
     ```
     - [What `git cherry-pick` does, basically, is take a commit from somewhere else, and "play it back" wherever you are right now. Because this introduces the same change with a different parent, Git builds a new commit with a different ID.](https://think-like-a-git.net/sections/rebase-from-the-ground-up/cherry-picking-explained.html)
+
+- Check out the "Contributing to a Repo" for commands used to contribute to repos that you do not own.
 
 ## Git Best Practices
 - Two helpful best practices to consider are atomic commits and leveraging those atomic commits to make your commit messages more useful to future collaborators.
@@ -402,6 +438,7 @@ git config --get user.email
 - You can see all of your current branches using `git branch` with no other arguments. The branch that you’re currently on will be indicated with an asterisk. If you want to change back to `main` from any other branch, you can do so just like changing to any other branch using `git checkout main`.
 
 - Once you are done working on your feature branch and are ready to bring the commits that you’ve made on it to your main branch, you will need to perform what is known as a `merge`. Merges are done by using the command `git merge branch_name` which will take the changes you’ve committed in `branch_name` and add them to the branch that you’re currently on. You can see an example of a `develop` branch being created, committed to, and then merged to `main` in the diagram below.
+
     ![alt text](images/merge_diagram.png)
 
 - Sometimes, the same lines in a file will have been changed by two different branches. When this happens, you will have a merge conflict when you try and merge those branches together. In order to finish merging the branches you will have to first resolve the conflict. This will be covered in the "Changing History" section.
@@ -563,7 +600,7 @@ git config --get user.email
     git push origin main
     ```
 
-    Remember when we were working with HEAD, aka the current commit we’re viewing, while rebasing? What this would do is it would revert the changes to HEAD! Then we would push our new commit to whichever branch we’re working on, which in this example is main even though normally our work would most likely be on a feature-branch.
+    Remember when we were working with HEAD, aka the current commit we’re viewing, while rebasing? What this would do is it would revert the changes to HEAD! Then we would push our new commit to whichever branch we’re working on, which in this example is `main` even though normally our work would most likely be on a feature-branch.
 
 ### When to use `git push --force`
 - So now that we’ve learned about the various dangers of `git push --force`, you’re probably wondering why it exists and when to use it. A very common scenario in which developers use `git push --force` is updating pull requests. Collaborative work is covered more in depth in a separate lesson, but the take-away from this section should be that the `--force` option should be used only when you are certain that it is appropriate. There are also less common scenarios, such as when sensitive information is accidentally uploaded to a repository and you want to remove all occurrences of it.
@@ -608,3 +645,6 @@ git config --get user.email
         8. Run `git checkout your_feature_name` to jump back onto your feature branch, then `git merge main` to merge `main` into it. If you have merge conflicts, resolve them with the techniques discussed earlier.
         9. Now you want to send your feature branch back up to your `origin` (your fork of the `upstream` repository). You can’t send directly to `upstream` because you don’t have access, so you’ll need to make a pull request. Use `git push origin your_feature_name` to ship your feature branch up to your fork on GitHub.
         10. If you have completed an assigned issue, the final step is to submit a pull request to merge your feature branch into the original `upstream` repository’s `main` branch. This can be done using GitHub’s interface.
+
+## Sources
+- Most of the resources were linked throughout the notes, but most of the notes were obtained from [The Odin Project](https://www.theodinproject.com/dashboard), mainly through these cours(es)/lesson(s): [Git Basics](https://www.theodinproject.com/paths/foundations/courses/foundations#git-basics), [Revisiting Rock Paper Scissors](https://www.theodinproject.com/lessons/foundations-revisiting-rock-paper-scissors), and [Intermediate Git](https://www.theodinproject.com/paths/full-stack-javascript/courses/javascript#intermediate-git).
