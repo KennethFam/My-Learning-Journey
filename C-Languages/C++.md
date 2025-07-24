@@ -686,6 +686,352 @@
 
 - The `[[maybe_unused]]` attribute should only be applied selectively to variables that have a specific and legitimate reason for being unused (e.g. because you need a list of named values, but which specific values are actually used in a given program may vary). Otherwise, unused variables should be removed from the program.
 
+### Introduction to iostream: cout, cin, and endl
+
+#### The input/output library
+- The input/output library (io library) is part of the C++ standard library that deals with basic input and output. We’ll use the functionality in this library to get input from the keyboard and output data to the console. The io part of iostream stands for input/output.
+
+- To use the functionality defined within the iostream library, we need to include the iostream header at the top of any code file that uses the content defined in iostream, like so:
+    ```cpp
+    #include <iostream>
+
+    // rest of code that uses iostream functionality here
+    ```
+
+#### `std::cout`
+- The iostream library contains a few predefined variables for us to use. One of the most useful is `std::cout`, which allows us to send data to the console to be printed as text. `cout` stands for “character output”. As a reminder, here’s our Hello world program:
+    ```cpp
+    #include <iostream> // for std::cout
+
+    int main()
+    {
+        std::cout << "Hello world!"; // print Hello world! to console
+
+        return 0;
+    }
+    ```
+    - In this program, we have included iostream so that we have access to `std::cout`. Inside our main function, we use `std::cout`, along with the insertion operator (`<<`), to send the text `Hello world!` to the console to be printed.
+
+- `std::cout` can not only print text, it can also print numbers:
+    ```cpp
+    #include <iostream> // for std::cout
+
+    int main()
+    {
+        std::cout << 4; // print 4 to console
+
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    4
+    ```
+
+- It can also be used to print the value of variables:
+    ```cpp
+    #include <iostream> // for std::cout
+
+    int main()
+    {
+        int x{ 5 }; // define integer variable x, initialized with value 5
+        std::cout << x; // print value of x (5) to console
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    5
+    ```
+
+- To print more than one thing on the same line, the insertion operator (`<<`) can be used multiple times in a single statement to concatenate (link together) multiple pieces of output. For example:
+    ```cpp
+    #include <iostream> // for std::cout
+
+    int main()
+    {
+        std::cout << "Hello" << " world!";
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    Hello world!
+    ```
+    - This uses the << operator twice, first to output `Hello` and then to output `world!`.
+
+- Tip: It might be helpful to imagine the `<<` operator (and `>>` operator) as a conveyor belt that moves data in the direction indicated. In this case, when the content is conveyed to `std::cout`, it gets output.
+
+- Here’s another example where we print both text and the value of a variable in the same statement:
+    ```cpp
+    #include <iostream> // for std::cout
+
+    int main()
+    {
+        int x{ 5 };
+        std::cout << "x is equal to: " << x;
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    x is equal to: 5
+    ```
+
+#### Using `std::endl` to output a newline
+- What would you expect this program to print?
+    ```cpp
+    #include <iostream> // for std::cout
+
+    int main()
+    {
+        std::cout << "Hi!";
+        std::cout << "My name is Alex.";
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    Hi!My name is Alex.
+    ```
+    - Separate output statements don’t result in separate lines of output on the console. If we want to print separate lines of output to the console, we need to tell the console to move the cursor to the next line. We can do that by outputting a newline. A **newline** is an OS-specific character or sequence of characters that moves the cursor to the start of the next line.
+
+- One way to output a newline is to output `std::endl` (which stands for “end line”):
+    ```cpp
+    #include <iostream> // for std::cout and std::endl
+
+    int main()
+    {
+        std::cout << "Hi!" << std::endl; // std::endl will cause the cursor to move to the next line
+        std::cout << "My name is Alex." << std::endl;
+
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    Hi!
+    My name is Alex.
+    ```
+    - Tip: In the above program, the second `std::endl` isn’t technically necessary, since the program ends immediately afterward. However, it serves a few useful purposes.
+        1. It helps indicate that the line of output is a “complete thought” (as opposed to partial output that is completed somewhere later in the code). In this sense, it functions similarly to using a period in standard English.
+        2. It positions the cursor on the next line, so that if we later add additional lines of output (e.g. have the program say “bye!”), those lines will appear where we expect (rather than appended to the prior line of output).
+        3. After running an executable from the command line, some operating systems do not output a new line before showing the command prompt again. If our program does not end with the cursor on a new line, the command prompt may appear appended to the prior line of output, rather than at the start of a new line as the user would expect.
+
+- Best practice: Output a newline whenever a line of output is complete.
+
+#### `std::cout` is buffered
+- Consider a rollercoaster ride at your favorite amusement park. Passengers show up (at some variable rate) and get in line. Periodically, a train arrives and boards passengers (up to the maximum capacity of the train). When the train is full, or when enough time has passed, the train departs with a batch of passengers, and the ride commences. Any passengers unable to board the current train wait for the next one.
+    - This analogy is similar to how output sent to `std::cout` is typically processed in C++. Statements in our program request that output be sent to the console. However, that output is typically not sent to the console immediately. Instead, the requested output “gets in line”, and is stored in a region of memory set aside to collect such requests (called a **buffer**). Periodically, the buffer is flushed, meaning all of the data collected in the **buffer** is transferred to its destination (in this case, the console). This also means that if your program crashes, aborts, or is paused (e.g. for debugging purposes) before the buffer is flushed, any output still waiting in the buffer will not be displayed.
+
+- Key insight: The opposite of buffered output is unbuffered output. With unbuffered output, each individual output request is sent directly to the output device. Writing data to a buffer is typically fast, whereas transferring a batch of data to an output device is comparatively slow. Buffering can significantly increase performance by batching multiple output requests together to minimize the number of times output has to be sent to the output device.
+
+#### `std::endl` vs `\n`
+- Using `std::endl` is often inefficient, as it actually does two jobs: it outputs a newline (moving the cursor to the next line of the console), and it flushes the buffer (which is slow). If we output multiple lines of text ending with `std::endl`, we will get multiple flushes, which is slow and probably unnecessary.
+
+- When outputting text to the console, we typically don’t need to explicitly flush the buffer ourselves. C++’s output system is designed to self-flush periodically, and it’s both simpler and more efficient to let it flush itself.
+
+- To output a newline without flushing the output buffer, we use `\n` (inside either single or double quotes), which is a special symbol that the compiler interprets as a newline character. `\n` moves the cursor to the next line of the console without causing a flush, so it will typically perform better. `\n` is also more concise to type and can be embedded into existing double-quoted text.
+
+- Here’s an example that uses `\n` in a few different ways:
+    ```cpp
+    #include <iostream> // for std::cout
+
+    int main()
+    {
+        int x{ 5 };
+        std::cout << "x is equal to: " << x << '\n'; // single quoted (by itself) (conventional)
+        std::cout << "Yep." << "\n";                 // double quoted (by itself) (unconventional but okay)
+        std::cout << "And that's all, folks!\n";     // between double quotes in existing text (conventional)
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    x is equal to: 5
+    Yep.
+    And that's all, folks!
+    ```
+    - When `\n` is not being embedded into an existing line of double-quoted text (e.g. "hello\n"), it is conventionally single quoted (`'\n'`).
+
+- Convention: In C++, we use single quotes to represent single characters (such as `'a'` or `'$'`), and double-quotes to represent text (zero or more characters). Even though `'\n'` is represented in source code as two symbols, it is treated by the compiler as a single linefeed (LF) character (with ASCII value 10), and thus is conventionally single quoted (unless embedded into existing double-quoted text). When `'\n'` is output, the library doing the outputting is responsible for translating this single LF character into the appropriate newline sequence for the given OS.
+
+- Best practice: Prefer `\n` over `std::endl` when outputting text to the console.
+
+#### `std::cin`
+- `std::cin` is another predefined variable in the iostream library. Whereas std::cout prints data to the console (using the insertion operator `<<` to provide the data), `std::cin` (which stands for “character input”) reads input from keyboard. We typically use the extraction operator `>>` to put the input data in a variable (which can then be used in subsequent statements).
+    ```cpp
+    #include <iostream>  // for std::cout and std::cin
+
+    int main()
+    {
+        std::cout << "Enter a number: "; // ask user for a number
+
+        int x{};       // define variable x to hold user input (and value-initialize it)
+        std::cin >> x; // get number from keyboard and store it in variable x
+
+        std::cout << "You entered " << x << '\n';
+        return 0;
+    }
+    ```
+    Example output (entering the value `4` as input):
+    ```
+    Enter a number: 4
+    You entered 4
+    ```
+    - When you run the program, line 5 will print “Enter a number: “. When the code gets to line 8, your program will wait for you to enter input. Once you enter a number (and press `enter`), the number you enter will be assigned to variable `x`. Finally, on line 10, the program will print “You entered ” followed by the number you just entered.
+    - This is an easy way to get keyboard input from the user.
+    - Note that you don’t need to output `'\n'` when accepting a line of input, as the user will need to press the enter key to have their input accepted, and this will move the cursor to the next line of the console.
+
+- Just like it is possible to output more than one bit of text in a single line, it is also possible to input more than one value on a single line:
+    ```cpp
+    #include <iostream>  // for std::cout and std::cin
+
+    int main()
+    {
+        std::cout << "Enter two numbers separated by a space: ";
+
+        int x{}; // define variable x to hold user input (and value-initialize it)
+        int y{}; // define variable y to hold user input (and value-initialize it)
+        std::cin >> x >> y; // get two numbers and store in variable x and y respectively
+
+        std::cout << "You entered " << x << " and " << y << '\n';
+
+        return 0;
+    }
+    ```
+    Example output (entering the value `5 6` as input):
+    ```
+    Enter two numbers separated by a space: 5 6
+    You entered 5 and 6
+    ```
+    - Values entered should be separated by whitespace (spaces, tabs, or newlines).
+    - There’s some debate over whether it’s necessary to initialize a variable immediately before you give it a user provided value via another source (e.g. std::cin), since the user-provided value will just overwrite the initialization value. In line with our previous recommendation that variables should always be initialized, best practice is to initialize the variable first.
+
+#### `std::cin` is buffered
+- In a prior section, we noted that outputting data is actually a two stage process:
+    - The data from each output request is added (to the end) of an output buffer.
+    - Later, data from (the front of) the output buffer is flushed to the output device (the console).
+
+- Adding data to the end of a buffer and removing it from the front of a buffer ensures data is processed in the same order in which it was added. This is sometimes called FIFO (first in, first out).
+
+- Similarly, inputting data is also a two stage process:
+    - The individual characters you enter as input are added to the end of an input buffer (inside `std::cin`). The `enter` key (pressed to submit the data) is also stored as a `'\n'` character.
+    - The extraction operator `>>` removes characters from the front of the input buffer and converts them into a value that is assigned (via copy-assignment) to the associated variable. This variable can then be used in subsequent statements.
+
+- Each line of input data in the input buffer is terminated by a `'\n'` character.
+
+- Example of `cin`'s buffer:
+    ```cpp
+    #include <iostream>  // for std::cout and std::cin
+
+    int main()
+    {
+        std::cout << "Enter two numbers: ";
+
+        int x{};
+        std::cin >> x;
+
+        int y{};
+        std::cin >> y;
+
+        std::cout << "You entered " << x << " and " << y << '\n';
+
+        return 0;
+    }
+    ```
+    - This program inputs to two variables (this time as separate statements). We’ll run this program twice.
+    - Run #1: 
+        - When `std::cin >> x;` is encountered, the program will wait for input. Enter the value `4`. The input `4\n` goes into the input buffer, and the value `4` is extracted to variable `x`.
+        - When `std::cin >> y;` is encountered, the program will again wait for input. Enter the value `5`. The input `5\n` goes into the input buffer, and the value `5` is extracted to variable `y`. Finally, the program will print `You entered 4 and 5`.
+    - Run #2:
+        - When `std::cin >> x;` is encountered, the program will wait for input. Enter `4 5`. The input `4 5\n` goes into the input buffer, but only the `4` is extracted to variable `x` (extraction stops at the space).
+        - When `std::cin >> y;` is encountered, the program will not wait for input. Instead, the `5` that is still in the input buffer is extracted to variable `y`. The program then prints `You entered 4 and 5`.
+    - Note that in run 2, the program didn’t wait for the user to enter additional input when extracting to variable `y` because there was already prior input in the input buffer that could be used.
+    - `std::cin` is buffered because it allows us to separate the entering of input from the extract of input. We can enter input once and then perform multiple extraction requests on it.
+
+#### The basic extraction process
+- Here’s a simplified view of how operator `>>` works for input.
+    1. If `std::cin` is not in a good state (e.g. the prior extraction failed and `std::cin` has not yet been cleared), no extraction is attempted, and the extraction process aborts immediately.
+    2. Leading whitespace characters (spaces, tabs, and newlines at the front of the buffer) are discarded from the input buffer. This will discard an unextracted newline character remaining from a prior line of input.
+    3. If the input buffer is now empty, operator `>>` will wait for the user to enter more data. Any leading whitespace is discarded from the entered data.
+    4. operator `>>` then extracts as many consecutive characters as it can, until it encounters either a newline character (representing the end of the line of input) or a character that is not valid for the variable being extracted to.
+
+- The result of the extraction process is as follows:
+    - If the extraction aborted in step 1, then no extraction attempt occurred. Nothing else happens.
+    - If any characters were extracted in step 4 above, extraction is a success. The extracted characters are converted into a value that is then copy-assigned to the variable.
+    - If no characters could be extracted in step 4 above, extraction has failed. The object being extracted to is copy-assigned the value 0 (as of C++11), and any future extractions will immediately fail (until `std::cin` is cleared).
+
+- Any non-extracted characters (including newlines) remain available for the next extraction attempt.
+
+- For example, given the following snippet:
+    ```cpp
+    int x{};
+    std::cin >> x;
+    ```
+    - Here’s what happens in a three different input cases:
+        - If the user types `5a` and enter, `5a\n` will be added to the buffer. `5` will be extracted, converted to an integer, and assigned to variable `x`. `a\n` will be left in the input buffer for the next extraction.
+        - If the user types `b` and enter, `b\n` would be added to the buffer. Because `b` is not a valid integer, no characters can be extracted, so this is an extraction failure. Variable `x` would be set to `0`, and future extractions will fail until the input stream is cleared.
+        - If `std::cin` is not in a good state due to a prior failed extraction, nothing happens here. The value of variable `x` is not altered.
+
+#### `operator<<` vs `operator>>`
+- New programmers often mix up `std::cin`, `std::cout`, the insertion operator (`<<`) and the extraction operator (`>>`). Here’s an easy way to remember:
+    - `std::cin` and `std::cout` always go on the left-hand side of the operator.
+    - `std::cout` is used to output a value (cout = character output).
+    - `std::cin` is used to get an input value (cin = character input).
+    - `<<` is used with `std::cout`, and shows the direction that data is moving. `std::cout << 4` moves the value `4` to the console.
+    - `>>` is used with `std::cin`, and shows the direction that data is moving. `std::cin >> x` moves the value the user entered from the keyboard into variable `x`.
+
+#### Quiz
+<details>
+<summary><strong> Question </strong></summary>
+
+- Consider the following program that we used above. The program expects you to enter an integer value, as the variable `x` that the user input will be put into is an integer variable. 
+    ```cpp
+    #include <iostream>  // for std::cout and std::cin
+
+    int main()
+    {
+        std::cout << "Enter a number: "; // ask user for a number
+        int x{}; // define variable x to hold user input
+        std::cin >> x; // get number from keyboard and store it in variable x
+        std::cout << "You entered " << x << '\n';
+
+        return 0;
+    }
+    ```
+    - Run this program multiple times and describe the output that results when you enter the following types of input:
+        - A letter, such as `h`.
+            - Result: `0` is always printed. 
+            - What’s happening: An integer can’t hold a letter, so extraction completely fails. `x` is assigned the value `0`.
+        - A number with a fractional part (e.g. `3.2`). Try numbers with fractional parts less than `0.5` and greater than `0.5` (e.g. `3.2` and `3.7`).
+            - Result: The fractional part is dropped (not rounded). 
+            - What’s happening: Given the number `3.2`, the `3` gets extracted, but `.` is an invalid character, so extraction stops here. The `.2` remains for a future extraction attempt. 
+            - If you are wondering why this isn’t a disallowed narrowing conversion, narrowing conversions are only disallowed during list-initialization (which happens on line 6). The extraction happens on line 7.
+        - A small negative integer, such as `-3`.
+            - Result: The entered number is output.
+            - What’s happening: A minus sign at the beginning of a number is acceptable, so it is extracted. The remaining numbers are extracted as well.
+        - A word, such as `Hello`.
+            - Result: `0` is always printed.
+            - What’s happening: An integer can’t hold a letter, so extraction completely fails. x` is assigned the value `0`.
+        - A really big number (at least 3 billion).
+            - Result: You are most likely to get the number `2147483647`.
+            - What’s happening: `x` can only hold numbers up to a certain size. If you enter a value larger than the largest number `x` can hold, it will be set to the largest number that `x` can hold (which is probably `2147483647`, but might be different on your system). We discuss this further in lesson [4.4 -- Signed integers](https://www.learncpp.com/cpp-tutorial/signed-integers/).
+        - A small number followed by some letters, such as `123abc`.
+            - Result: The numeric values are printed (e.g. `123`).
+            - What’s happening: `123` is extracted, the remaining characters (e.g. `abc`) are left for a later extraction.
+        - A few letters followed by a small number, such as `abc123`.
+            - Result: `0` is always printed.
+            - What’s happening: An integer can’t hold a letter, so extraction completely fails. `x` is assigned the value `0`.
+        - `   +5` (three spaces, followed by a plus symbol, and a 5).
+            - Result: `5` is printed.
+            - What’s happening: The leading whitespace is skipped. Plus is a valid symbol at the start of a number (just as a minus sign would be), so it is extracted. The `5` is also extracted.
+        - `5b6`.
+            - Result: `5` is printed.
+            - What’s happening: `5` is extracted. `b` is invalid, so extraction stops here. The `b6` remains for a future extraction attempt.
+
+</details>
+
 ## Vocabulary
 - statement: an instruction in a computer program that tells the computer to perform an action. Most (but not all) statements in C++ end in a semicolon. If you see a line that ends in a semicolon, it’s probably a statement.
 
@@ -770,3 +1116,9 @@
 - Prefer direct-list-initialization or value-initialization to initialize your variables.
 
 - Initialize your variables upon creation.
+
+- Output a newline whenever a line of output is complete.
+
+- Prefer \n over std::endl when outputting text to the console.
+
+- There’s some debate over whether it’s necessary to initialize a variable immediately before you give it a user provided value via another source (e.g. std::cin), since the user-provided value will just overwrite the initialization value. In line with our previous recommendation that variables should always be initialized, best practice is to initialize the variable first.
