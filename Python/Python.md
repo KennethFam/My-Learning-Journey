@@ -2595,3 +2595,162 @@
     [1, 2, 3, 5, 1]
     [2, 3, 5, 1]
     ```
+
+### Classes and objects
+- In the previous section we worked with lists, tuples, dictionaries and strings. These are all rather special cases in Python programming. Python syntax features a unique, pre-defined method of declaring an object belonging to each of these types:
+    ```py
+    # Lists are declared with square brackets
+    my_list = [1,2,3]
+
+    # Strings are declared with quotation marks
+    my_string = "Hi there!"
+
+    # Dictionaries are declared with curly brackets
+    my_dict = {"one": 1, "two:": 2}
+
+    # Tuples are declared with parentheses
+    my_tuple = (1,2,3)
+    ```
+
+- When some other type of object is declared, we need to call a special initialization function called a *constructor*. Let's have a look at working with fractions through the Fraction class.
+    ```py
+    # we are using the class Fraction from the module fractions
+    from fractions import Fraction
+
+    # create some new fractions
+    half = Fraction(1,2)
+
+    third = Fraction(1,3)
+
+    another = Fraction(3,11)
+
+    # print these out
+    print(half)
+    print(third)
+    print(another)
+
+    # Fractions can be added together, for example
+    print(half + third)
+    ```
+    Output:
+    ```
+    1/2
+    1/3
+    3/11
+    5/6
+    ```
+    - As you can see above, constructor method calls look a little different than the normal method calls we have come across before. For one, they are not attached to any object with the dot notation (as the constructor call is needed to create an object in the first place). The constructor method is also capitalized: `half = Fraction(1,2)`. Let's have a closer look at how objects are constructed by getting familiar with the concept of the class.
+
+#### A class is the blueprint of an object
+- We have already used the term class in the material many times. For instance, in the example above we imported the `Fraction` class from the module `fractions`. New fraction objects were created by calling the *constructor* method of the `Fraction` class.
+
+- A class definition contains the structure and functionalities of any object which represents it. That is why classes are sometimes referred to as the blueprints of objects. So, a class definition tells you what kind of data an object contains, and defines also the methods which can be used on the object. *Object oriented programming* refers to a programming paradigm where the functionality of the program is tied into the use of classes and objects created based on them.
+
+- A single class definition can be used to create multiple objects. As mentioned before, objects are independent. Changes made to one object generally do not affect the other objects representing the same class. Each object has its own unique set of data attributes. It might be helpful to consider this simplification of the class-object relationship:
+    - a class defines the variables
+    - when an object is created, those variables are assigned values
+
+- So, we can use an object of type `Fraction` to access the numerator and denominator of a fractional number:
+    ```py
+    from fractions import Fraction
+
+    number = Fraction(2,5)
+
+    # Print the numerator
+    print(number.numerator)
+
+    # ...and the denominator
+    print(number.denominator)
+    ```
+    Output:
+    ```
+    2
+    5
+    ```
+    - The Fraction class definition contains declarations for the variables `numerator` and `denominator`. Each object created based on the class has its own specific values assigned to these variables.
+
+- Similarly, objects created based on the `date` class each contain their own unique values for the `year`, `month` and `day` of the date:
+    ```py
+    from datetime import date
+
+    xmas_eve = date(2020, 12, 24)
+    midsummer = date(2020, 6, 20)
+
+    # print only the month attribute of both objects
+    print(xmas_eve.month)
+    print(midsummer.month)
+    ```
+    Output:
+    ```
+    12
+    6
+    ```
+    - The `date` class definition contains declarations of the `year`, `month` and `day` variables. When a new `date` object is created based on the class, these variables are assigned values. Each object has its own unique values assigned to these variables.
+
+#### Functions which work with objects
+- Passing an object as an argument to a function should be familiar to you by now, as we have done so many times on this course so far. Let's have a look at the following example. Here we have a function which checks if the `date` object passed as an argument falls on a weekend:
+    ```py
+    def is_it_weekend(my_date: date):
+        weekday = my_date.isoweekday()
+        return weekday == 6 or weekday == 7
+    ```
+    - This function uses the method [`isoweekday`](https://docs.python.org/3/library/datetime.html#datetime.date.isoweekday), which is defined in the `date` class definition, and returns an integer value so that if the date given is a Monday, it returns `1`, and if it is a Tuesday, it returns `2`, and so forth. You can use the above function like this:
+        ```py
+        xmas_eve = date(2020, 12, 24)
+        midsummer = date(2020, 6, 20)
+
+        print(is_it_weekend(xmas_eve))
+        print(is_it_weekend(midsummer))
+        ```
+        Output:
+        ```
+        False
+        True
+        ```
+
+#### Methods vs variables
+- When working with an object of type `date` you may notice there is a slight difference between how the variables contained in the object are accessed, as opposed to how the methods attached to the objects are used:
+    ```py
+    my_date = date(2020, 12, 24)
+
+    # calling a method
+    weekday = my_date.isoweekday()
+
+    # accessing a variable
+    my_month = my_date.month
+
+    print("The day of the week:", weekday)
+    print("The month:", my_month)
+    ```
+    Output:
+    ```
+    The day of the week: 4
+    The month: 12
+    ```
+    - The day of the week the date falls on is available through the method `isoweekday`:
+        ```py
+        weekday = my_date.isoweekday()
+        ```
+        - This is a method call, so there are parentheses after the name of the method. Leaving the parentheses out does not cause an error, but the results are weird:
+            ```py
+            weekday =  my_date.isoweekday
+            print("The day of the week:", weekday)
+            ```
+            Output:
+            ```
+            The day of the week: <built-in method isoweekday of datetime.date object at 0x10ed66450>
+            ```
+    - The `month` of a `date` object is a variable, so the value attached can be accessed with a *reference*.
+        ```py
+        my_month = my_date.month
+        ```
+        - Notice there are no parentheses here. Adding parentheses would cause an error:
+            ```py
+            my_month = my_date.month()
+            ```
+            Output:
+            ```
+            Traceback (most recent call last):
+            File "", line 1, in 
+            TypeError: 'int' object is not callable
+            ```
