@@ -14,4 +14,4 @@
 ## Links
 - [Using WSL with VS Code](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode).
 - [Run Linux GUI apps (e.g. Chrome) on the Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps)
-
+- [Connecting USB devices to WSL](https://learn.microsoft.com/en-us/windows/wsl/connect-usb)
