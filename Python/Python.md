@@ -3275,7 +3275,7 @@
 
 - There are many more special underscored methods which can be defined for classes. One rather similar to the `__str__` method is the `__repr__` method. Its purpose is to provide a technical representation of the state of the object. We will come across this method later.
 
-### Example 2: Task list
+#### Example 2: Task list
 - The following class `TaskList` models a list of tasks:
     ```py
     class TaskList:
@@ -3327,4 +3327,485 @@
         studying
         1
         0
+        ```
+
+### Objects and references
+- Every value in Python is an object. Any object you create based on a class you've defined yourself works exactly the same as any "regular" Python object. For example, objects can be stored in a list:
+    ```py
+    from datetime import date
+
+    class CompletedCourse:
+
+        def __init__(self, course_name: str, credits: int, completion_date: date):
+            self.name = course_name
+            self.credits = credits
+            self.completion_date = completion_date
+
+
+    if __name__ == "__main__":
+        # Here we create some completed courses and add these to a list 
+        completed = []
+
+        maths1 = CompletedCourse("Mathematics 1", 5, date(2020, 3, 11))
+        prog1 = CompletedCourse("Programming 1", 6, date(2019, 12, 17))
+
+        completed.append(maths1)
+        completed.append(prog1)
+
+        # Let's add a couple more straight to the list
+        completed.append(CompletedCourse("Physics 2", 4, date(2019, 11, 10)))
+        completed.append(CompletedCourse("Programming 2", 5, date(2020, 5, 19)))
+
+        # Go through all the completed courses, print out their names 
+        # and sum up the credits received
+        credits = 0
+        for course in completed:
+            print(course.name)
+            credits += course.credits
+
+        print("Total credits received:", credits)
+    ```
+    Output:
+    ```
+    Mathematics 1
+    Programming 1
+    Physics 2
+    Programming 2
+    Total credits received: 20
+    ```
+
+- You may remember that lists do not contain any objects themselves. They contain *references to objects*. The exact same object can appear multiple times in a single list, and it can be referred to multiple times within the list or outside it. Let's have a look at an example:
+    ```py
+    class Product:
+        def __init__(self, name: str, unit: str):
+            self.name = name
+            self.unit = unit
+
+
+    if __name__ == "__main__":
+        shopping_list = []
+        milk = Product("Milk", "litre")
+
+        shopping_list.append(milk)
+        shopping_list.append(milk)
+        shopping_list.append(Product("Cucumber", "piece"))
+    ```
+
+    ![alt text](images/objects&references.png)
+
+- If there is more than one reference to the same object, it makes no difference which one of the references is used:
+    ```py
+    class Dog:
+        def __init__(self, name):
+            self.name = name
+
+        def __str__(self):
+            return self.name
+
+    dogs = []
+    fluffy = Dog("Fluffy")
+    dogs.append(fluffy)
+    dogs.append(fluffy)
+    dogs.append(Dog("Fluffy"))
+
+    print("Dogs initially:")
+    for dog in dogs:
+        print(dog)
+
+    print("The dog at index 0 is renamed:")
+    dogs[0].name = "Pooch"
+    for dog in dogs:
+        print(dog)
+
+    print("The dog at index 2 is renamed:")
+    dogs[2].name = "Fifi"
+    for dog in dogs:
+        print(dog)
+    ```
+    Output:
+    ```
+    Dogs initially:
+    Fluffy
+    Fluffy
+    Fluffy
+    The dog at index 0 is renamed:
+    Pooch
+    Pooch
+    Fluffy
+    The dog at index 2 is renamed:
+    Pooch
+    Pooch
+    Fifi
+    ```
+    - The references at indexes 0 and 1 in the list refer to the same object. Either one of the references can be used to access the object. The reference at index 2 refers to a different object, albeit with seemingly the same contents. Changing the contents of this latter object does not affect the other one.
+
+- The operator `is` is used for checking if the two references refer to the exact same object, while the operator `==` will tell you if the contents of the objects are the same. The following example hopefully makes the difference clear:
+    ```py
+    list1 = [1, 2, 3]
+    list2 = [1, 2, 3]
+    list3 = list1
+
+    print(list1 is list2)
+    print(list1 is list3)
+    print(list2 is list3)
+
+    print()
+
+    print(list1 == list2)
+    print(list1 == list3)
+    print(list2 == list3)
+    ```
+    Output:
+    ```
+    False
+    True
+    False
+
+    True
+    True
+    True
+    ```
+
+- Any Python object can also be stored in a dictionary or any other data structure. This also applies to objects created based on a class you've defined yourself.
+    ```py
+    class Student:
+        def __init__(self, name: str, cr: int):
+            self.name = name
+            self.cr = cr
+
+    if __name__ == "__main__":
+        # The key in this dictionary is the student number, 
+        # and the value is an object of type Student
+        students = {}
+        students["12345"] = Student("Saul Student", 10)
+        students["54321"] = Student("Sally Student", 67)
+    ```
+
+    ![alt text](images/object&dict.png)
+
+#### Self or no self?
+- Thus far we've only touched upon the surface of using the `self` parameter name. Let's have a closer look at when it should or should not be used. Below we have a simple class which lets us create a vocabulary object containing some words:
+    ```py
+    class Vocabulary:
+        def __init__(self):
+            self.words = []
+
+        def add_word(self, word: str):
+            if not word in self.words:
+                self.words.append(word)
+
+        def print_vocabulary(self):
+            for word in sorted(self.words):
+                print(word)
+
+    vocab = Vocabulary()
+    vocab.add_word("python")
+    vocab.add_word("object")
+    vocab.add_word("object-oriented programming")
+    vocab.add_word("object")
+    vocab.add_word("nerd")
+
+    vocab.print_vocabulary()
+    ```
+    Output:
+    ```
+    nerd
+    object
+    object-oriented programming
+    python
+    ```
+    - The list of words is stored in an attribute named `self.words`. In this case the `self` parameter name is mandatory in both the constructor method of the class and in any other method accessing that variable. If `self` is left out, the different methods will not access the same list of words.
+    - Let's add a new method to our class definition. The method `longest_word(self)` returns (one of) the longest words in the vocabulary. The following is one way of completing this task, but we will soon see it is not a very good way:
+        ```py
+        class Vocabulary:
+            def __init__(self):
+                self.words = []
+
+            # ...
+
+            def longest_word(self):
+                # define two helper variables
+                self.longest = ""
+                self.length_of_longest = 0
+
+                for word in self.words:
+                    if len(word) > self.length_of_longest:
+                        self.length_of_longest = len(word)
+                        self.longest = word
+
+                return self.longest
+        ```
+        - This method uses two helper variables which are declared with the `self` parameter name. Remember, the names of variables do not matter in the functional sense, so these variables could also be named more confusingly as, for example, `helper` and `helper2`. The code begins to look a bit cryptic:
+            ```py
+            class Vocabulary:
+                def __init__(self):
+                    self.words = []
+
+                # ...
+
+                def longest_word(self):
+                    # define two helper variables
+                    self.helper = ""
+                    self.helper2 = 0
+
+                    for word in self.words:
+                        if len(word) > self.helper2:
+                            self.helper2 = len(word)
+                            self.helper = word
+
+                    return self.helper
+            ```
+        - When a variable is declared with the `self` parameter name, it becomes an attribute of the object. This means that the variable will exist for as long as the object exists. Specifically, the variable will continue existing also after the method declaring it has finished its execution. In the example above this is quite unnecessary, as the helper variables are meant to be used only within the method `longest_word(self)`. So, declaring helper variables with the `self` parameter name is not a very good idea here.
+        - Besides causing variables to exist beyond their "expiration date", using `self` to create new attributes where they aren't necessary can cause difficult bugs in your code. Especially generically named attributes such as `self.helper`, which are then used in various different methods, can cause unexpected behaviour which is hard to trace. For example, if a helper variable is declared as an attribute and assigned an initial value in the constructor, but the variable is then used in an unrelated context in another method, the results are often unpredictable:
+            ```py
+            class Vocabulary:
+                def __init__(self):
+                    self.words = []
+                    # define helper variables
+                    self.helper = ""
+                    self.helper2 = ""
+                    self.helper3 = ""
+                    self.helper4 = ""
+
+                # ...
+
+                def longest_word(self):
+                    for word in self.words:
+                        # above the helper variables were all assigned string values
+                        # the following will not work because the type of helper2 is wrong
+                        if len(word) > self.helper2:
+                            self.helper2 = len(word)
+                            self.helper = word
+
+                    return self.helper
+            ```
+            - You might think this would be solved by just declaring attributes where they are used, outside the constructor, but this results in a situation where the attributes accessible through an object are dependent on which methods have been executed. In the previous part we saw that the advantage of declaring attributes in the constructor is that all instances of the class will then have the exact same attributes. If this is not the case, using different instances of the class can easily lead to errors.
+        - In conclusion, if you need helper variables for use within a single method, the correct way to do it is without `self`. To make your code easier to understand, also use informative variable names:
+            ```py
+            class Vocabulary:
+                def __init__(self):
+                    self.words = []
+
+                # ...
+
+                def longest_word(self):
+                    # the correct way of declaring helper variables 
+                    # for use within a single method
+                    longest = ""
+                    length_of_longest = 0
+
+                    for word in self.words:
+                        if len(word) > length_of_longest:
+                            length_of_longest = len(word)
+                            longest = word
+
+                    return longest
+            ```
+            - In the above implementation the helper variables are only accessible while the method is being executed. The values stored within cannot cause complications in other parts of the program.
+
+#### Objects as arguments to functions
+- The objects created based on our own classes are usually mutable. You may remember that, for instance, Python lists are mutable: when passed as arguments to functions, their contents can change as a result of the execution. Let's have a look at a simple example where a function receives a reference to an object of type `Student` as its argument. The function then changes the name of the student. Both the function and the main function calling it access the same object, so the change is apparent in the main function as well.
+    ```py
+    class Student:
+        def __init__(self, name: str, student_number: str):
+            self.name = name
+            self.student_number = student_number
+
+        def __str__(self):
+            return f"{self.name} ({self.student_number})"
+
+    # the type hint here uses the name of the class defined above
+    def change_name(student: Student):
+        student.name = "Saul Student"
+
+    # create a Student object
+    steve = Student("Steve Student", "12345")
+
+    print(steve)
+    change_name(steve)
+    print(steve)
+    ```
+    Output:
+    ```
+    Steve Student (12345)
+    Saul Student (12345)
+    ```
+
+- It is also possible to create objects within functions. If a function returns a reference to the newly created object, it is also accessible within the main function:
+    ```py
+    from random import randint, choice
+
+    class Student:
+        def __init__(self, name: str, student_number: str):
+            self.name = name
+            self.student_number = student_number
+
+        def __str__(self):
+            return f"{self.name} ({self.student_number})"
+
+    # This function creates and returns a new Student object.
+    # It randomly selects values for the name and the student number.
+    def new_student():
+        first_names = ["Mark","Mindy","Mary","Mike"]
+        last_names = ["Javanese", "Rusty", "Scriptor", "Pythons"]
+
+        # randomly determine the name
+        name = choice(first_names) + " " + choice(last_names)
+
+        # randomly determine the student number
+        student_number = str(randint(10000,99999))
+
+        # Create and return a Student object
+        return Student(name, student_number)
+
+    if __name__ == "__main__":
+        # Call the function five times and store the results in a list
+        students = []
+        for i in range(5):
+            students.append(new_student())
+
+        # Print out the results
+        for student in students :
+            print(student)
+    ```
+    Example output:
+    ```
+    Mary Rusty (78218)
+    Mindy Rusty (80068)
+    Mike Pythons (70396)
+    Mark Javanese (83307)
+    Mary Pythons (45149)
+    ```
+
+#### Objects as arguments to methods
+- Similarly, objects can act as arguments to methods. Let's have a look at an example from an amusement park:
+    ```py
+    class Person:
+        def __init__(self, name: str, height: int):
+            self.name = name
+            self.height = height
+
+    class Attraction:
+        def __init__(self, name: str, min_height: int):
+            self.visitors = 0
+            self.name = name
+            self.min_height = min_height
+
+        def admit_visitor(self, person: Person):
+            if person.height >= self.min_height:
+                self.visitors += 1
+                print(f"{person.name} got on board")
+            else:
+                print(f"{person.name} was too short :(")
+
+        def __str__(self):
+            return f"{self.name} ({self.visitors} visitors)"
+    ```
+    - The `Attraction` contains a method `admit_visitor`, which takes an object of type `Person` as an argument. If the visitor is tall enough, they are admitted on board and the number of visitors is increased. The classes can be tested as follows:
+        ```py
+        rollercoaster = Attraction("Rollercoaster", 120)
+        jared = Person("Jared", 172)
+        alice = Person("Alice", 105)
+
+        rollercoaster.admit_visitor(jared)
+        rollercoaster.admit_visitor(alice)
+
+        print(rollercoaster)
+        ```
+        Output:
+        ```
+        Jared got on board
+        Alice was too short :(
+        Rollercoaster (1 visitors)
+        ```
+
+#### An instance of the same class as an argument to a method
+- Below we have yet another version of the class `Person`:
+    ```py
+    class Person:
+        def __init__(self, name: str, year_of_birth: int):
+            self.name = name
+            self.year_of_birth = year_of_birth
+    ```
+    - Let's assume we want to write a program which compares the ages of objects of type Person. We could write a separate function for this purpose:
+        ```py
+        def older_than(person1: Person, person2: Person):
+            if person1.year_of_birth < person2.year_of_birth:
+                return True
+            else:
+                return False
+
+        muhammad = Person("Muhammad ibn Musa al-Khwarizmi", 780)
+        pascal = Person("Blaise Pascal", 1623)
+        grace = Person("Grace Hopper", 1906)
+
+        if older_than(muhammad, pascal):
+            print(f"{muhammad.name} is older than {pascal.name}")
+        else:
+            print(f"{muhammad.name} is not older than {pascal.name}")
+
+        if older_than(grace, pascal):
+            print(f"{grace.name} is older than {pascal.name}")
+        else:
+            print(f"{grace.name} is not older than {pascal.name}")
+        ```
+        Output:
+        ```
+        Muhammad ibn Musa al-Khwarizmi is older than Blaise Pascal
+        Grace Hopper is not older than Blaise Pascal
+        ```
+
+- One of the principles of object oriented programming is to include any functionality which handles objects of a certain type in the class definition, as methods. So instead of a function we could write a *method* which allows us to compare the age of a `Person` object to another `Person` object:
+    ```py
+    class Person:
+        def __init__(self, name: str, year_of_birth: int):
+            self.name = name
+            self.year_of_birth = year_of_birth
+
+        # NB: type hints must be enclosed in quotation marks if the parameter
+        # is of the same type as the class itself!
+        def older_than(self, another: "Person"):
+            if self.year_of_birth < another.year_of_birth:
+                return True
+            else:
+                return False
+    ```
+    - Here the object which the method is called on is referred to as `self`, while the other Person object is `another`. Remember, calling a method differs from calling a function. A method is attached to an object with the dot notation:
+        ```py
+        muhammad = Person("Muhammad ibn Musa al-Khwarizmi", 780)
+        pascal = Person("Blaise Pascal", 1623)
+        grace = Person("Grace Hopper", 1906)
+
+        if muhammad.older_than(pascal):
+            print(f"{muhammad.name} is older than {pascal.name}")
+        else:
+            print(f"{muhammad.name} is not older than {pascal.name}")
+
+        if grace.older_than(pascal):
+            print(f"{grace.name} is older than {pascal.name}")
+        else:
+            print(f"{grace.name} is not older than {pascal.name}")
+        ```
+        - To the left of the dot is the object itself, which is referred to as `self` within the method definition. In parentheses is the argument to the method, which is the object referred to as `another`.
+        - The printout from the program is exactly the same as with the function implementation above.
+    - A rather cosmetic point to finish off: the `if...else` structure in the method `older_than` is by and large unneccessary. The value of the Boolean expression in the condition is already the exact same truth value which is returned. The method can thus be simplified:
+        ```py
+        class Person:
+            def __init__(self, name: str, year_of_birth: int):
+                self.name = name
+                self.year_of_birth = year_of_birth
+
+            # NB: type hints must be enclosed in quotation marks if the parameter 
+            # is of the same type as the class itself!
+            def older_than(self, another: "Person"):
+                return self.year_of_birth < another.year_of_birth
+        ```
+    - As stated in the comments in the examples above, if the parameter in a method definition is of the same type as the class itself, the type hint must be enclosed in quotation marks. Leaving the quotation marks out causes an error, which you will see if you try the following:
+        ```py
+        class Person:
+            # ...
+
+            # this would cause an error, as Person must be enclosed in quotation marks
+            def older_than(self, another: Person):
+                return self.year_of_birth < another.year_of_birth:
         ```
