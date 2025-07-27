@@ -2754,3 +2754,577 @@
             File "", line 1, in 
             TypeError: 'int' object is not callable
             ```
+
+### Defining classes
+- A class is defined with the keyword `class`. The syntax is as follows:
+    ```py
+    class NameOfClass:
+        # class defition goes here
+    ```
+
+- Classes are usually named in *PascalCase*, also known as *UpperCamelCase*. This means that all the words in the class name are written together, without spaces, and each word is capitalised. The following class names follow this convention:
+    - Weekday
+    - BankAccount
+    - LibraryDatabase
+    - PythonCourseGrades
+
+- A single class definition should represent a single whole, the contents of which should be atomically linked together in some way. In more complicated programs classes can contain members of other classes. For example, the class `Course` could contain objects of class `Lecture`, `ExerciseSession` etc.
+
+- Lets have a look at a skeleton of a class definition. The functionalities are still missing at this point.
+    ```py
+    class BankAccount:
+        pass
+    ```
+    - The above piece of code tells Python that here we are defining a class named `BankAccount`. The class does not contain any functionality yet, but we can still create an object based on the class.
+    - Lets have a look at a program where two variables are added to a `BankAccount` object: `balance` and `owner`. Any variables attached to an object are called its *attributes*, or more specifically, *data attributes*, or sometimes *instance variables*. The attributes attached to an object can be accessed through the object:
+        ```py
+        class BankAccount:
+            pass
+
+        peters_account = BankAccount()
+        peters_account.owner = "Peter Python"
+        peters_account.balance = 5.0
+
+        print(peters_account.owner)
+        print(peters_account.balance)
+        ```
+        Output:
+        ```
+        Peter Python
+        5.0
+        ```
+
+- The data attributes are available only through the object they are attached to. Each `BankAccount` object created based on the `BankAccount` class has its own values attached to the data attributes. Those values can be accessed by referring to the object in question:
+    ```py
+    account = BankAccount()
+    account.balance = 155.50
+
+    print(account.balance) # This refers to the data attribute balance attached to the account
+    print(balance) # THIS CAUSES AN ERROR, as there is no such independent variable available, and the object reference is missing
+    ```
+
+#### Adding a constructor
+- In the above example we saw that a new instance of a class can be created by calling the constructor method of the class like so: `NameOfClass()`. Above we then attached data attributes to the object separately, but it is often more convenient to pass these initial values of attributes directly as the object is created. In the above example we first had a `BankAccount` object without these attributes, and the attributes only existed after they were explicitly declared.
+
+- Declaring attributes outside the constructor results in a situation where different instances of the same class can have different attributes. The following code produces an error because we now have another `BankAccount` object, `paulas_account`, which does not contain the same attributes:
+    ```py
+    class BankAccount:
+    pass
+
+    peters_account = BankAccount()
+    peters_account.owner = "Peter"
+    peters_account.balance = 1400
+
+    paulas_account = BankAccount()
+    paulas_account.owner = "Paula"
+
+    print(peters_account.balance)
+    print(paulas_account.balance) # THIS CAUSES AN ERROR
+    ```
+    - So, instead of declaring attributes after each instance of the class is created, it is usually a better idea to initialize the values of the attributes as the class constructor is called. As the BankAccount class definition is currently just a skeleton, the constructor method is implicitly assumed by the Python interpreter, but it is possible to define your own constructor methods, and that is exactly what we will do now.
+
+- A constructor method is a method declaration with the special name `__init__`, usually included at the very beginning of a class definition. Lets have a look at a `BankAccount` class with a constructor method added in:
+    ```py
+    class BankAccount:
+
+        # The constructor
+        def __init__(self, balance: float, owner: str):
+            self.balance = balance
+            self.owner = owner
+    ```
+    - The name of the constructor method is always `__init__`. Notice the two underscores on both sides of the word `init`.
+    - The first parameter in a constructor definition is always named `self`. This refers to the object itself, and is necessary for declaring any attributes attached to the object. The assignment `self.balance = balance` assigns the balance received as an argument to the balance attribute of the object. It is a common convention to use the same variable names for the parameters and the data attributes defined in a constructor, but the variable names `self.balance` and `balance` above refer to two different variables:
+        - The variable `self.balance` is an attribute of the object. Each `BankAccount` object has its own balance.
+        - The variable `balance` is a parameter in the constructor method `__init__`. Its value is set to the value passed as an argument to the method as the constructor is called (that is, when a new instance of the class is created).
+
+- Now that we have defined the parameters of the constructor method, we can pass the desired initial values of the data attributes as arguments as a new object is created:
+    ```py
+    class BankAccount:
+
+        # The constructor
+        def __init__(self, balance: float, owner: str):
+            self.balance = balance
+            self.owner = owner
+
+    # As the method is called, no argument should be given for the self parameter
+    # Python assigns the value for self automatically
+    peters_account = BankAccount(100, "Peter Python")
+    paulas_account = BankAccount(20000, "Paula Pythons")
+
+    print(peters_account.balance)
+    print(paulas_account.balance)
+    ```
+    Output:
+    ```
+    100
+    20000
+    ```
+    - It is now much easier to work with the `BankAccount` objects, as the values can be passed at object creation, and the resulting two separate instances can be handled more predictably and uniformly. Declaring data attributes in the constructor also ensures the attributes are actually declared, and the desired initial values are always given by the programmer using the class.
+
+- It is still possible to change the initial values of the data attributes later in the program:
+    ```py
+    class BankAccount:
+
+        # The constructor
+        def __init__(self, balance: float, owner: str):
+            self.balance = balance
+            self.owner = owner
+
+    peters_account = BankAccount(100, "Peter Python")
+    print(peters_account.balance)
+
+    # Change the balance to 1500
+    peters_account.balance = 1500
+    print(peters_account.balance)
+
+    # Add 2000 to the balance
+    peters_account.balance += 2000
+    print(peters_account.balance)
+    ```
+    Output:
+    ```
+    100
+    1500
+    3500
+    ```
+
+- Let's have a look at another example of classes and objects. We'll write a class which models a single draw of lottery numbers:
+    ```py
+    from datetime import date
+
+    class LotteryDraw:
+
+        def __init__(self, round_week: int, round_date: date, numbers: list):
+            self.round_week = round_week
+            self.round_date = round_date
+            self.numbers = numbers
+
+
+    # Create a new LotteryDraw object
+    round1 = LotteryDraw(1, date(2021, 1, 2), [1,4,8,12,13,14,33])
+
+    # Tulostetaan tiedot
+    print(round1.round_week)
+    print(round1.round_date)
+
+    for number in round1.numbers:
+        print(number)
+    ```
+    Output:
+    ```
+    1
+    2021-01-02
+    1
+    4
+    8
+    12
+    13
+    14
+    33
+    ```
+    - As you can see above, the attributes can be of any type. Here, each LotteryDraw object has attributes of type `list` and `date`.
+
+#### Using objects formed from your own classes
+- Objects formed from your own class definitions are no different from any other Python objects. They can be passed as arguments and return values just like any other object. We could, for example, write some helper functions for working with bank accounts:
+    ```py
+    # this function creates a new bank account object and returns it
+    def open_account(name: str):
+        new_account =  BankAccount(0, name)
+        return new_account
+
+    # this function adds the amount passed as an argument to the balance of the bank account also passed as an argument
+    def deposit_money_on_account(account: BankAccount, amount: int):
+        account.balance += amount
+
+    peters_account = open_account("Peter Python")
+    print(peters_account.balance)
+
+    deposit_money_on_account(peters_account, 500)
+
+    print(peters_account.balance)
+    ```
+    Output:
+    ```
+    0
+    500
+    ```
+
+### Defining methods
+- Classes which contain only data attributes are not very different from dictionaries. Below you will find two ways to model a bank account, first with a class definition, and then using a dictionary.
+    Class:
+    ```py
+    # Example 1: bank account with class definition
+    class BankAccount:
+
+        def __init__(self, account_number: str, owner: str, balance: float, annual_interest: float):
+            self.account_number = account_number
+            self.owner = owner
+            self.balance = balance
+            self.annual_interest = annual_interest
+
+    peters_account = BankAccount("12345-678", "Peter Python", 1500.0, 0.015)
+    ```
+    Dictionary:
+    ```py
+    # Example 2: bank account with dictionary
+    peters_account = {"account_number": "12345-678", "owner": "Peter Python", "balance": 1500.0, "annual_interest": 0.015}
+    ```
+    - With a dictionary the implementation is much shorter and more straightforward. With a class, however, the structure is more "tightly bound", so that we can expect all `BankAccount` objects to be structurally alike. A class is also named. The `BankAccount` class is referenced when creating a new bank account, and the type of the object is `BankAccount`, not `dict`.
+    - Another significant advantage of classes is that in addition to data, they can contain functionality. One of the guiding principles of object oriented programming is that an object is used to access both the data attached to an object and the functionality to process that data.
+
+### Methods in classes
+- A method is a subprogram or function that is bound to a specific class. Usually a method only affects a single object. A method is defined within the class definition, and it can access the data attributes of the class just like any other variable.
+
+- Let's continue with the `BankAccount` class introduced above. Below we have a new method which adds interest to the account:
+    ```py
+    class BankAccount:
+
+        def __init__(self, account_number: str, owner: str, balance: float, annual_interest: float):
+            self.account_number = account_number
+            self.owner = owner
+            self.balance = balance
+            self.annual_interest = annual_interest
+
+        # This method adds the annual interest to the balance of the account
+        def add_interest(self):
+            self.balance += self.balance * self.annual_interest
+
+
+    peters_account = BankAccount("12345-678", "Peter Python", 1500.0, 0.015)
+    peters_account.add_interest()
+    print(peters_account.balance)
+    ```
+    Output:
+    ```
+    1522.5
+    ```
+    - The `add_interest` method multiplies the balance of the account by the annual interest percentage, and then adds the result to the current balance. The method acts only on the object which it is called on.
+    - Let's see how this works when we have created multiple instances of the class:
+        ```py
+        # The class BankAccount is defined in the previous example
+
+        peters_account = BankAccount("12345-678", "Peter Python", 1500.0, 0.015)
+        paulas_account = BankAccount("99999-999", "Paula Pythonen", 1500.0, 0.05)
+        pippas_account = BankAccount("1111-222", "Pippa Programmer", 1500.0, 0.001)
+
+        # Add interest on Peter's and Paula's accounts, but not on Pippa's
+        peters_account.add_interest()
+        paulas_account.add_interest()
+
+        # Print all account balances
+        print(peters_account.balance)
+        print(paulas_account.balance)
+        print(pippas_account.balance)
+        ```
+        Output:
+        ```
+        1522.5
+        1575.0
+        1500.0
+        ```
+        - As you can see above, the annual interest is added only to those accounts which the method is called on. As the annual interest rates are different for Peter's and Paula's accounts, the results are different for these two accounts. The balance on Pippa's account does not change, because the `add_interest` method is not called on the object `pippas_account`.
+
+#### Encapsulation
+- In object oriented programming the word *client* comes up from time to time. This is used to refer to a section of code which creates an object and uses the service provided by its methods. When the data contained in an object is used only through the methods it provides, the *internal integrity* of the object is guaranteed. In practice this means that, for example, a `BankAccount` class offers methods to handle the `balance` attribute, so the balance is never accessed directly by the client. These methods can then verify that the balance is not allowed to go below zero, for instance. An example of how this would work:
+    ```py
+    class BankAccount:
+
+        def __init__(self, account_number: str, owner: str, balance: float, annual_interest: float):
+            self.account_number = account_number
+            self.owner = owner
+            self.balance = balance
+            self.annual_interest = annual_interest
+
+        # This method adds the annual interest to the balance of the account
+        def add_interest(self):
+            self.balance += self.balance * self.annual_interest
+
+        # This method "withdraws" money from the account
+        # If the withdrawal is successful the method returns True, and False otherwise
+        def withdraw(self, amount: float):
+            if amount <= self.balance:
+                self.balance -= amount
+                return True
+
+            return False
+
+    peters_account = BankAccount("12345-678", "Peter Python", 1500.0, 0.015)
+
+    if peters_account.withdraw(1000):
+        print("The withdrawal was successful, the balance is now", peters_account.balance)
+    else:
+        print("The withdrawal was unsuccessful, the balance is insufficient")
+
+    # Yritetään uudestaan
+    if peters_account.withdraw(1000):
+        print("The withdrawal was successful, the balance is now", peters_account.balance)
+    else:
+        print("The withdrawal was unsuccessful, the balance is insufficient")
+    ```
+    Output:
+    ```
+    The withdrawal was successful, the balance is now 500.0
+    The withdrawal was unsuccessful, the balance is insufficient
+    ```
+
+- Maintaining the internal integrity of the object and offering suitable methods to ensure this is called *encapsulation*. The idea is that the inner workings of the object are hidden from the client, but the object offers methods which can be used to access the data stored in the object.
+
+- Adding a method does not automatically hide the attribute. Even though the `BankAccount` class definition contains the `withdraw` method for withdrawing money, the client code can still access and change the `balance` attribute directly:
+    ```py
+    peters_account = BankAccount("12345-678", "Peter Python", 1500.0, 0.015)
+
+    # Attempt to withdraw 2000
+    if peters_account.withdraw(2000):
+        print("The withdrawal was successful, the balance is now", peters_account.balance)
+    else:
+        print("The withdrawal was unsuccessful, the balance is insufficient")
+
+        # "Force" the withdrawal of 2000
+        peters_account.balance -= 2000
+
+    print("The balance is now:", peters_account.balance)
+    ```
+    Output:
+    ```
+    The withdrawal was unsuccessful, the balance is insufficient
+    The balance is now: -500.0
+    ```
+    - It is possible to hide the data attributes from the client code, which can help in solving this problem. We will return to this topic in the next part.
+
+- Let's have a look at a class which models the personal best of a player. The class definition contains separate validator methods which ascertain that the arguments passed are valid. The methods are called already within the constructor. This ensures the object created is internally sound.
+    ```py
+    from datetime import date
+
+    class PersonalBest:
+
+        def __init__(self, player: str, day: int, month: int, year: int, points: int):
+            # Default values
+            self.player = ""
+            self.date_of_pb = date(1900, 1, 1)
+            self.points = 0
+
+            if self.name_ok(player):
+                self.player = player
+
+            if self.date_ok(day, month, year):
+                self.date_of_pb = date(year, month, day)
+
+            if self.points_ok(points):
+                self.points = points
+
+        # Helper methods to check the arguments are valid
+        def name_ok(self, name: str):
+            return len(name) >= 2 # Name should be at least two characters long
+
+        def date_ok(self, day, month, year):
+            try:
+                date(year, month, day)
+                return True
+            except:
+                # an exception is raised if the arguments are not valid
+                return False
+
+        def points_ok(self, points):
+            return points >= 0
+
+    if __name__ == "__main__":
+        result1 = PersonalBest("Peter", 1, 11, 2020, 235)
+        print(result1.points)
+        print(result1.player)
+        print(result1.date_of_pb)
+
+        # The date was not valid
+        result2 = PersonalBest("Paula", 4, 13, 2019, 4555)
+        print(result2.points)
+        print(result2.player)
+        print(result2.date_of_pb) # Tulostaa oletusarvon 1900-01-01
+    ```
+    Output:
+    ```
+    235
+    Peter
+    2020-11-01
+    4555
+    Paula
+    1900-01-01
+    ```
+    - In the example above, the helper methods were called via the `self` parameter name when they were used in the constructor. It is possible to also include static method definitions in class definitions. These are methods which can be called without ever creating an instance of the class. We will return to this subject in the next part.
+
+- The parameter name `self` is only used when referring to the features of the *object as an instance of the class*. These include both the data attributes and the methods attached to an object. To make the terminology more confusing, the data attributes and methods are together sometimes referred to simply as the *attributes* of the object, which is why in this material we have often specified *data attributes* when we mean the variables defined within the class. This is where the terminology of some Python programmers slightly differs from the terminology used in object oriented programming more widely, where *attributes* usually refers to just the data attributes of an object.
+
+- It is also possible to create local variables within method definitions without referring to `self`. You should do so if there is no need to access the variables outside the method. Local variables within methods have no special keywords; they are used just like any normal variables you have come across thus far. So, for example this would work:
+    ```py
+    class BonusCard:
+        def __init__(self, name: str, balance: float):
+            self.name = name
+            self.balance = balance
+
+        def add_bonus(self):
+            # The variable bonus below is a local variable.
+            # It is not a data attribute of the object.
+            # It can not be accessed directly through the object.
+            bonus = self.balance * 0.25
+            self.balance += bonus
+
+        def add_superbonus(self):
+            # The superbonus variable is also a local variable.
+            # Usually helper variables are local variables because
+            # there is no need to access them from the other
+            # methods in the class or directly through an object.
+            superbonus = self.balance * 0.5
+            self.balance += superbonus
+
+        def __str__(self):
+            return f"BonusCard(name={self.name}, balance={self.balance})"
+    ```
+
+### More examples of classes
+
+##### Example 1: the Rectangle class
+- Let's have a look at a class which models a rectangle in two-dimensional space:
+    ```py
+    class Rectangle:
+        def __init__(self, left_upper: tuple, right_lower: tuple):
+            self.left_upper = left_upper
+            self.right_lower = right_lower
+            self.width = right_lower[0]-left_upper[0]
+            self.height = right_lower[1]-left_upper[1]
+
+        def area(self):
+            return self.width * self.height
+
+        def perimeter(self):
+            return self.width * 2 + self.height * 2
+
+        def move(self, x_change: int, y_change: int):
+            corner = self.left_upper
+            self.left_upper = (corner[0]+x_change, corner[1]+y_change)
+            corner = self.right_lower
+            self.right_lower = (corner[0]+x_change, corner[1]+y_change)
+    ```
+    - A new `Rectangle` is created with two tuples as arguments. These tuples contain the x and y coordinates of the upper left corner and the lower right corner. The constructor calculates the height and width of the rectangle based on these values.
+    - The methods `area` and `perimeter` calculate the area and perimeter of the rectangle based on the height and width. The method `move` moves the rectangle by the x and y values given as arguments.
+    - The following program tests the `Rectangle` class:
+        ```py
+        rectangle = Rectangle((1, 1), (4, 3))
+        print(rectangle.left_upper)
+        print(rectangle.right_lower)
+        print(rectangle.width)
+        print(rectangle.height)
+        print(rectangle.perimeter())
+        print(rectangle.area())
+
+        rectangle.move(3, 3)
+        print(rectangle.left_upper)
+        print(rectangle.right_lower)
+        ```
+        Output:
+        ```
+        (1, 1)
+        (4, 3)
+        3
+        2
+        10
+        6
+        (4, 4)
+        (7, 6)
+        ```
+
+#### Printing an object
+- When you have an object created from a class defined by yourself, the default reaction to calling the `print` command with that object as its argument is not very informative:
+    ```py
+    rectangle = Rectangle((1, 1), (4, 3))
+    print(rectangle)
+    ```
+    The printout should look a bit like this:
+    ```
+    <main.Rectangle object at 0x000002D7BF148A90>
+    ```
+
+- Obviously, we want more control over what is printed out. The easiest way to do this is to add a special `__str__` method to the class definition. Its purpose is to return a snapshot of the state of the object in string format. If the class definition contains a `__str__` method, the value returned by the method is the one printed out when the `print` command is executed. So, let's add a `__str__` method definition to our `Rectangle` class:
+    ```py
+    class Rectangle:
+
+        # ...the rest of the class goes here the same as above...
+
+        # This method returns the state of the object in string format
+        def __str__(self):
+            return f"rectangle {self.left_upper} ... {self.right_lower}"
+    ```
+    - Now the `print` command produces something more user-friendly:
+        ```py
+        rectangle = Rectangle((1, 1), (4, 3))
+        print(rectangle)
+        ```
+        Output:
+        ```
+        rectangle (1, 1) ... (4, 3)
+        ```
+
+- The `__str__` method is perhaps more often used for formulating a string representation of the object with the `str` function, as seen in the following program:
+    ```py
+    rectangle = Rectangle((1, 1), (4, 3))
+    str_rep = str(rectangle)
+    print(str_rep)
+    ```
+    Output:
+    ```
+    rectangle (1, 1) ... (4, 3)
+    ```
+    - Note that using `str(rectangle)` returns the result from the `__str__` function.
+
+- There are many more special underscored methods which can be defined for classes. One rather similar to the `__str__` method is the `__repr__` method. Its purpose is to provide a technical representation of the state of the object. We will come across this method later.
+
+### Example 2: Task list
+- The following class `TaskList` models a list of tasks:
+    ```py
+    class TaskList:
+        def __init__(self):
+            self.tasks = []
+
+        def add_task(self, name: str, priority: int):
+            self.tasks.append((priority, name))
+
+        def get_next(self):
+            self.tasks.sort()
+            # The list method pop removes and returns the last item in a list
+            task = self.tasks.pop()
+            # Return the name of the task (the second item in the tuple)
+            return task[1]
+
+        def number_of_tasks(self):
+            return len(self.tasks)
+
+        def clear_tasks(self):
+            self.tasks = []
+    ```
+    - The method `add_task` adds a new task to the list. Each task also has a priority attached, which is used for sorting the tasks. The method `get_next` removes and returns the task with the highest priority on the list. There is also the `number_of_tasks` method, which returns the number of tasks on the list, and finally the method `clear_tasks`, which clears the task list.
+    - Within the object, the tasks are stored in a list. Each task is of a tuple containing the priority of the task and its name. The priority value is stored first, so that when the list is sorted, the task with the highest priority is the last item on the list. This is why we can then simply use the pop method to retrieve and remove the highest priority item.
+    - Please have a look at the following program with the task list in action:
+        ```py
+        tasks = TaskList()
+        tasks.add_task("studying", 50)
+        tasks.add_task("exercise", 60)
+        tasks.add_task("cleaning", 10)
+        print(tasks.number_of_tasks())
+        print(tasks.get_next())
+        print(tasks.number_of_tasks())
+        tasks.add_task("date", 100)
+        print(tasks.number_of_tasks())
+        print(tasks.get_next())
+        print(tasks.get_next())
+        print(tasks.number_of_tasks())
+        tasks.clear_tasks()
+        print(tasks.number_of_tasks())
+        ```
+        Output:
+        ```
+        3
+        exercise
+        2
+        3
+        date
+        studying
+        1
+        0
+        ```
