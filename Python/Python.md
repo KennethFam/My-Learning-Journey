@@ -3809,3 +3809,207 @@
             def older_than(self, another: Person):
                 return self.year_of_birth < another.year_of_birth:
         ```
+
+### Objects as attributes
+- We have already seen examples of classes which have lists as attributes. As there is thus nothing stopping us from including mutable objects as attributes in our classes, we might as well use instances of our own classes as attributes in other classes we've defined ourselves. In the following examples we will define the classes `Course`, `Student` and `CompletedCourse`. A completed course makes use of the first two classes. The class definitions are very short and simple in order to better concentrate on the technique of using instances of our own classes as attributes. We will assume each class is defined in a separate file.
+    - First we define the class `Course` in a file named `course.py`:
+        ```py
+        class Course:
+            def __init__(self, name: str, code: str, credits: int):
+                self.name = name
+                self.code = code
+                self.credits = credits
+        ```
+    - Next, the class `Student` in a file named `student.py`:
+        ```py
+        class Student:
+            def __init__(self, name: str, student_number: str, credits: int):
+                self.name = name
+                self.student_number = student_number
+                self.credits = credits
+        ```
+    - Finally, the class `CompletedCourse` is defined in a file named `completedcourse.py`. As it uses the other two classes, they have to be imported before they can be used:
+        ```py
+        from course import Course
+        from student import Student
+
+        class CompletedCourse:
+            def __init__(self, student: Student, course: Course, grade: int):
+                self.student = student
+                self.course = course
+                self.grade = grade
+        ```
+    - Here is an example of a main function which adds some completed courses to a list:
+        ```py
+        from completedcourse import CompletedCourse
+        from course import Course
+        from student import Student
+
+        # Create a list of students
+        students = []
+        students.append(Student("Ollie", "1234", 10))
+        students.append(Student("Peter", "3210", 23))
+        students.append(Student("Lena", "9999", 43))
+        students.append(Student("Tina", "3333", 8))
+
+        # Create a course named Introduction to Programming
+        itp = Course("Introduction to Programming", "itp1", 5)
+
+        # Add completed courses for each student, with grade 3 for all
+        completed = []
+        for student in students:
+            completed.append(CompletedCourse(student, itp, 3))
+
+        # Print out the name of the student for each completed course
+        for course in completed:
+            print(course.student.name)
+        ```
+        Output:
+        ```
+        Ollie
+        Peter
+        Lena
+        Tina
+        ```
+        - What exactly is happening with all the dots on the line `print(course.student.name)`?
+            - `course` is an instance of the class `CompletedCourse`
+            - `student` refers to an attribute of the `CompletedCourse` object, which is an object of type `Student`
+            - the attribute `name` in the `Student` object contains the name of the student
+
+#### When is an `import` necessary?
+- In the examples above an import statement appeared quite a few times:
+    ```py
+    from completedcourse import CompletedCourse
+    from course import Course
+    from student import Student
+
+    # rest of the main function
+    ```
+    - An `import` statement is only necessary when using code which is defined somewhere outside the current file (or Python interpreter session). This includes situations where we want to use something defined in the Python standard library. For example, the `math` module contains some mathematical operations:
+        ```py
+        import math
+
+        x = 10
+        print(f"the square root of {x} is {math.sqrt(x)}")
+    ```
+    - In the example above we assumed the three classes were each defined in a separate file, and the main function was run from yet another file. This is why the `import` statements were necessary.
+
+#### A list of objects as an attribute of an object
+- In the examples above we used single instances of other classes as attributes: a `Person` has a single `Pet` as an attribute, and a `CompletedCourse` has one `Student` and one `Course` as its attributes.
+
+- In object oriented programming it is often the case that we want to have a collection of objects as an attribute. For example, the relationship between a sports team and its players follows this pattern:
+    ```py
+    class Player:
+        def __init__(self, name: str, goals: int):
+            self.name = name
+            self.goals = goals
+
+        def __str__(self):
+            return f"{self.name} ({self.goals} goals)"
+
+    class Team:
+        def __init__(self, name: str):
+            self.name = name
+            self.players = []
+
+        def add_player(self, player: Player):
+            self.players.append(player)
+
+        def summary(self):
+            goals = []
+            for player in self.players:
+                goals.append(player.goals)
+            print("Team:", self.name)
+            print("Players:", len(self.players))
+            print("Goals scored by each player:", goals)
+    ```
+    An example of our class in action:
+    ```py
+    ca = Team("Campus Allstars")
+    ca.add_player(Player("Eric", 10))
+    ca.add_player(Player("Emily", 22))
+    ca.add_player(Player("Andy", 1))
+    ca.summary()
+    ```
+    Output:
+    ```
+    Team: Campus Allstars
+    Players: 3
+    Goals scored by each player: [10, 22, 1]
+    ```
+
+#### None: a reference to nothing
+- In Python programming all initialised variables refer to an object. There are, however, inevitably situations where we need to refer to something which does not exist, without causing errors. The keyword `None` represents exactly such an "empty" object.
+
+- Continuing from the Team and Player example above, let's assume we want to add a method for searching for players on the team by the name of the player. If no such player is found, it might make sense to return `None`:
+    ```py
+    class Player:
+        def __init__(self, name: str, goals: int):
+            self.name = name
+            self.goals = goals
+
+        def __str__(self):
+            return f"{self.name} ({self.goals} goals)"
+
+    class Team:
+        def __init__(self, name: str):
+            self.name = name
+            self.players = []
+
+        def add_player(self, player: Player):
+            self.players.append(player)
+
+        def find_player(self, name: str):
+            for player in self.players:
+                if player.name == name:
+                    return player
+            return None
+    ```
+    Let's test our function:
+    ```py
+    ca = Team("Campus Allstars")
+    ca.add_player(Player("Eric", 10))
+    ca.add_player(Player("Amily", 22))
+    ca.add_player(Player("Andy", 1))
+
+    player1 = ca.find_player("Andy")
+    print(player1)
+    player2 = ca.find_player("Charlie")
+    print(player2)
+    ```
+    Output:
+    ```
+    Andy (1 goals)
+    None
+    ```
+
+- Be careful with `None`, though. It can sometimes cause more trouble than it solves. It is a common programming error to try to access a method or an attribute through a reference which evaluates to `None`:
+    ```py
+    ca = Team("Campus Allstars")
+    ca.add_player(Player("Eric", 10))
+
+    player = ca.find_player("Charlie")
+    print(f"Goals by Charlie: {player.goals}")
+    ```
+    Executing the above would cause an error:
+    ```
+    Traceback (most recent call last):
+    File "", line 1, in 
+    AttributeError: 'NoneType' object has no attribute 'goals'
+    ```
+
+- It is a good idea to check for `None` before trying to access any attributes or methods of return values:
+    ```py
+    ca = Team("Campus Allstars")
+    ca.add_player(Player("Eric", 10))
+
+    player = ca.find_player("Charlie")
+    if player is not None:
+        print(f"Goals by Charlie: {player.goals}")
+    else:
+        print(f"Charlie doesn't play in Campus Allstars :(")
+    ```
+    Output:
+    ```
+    Charlie doesn't play in Campus Allstars :(
+    ```
