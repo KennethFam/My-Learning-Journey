@@ -5298,3 +5298,319 @@
     ```
     Footballer - name: Peter Pythons, nickname: Pyper, position: forward
     ```
+    - `__repr__` will be discussed later.
+
+### Object oriented programming techniques
+- A class can contain a method which returns an object of the very same class. For example, below we have the class `Product`, whose method `product_on_sale` returns a new `Product` object with the same name as the original but with a price which is 25 % lower:
+    ```py
+    class Product:
+        def __init__(self, name: str, price: float):
+            self.__name = name
+            self.__price = price
+
+        def __str__(self):
+            return f"{self.__name} (price {self.__price})"
+
+        def product_on_sale(self):
+            on_sale = Product(self.__name, self.__price * 0.75)
+            return on_sale
+    ```
+    ```py
+    apple1 = Product("Apple", 2.99)
+    apple2 = apple1.product_on_sale()
+    print(apple1)
+    print(apple2)
+    ```
+    Output:
+    ```
+    Apple (price 2.99)
+    Apple (price 2.2425)
+    ```
+
+- Let's review the purpose of the variable `self`: within a class definition it refers to the object itself. Typically it is used to refer to the object's own traits, its attributes, and methods. The variable can be used to refer to the entire object as well, for example if the object itself needs to be returned to the client code. In the example below we've added the method cheaper to the class definition. It takes another Product as its argument and returns the cheaper of the two:
+    ```py
+    class Product:
+        def __init__(self, name: str, price: float):
+            self.__name = name
+            self.__price = price
+
+        def __str__(self):
+            return f"{self.__name} (price {self.__price})"
+
+        @property
+        def price(self):
+            return self.__price
+
+        def cheaper(self, Product):
+            if self.__price < Product.price:
+                return self
+            else:
+                return Product
+    ```
+    ```py
+    apple = Product("Apple", 2.99)
+    orange = Product("Orange", 3.95)
+    banana = Product("Banana", 5.25)
+
+    print(orange.cheaper(apple))
+    print(orange.cheaper(banana))
+    ```
+    Output:
+    ```
+    Apple (2.99)
+    Orange (3.95)
+    ```
+    - While this works just fine, it is a very specialised case of comparing two objects. It would be better if we could use the Python comparison operators directly on these `Product` objects.
+
+#### Overloading operators
+- Python contains some specially named built-in methods for working with the standard arithmetic and comparison operators. The technique is called **operator overloading**. If you want to be able to use a certain operator on instances of self-defined classes, you can write a special method which returns the correct result of the operator. We have already used this technique with the `__str__` method: Python knows to look for a method named like this when a string representation of an object is called for.
+
+- Let's start with the operator `>` which tells us if the first operand is greater than the second. The `Product` class definition below contains the method `__gt__`, which is short for *greater than*. This specially named method should return the correct result of the comparison. Specifically, it should return `True` if and only if the current object is greater than the object passed as an argument. The criteria used can be determined by the programmer. By *current object* we mean the object on which the method is called with the dot `.` notation.
+    ```py
+    class Product:
+        def __init__(self, name: str, price: float):
+            self.__name = name
+            self.__price = price
+
+        def __str__(self):
+            return f"{self.__name} (price {self.__price})"
+
+        @property
+        def price(self):
+            return self.__price
+
+        def __gt__(self, another_product):
+            return self.price > another_product.price
+    ```
+    - In the implementation above, the method `__gt__` returns `True` if the price of the current product is greater than the price of the product passed as an argument. Otherwise the method returns `False`.
+    - Now the comparison operator `>` is available for use with objects of type Product:
+        ```py
+        orange = Product("Orange", 2.90)
+        apple = Product("Apple", 3.95)
+
+        if orange > apple:
+            print("Orange is greater")
+        else:
+            print("Apple is greater")
+        ```
+        Output:
+        ```
+        Apple is greater
+        ```
+    - As stated above, it is up to the programmer to determine the criteria by which it is decided which is greater and which is lesser. We could, for instance, decide that the order should not be based on price, but be alphabetical by name instead. This would mean that `orange` would now be "greater than" `apple`, as "orange" comes alphabetically last.
+        ```py
+        class Product:
+            def __init__(self, name: str, price: float):
+                self.__name = name
+                self.__price = price
+
+            def __str__(self):
+                return f"{self.__name} (price {self.__price})"
+
+            @property
+            def price(self):
+                return self.__price
+
+            @property
+            def name(self):
+                return self.__name
+
+            def __gt__(self, another_product):
+                return self.name > another_product.name
+        ```
+        ```py
+        Orange = Product("Orange", 4.90)
+        Apple = Product("Apple", 3.95)
+
+        if Orange > Apple:
+            print("Orange is greater")
+        else:
+            print("Apple is greater")
+        ```
+        Output:
+        ```
+        Orange is greater
+        ```
+
+#### More operators
+- Here we have a table containing the standard comparison operators, along with the methods which need to be implemented if we want to make them available for use on our objects:
+    ![alt text](images/comparison_overload.png)
+
+- You can also implement some other operators, including the following arithmetic operators:
+    ![alt text](images/arithmetic_overload.png)
+
+- More operators and method names are easily found online. Remember also the `dir` command for listing the methods available for use on a given object.
+
+- It is very rarely necessary to implement all the arithmetic and comparison operators in your own classes. For example, division is an operation which rarely makes sense outside numerical objects. What would be the result of dividing a `Student` object by three, or by another `Student` object? Nevertheless, some of these operators are often very useful with also your own classes. The selection of methods to implement depends on what makes sense, knowing the properties of your objects.
+
+- Let's have a look at a class which models a single note. If we implement the `__add__` method within our class definition, the addition operator `+` becomes available on our Note objects:
+    ```py
+    from datetime import datetime
+
+    class Note:
+        def __init__(self, entry_date: datetime, entry: str):
+            self.entry_date = entry_date
+            self.entry = entry
+
+        def __str__(self):
+            return f"{self.entry_date}: {self.entry}"
+
+        def __add__(self, another):
+            # The date of the new note is the current time
+            new_note = Note(datetime.now(), "")
+            new_note.entry = self.entry + " and " + another.entry
+            return new_note
+    ```
+    ```py
+    entry1 = Note(datetime(2016, 12, 17), "Remember to buy presents")
+    entry2 = Note(datetime(2016, 12, 23), "Remember to get a tree")
+
+    # These notes can be added together with the + operator
+    # This calls the  __add__ method in the Note class
+    both = entry1 + entry2
+    print(both)
+    ```
+    Example output:
+    ```
+    2020-09-09 14:13:02.163170: Remember to buy presents and Remember to get a tree
+    ```
+
+#### A string representation of an object
+- You have already implemented quite a few `__str__` methods in your classes. As you know, the method returns a string representation of the object. Another quite similar method is `__repr__` which returns a technical representation of the object. The method `__repr__` is often implemented so that it returns the program code which can be executed to return an object with identical contents to the current object.
+
+- The function `repr` returns this technical string representation of the object. The technical representation is used also whenever the `__str__` method has not been defined for the object. The example below will make this clearer:
+    ```py
+    class Person:
+        def __init__(self, name: str, age: int):
+            self.name = name
+            self.age = age
+            
+        def __repr__(self):
+            return f"Person({repr(self.name)}, {self.age})"
+    ```
+    ```py
+    person1 = Person("Anna", 25)
+    person2 = Person("Peter", 99)
+    print(person1)
+    print(person2)
+    ```
+    Output:
+    ```
+    Person('Anna', 25)
+    Person('Peter', 99)
+    ```
+    - Notice how the `__repr__` method itself uses the `repr` function to retrieve the technical representation of the string. This is necessary to include the ` characters in the result.
+
+- The following class has definitions for both `__repr__` and `__str__`:
+    ```py
+    class Person:
+        def __init__(self, name: str, age: int):
+            self.name = name
+            self.age = age
+            
+        def __repr__(self):
+            return f"Person({repr(self.name)}, {self.age})"
+
+        def __str__(self):
+            return f"{self.name} ({self.age} years)"
+    ```
+    ```py
+    Person = Person("Anna", 25)
+    print(Person)
+    print(repr(Person))
+    ```
+    Output:
+    ```
+    Anna (25 years)
+    Person('Anna', 25)
+    ```
+
+- It is worth mentioning that with data structures, such as lists, Python always uses the `__repr__` method for the string representation of the contents. This can sometimes look a bit baffling:
+    ```py
+    persons = []
+    persons.append(Person("Anna", 25))
+    persons.append(Person("Peter", 99))
+    persons.append(Person("Mary", 55))
+    print(persons)
+    ```
+    Output:
+    ```
+    [Person('Anna', 25), Person('Peter', 99), Person('Mary', 55)]
+    ```
+    - If `__str__` is defined, you can loop through `persons` and print each person individually.
+
+#### Iterators
+- We know that the `for` statement can be used to *iterate* through many different data structures, files and collections of items. A typical use case would be the following function:
+    ```py
+    def count_positives(my_list: list):
+        n = 0
+        for item in my_list:
+            if item > 0:
+                n += 1
+        return n
+    ```
+    - The function goes through the items in the list one by one, and keeps track of how many of the items were positive.
+
+- It is possible to make your own classes iterable, too. This is useful when the core purpose of the class involves storing a collection of items. The Bookshelf class from a previous example would be a good candidate, as it would make sense to use a `for` loop to go through the books on the shelf. The same applies to, say, a student register. Being able to iterate through the collection of students could be useful.
+
+- To make a class iterable you must implement the iterator methods `__iter__` and `__next__`. We will return to the specifics of these methods after the following example:
+    ```py
+    class Book:
+        def __init__(self, name: str, author: str, page_count: int):
+            self.name = name
+            self.author = author
+            self.page_count = page_count
+
+    class Bookshelf:
+        def __init__(self):
+            self._books = []
+
+        def add_book(self, book: Book):
+            self._books.append(book)
+
+        # This is the iterator initialization method
+        # The iteration variable(s) should be initialized here
+        def __iter__(self):
+            self.n = 0
+            # the method returns a reference to the object itself as 
+            # the iterator is implemented within the same class definition
+            return self
+
+        # This method returns the next item within the object
+        # If all items have been traversed, the StopIteration event is raised
+        def __next__(self):
+            if self.n < len(self._books):
+                # Select the current item from the list within the object
+                book = self._books[self.n]
+                # increase the counter (i.e. iteration variable) by one
+                self.n += 1
+                # return the current item
+                return book
+            else:
+                # All books have been traversed
+                raise StopIteration
+    ```
+    - The method `__iter__` initializes the iteration variable or variables. In this case it suffices to have a simple counter containing the index of the current item in the list. We also need the method `__next__`, which returns the next item in the iterator. In the example above the method returns the item at index `n` from the list within the Bookshelf object, and the iterator variable is also incremented.
+    - When all objects have been traversed, the `__next__` method raises the `StopIteration` exception. The process is no different from raising any other exceptions, but this exception is automatically handled by Python and its purpose is to signal to the code calling the iterator (e.g. a `for` loop) that the iteration is now over.
+    - Our Bookshelf is now ready for iteration, for example with a `for` loop:
+        ```py
+        if __name__ == "__main__":
+            b1 = Book("The Life of Python", "Montague Python", 123)
+            b2 = Book("The Old Man and the C", "Ernest Hemingjavay", 204)
+            b3 = Book("A Good Cup of Java", "Caffee Coder", 997)
+
+            shelf = Bookshelf()
+            shelf.add_book(b1)
+            shelf.add_book(b2)
+            shelf.add_book(b3)
+
+            # Print the names of all the books
+            for book in shelf:
+                print(book.name)
+        ```
+        Output:
+        ```
+        The Life of Python
+        The Old Man and the C
+        A Good Cup of Java
+        ```
