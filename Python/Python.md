@@ -5166,3 +5166,135 @@
         0.7225
         0.7586250000000001
         ```
+
+### Access modifiers
+- If a trait is defined as private in the base class, it is not directly accessible in any derived classes, as was briefly mentioned in the previous section. Let's take a look at an example. In the `Notebook` class below the notes are stored in a list, and the list attribute is private:
+    ```py
+    class Notebook:
+    """ A Notebook stores notes in string format """
+
+        def __init__(self):
+            # private attribute
+            self.__notes = []
+
+        def add_note(self, note):
+            self.__notes.append(note)
+
+        def retrieve_note(self, index):
+            return self.__notes[index]
+
+        def all_notes(self):
+            return ",".join(self.__notes)
+    ```
+    - If the integrity of the class is key, making the list attribute `notes` private makes sense. The class provides the client with suitable methods for adding and browsing notes, after all. This approach becomes problematic if we define a new class `NotebookPro`, which inherits the `Notebook` class. The private list attribute is not accessible to the client, but neither is it accessible to the derived classes. If we try to access it, as in the `find_notes` method below, we get an error:
+        ```py
+        class NotebookPro(Notebook):
+            """ A better Notebook with search functionality """
+            def __init__(self):
+                # This is OK, the constructor is public despite the underscores
+                super().__init__()
+
+            # This causes an error
+            def find_notes(self, search_term):
+                found = []
+                # the attribute __notes is private
+                # the derived class can't access it directly
+                for note in self.__notes:
+                    if search_term in note:
+                        found.append(note)
+
+                return found
+        ```
+        Output:
+        ```
+        AttributeError: 'NotebookPro' object has no attribute '_NotebookPro__notes'
+        ```
+
+#### Protected traits
+- Many object oriented programming languages have a feature, usually a special keyword, for *protecting* traits. This means that a trait should be hidden from the clients of the class, but kept accessible to its subclasses. Python in general abhors keywords, so no such feature is directly available in Python. Instead, there is a convention of marking protected traits in a certain way.
+    - Remember, a trait can be hidden by prefixing its name with two underscores:
+        ```py
+        def __init__(self):
+            self.__notes = []
+        ```
+    - The agreed convention to protect a trait is to prefix the name with a single underscore. Now, this is just a convention. Nothing prevents a programmer from breaking the convention, but it is considered a bad programming practice.
+        ```py
+        def __init__(self):
+            self._notes = []
+        ```
+
+- Below we have the entire Notebook example, with protected `_notes` instead of private `__notes`:
+    ```py
+    class Notebook:
+        """ A Notebook stores notes in string format """
+
+        def __init__(self):
+            # protected attribute
+            self._notes = []
+
+        def add_note(self, note):
+            self._notes.append(note)
+
+        def retrieve_note(self, index):
+            return self._notes[index]
+
+        def all_notes(self):
+            return ",".join(self._notes)
+
+    class NotebookPro(Notebook):
+        """ A better Notebook with search functionality """
+        def __init__(self):
+            # This is OK, the constructor is public despite the underscores
+            super().__init__()
+
+        # This works, the protected attribute is accessible to the derived class
+        def find_notes(self, search_term):
+            found = []
+            for note in self._notes:
+                if search_term in note:
+                    found.append(note)
+
+            return found
+    ```
+
+- Below we have a handy table for the visibility of attributes with different access modifiers:
+    ![alt text](images/var_visibility.png)
+
+- Access modifiers work the same with all traits. For example, in the `Person` class below we have the protected method `capitalize_initials`. It can be used from the derived class `Footballer`:
+    ```py
+    class Person:
+        def __init__(self, name: str):
+            self._name = self._capitalize_initials(name)
+
+        def _capitalize_initials(self, name):
+            name_capitalized = []
+            for n in name.split(" "):
+                name_capitalized.append(n.capitalize())
+
+            return " ".join(name_capitalized)
+
+        def __repr__(self):
+            return self.__name
+
+    class Footballer(Person):
+
+        def __init__(self, name: str, nickname: str, position: str):
+            super().__init__(name)
+            # the method is available as it is protected in the base class
+            self.__nickname = self._capitalize_initials(nickname)
+            self.__position = position
+
+        def __repr__(self):
+            r =  f"Footballer - name: {self._name}, nickname: {self.__nickname}"
+            r += f", position: {self.__position}"
+            return r
+
+    # Test the classes
+    if __name__ == "__main__":
+        jp = Footballer("peter pythons", "pyper", "forward")
+        print(jp)
+    ```
+    Output:
+    ```
+    Footballer - name: Peter Pythons, nickname: Pyper, position: forward
+    ```
