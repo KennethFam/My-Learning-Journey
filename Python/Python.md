@@ -4896,3 +4896,273 @@
         ['ItP', 'ACiP']
         []
         ```
+
+### Class hierarchies
+
+#### Special classes for special purposes
+- Sometimes you come across a situation where you have already defined a class, but then realize you need special traits in some, but not all, instances of the class. Then again, sometimes you realize you've defined two very similar classes with only minor differences. As programmers we aim to always repeat ourselves as little as possible, while maintaining clarity and readability. So how can we accommodate for different implementations of intrinsically similar objects?
+
+- Let's have a look at two class definitions: `Student` and `Teacher`. Getter and setter methods have been left out for now, in order to keep the example short.
+    ```py
+    class Student:
+
+        def __init__(self, name: str, id: str, email: str, credits: str):
+            self.name = name
+            self.id = id
+            self.email = email
+            self.credits = credits
+
+    class Teacher:
+
+        def __init__(self, name: str, email: str, room: str, teaching_years: int):
+            self.name = name
+            self.email = email
+            self.room = room
+            self.teaching_years = teaching_years
+    ```
+    - Even in a stripped down example, like the above, we already have quite a bit of repetition: both classes contain attributes `name` and `email`. It would be a good idea to have a single attribute definition, so that a single function would suffice for editing both attributes. For example, imagine the school's email address changed. All addresses would have to be updated. We could write two separate versions of essentially the same function:
+        ```py
+        def update_email(o: Student):
+            o.email = o.email.replace(".com", ".edu")
+
+        def update_email2(o: Teacher):
+            o.email = o.email.replace(".com", ".edu")
+        ```
+        - Writing practically the same thing twice is unnecessary repetition, not to mention it doubles the possibilities for errors. It would be a definite improvement if we could use a single function to work with instances of both classes.
+        - Both classes also have attributes which are unique to them. Simply combining all attributes in a single class would mean all instances of the class would then have unnecessary attributes, just different ones for different instances. That doesn't seem like an ideal situation, either.
+
+#### Inheritance
+- Object oriented programming languages usually feature a technique called **inheritance**. A class can *inherit* the traits of another class. In addition to these inherited traits a class can also contain traits which are unique to it.
+
+- Knowing this, it would make sense for the Teacher and Student classes to have a common base or parent class `Person`:
+    ```py
+    class Person:
+
+        def __init__(self, name: str, email: str):
+            self.name = name
+            self.email = email
+    ```
+    - The new class contains those traits which are shared by the other two classes. Now `Student` and `Teacher` can inherit these traits and add their own besides.
+    - The syntax for inheritance simply involves adding the base class name in parentheses on the header line:
+        ```py
+        class Person:
+
+            def __init__(self, name: str, email: str):
+                self.name = name
+                self.email = email
+
+            def update_email_domain(self, new_domain: str):
+                old_domain = self.email.split("@")[1]
+                self.email = self.email.replace(old_domain, new_domain)
+
+
+        class Student(Person):
+
+            def __init__(self, name: str, id: str, email: str, credits: str):
+                self.name = name
+                self.id = id
+                self.email = email
+                self.credits = credits
+
+
+        class Teacher(Person):
+
+            def __init__(self, name: str, email: str, room: str, teaching_years: int):
+                self.name = name
+                self.email = email
+                self.room = room
+                self.teaching_years = teaching_years
+
+        # Let's test our classes
+        if __name__ == "__main__":
+        saul = Student("Saul Student", "1234", "saul@example.com", 0)
+        saul.update_email_domain("example.edu")
+        print(saul.email)
+
+        tara = Teacher("Tara Teacher", "tara@example.fi", "A123", 2)
+        tara.update_email_domain("example.ex")
+        print(tara.email)
+        ```
+        - Both `Student` and `Teacher` inherit the `Person` class, so both have the traits defined in the `Person` class, including the method `update_email_domain`. The same method works for instances of both the derived classes.
+
+- Let's have a look at another example. We have a `Bookshelf` which inherits the class `BookContainer`:
+    ```py
+    class Book:
+        """ This class models a simple book """
+        def __init__(self, name: str, author: str):
+            self.name = name
+            self.author = author
+
+
+    class BookContainer:
+        """ This class models a container for books """
+
+        def __init__(self):
+            self.books = []
+
+        def add_book(self, book: Book):
+            self.books.append(book)
+
+        def list_books(self):
+            for book in self.books:
+                print(f"{book.name} ({book.author})")
+
+
+    class Bookshelf(BookContainer):
+        """ This class models a shelf for books """
+
+        def __init__(self):
+            super().__init__()
+
+        def add_book(self, book: Book, location: int):
+            self.books.insert(location, book)
+    ```
+    - The class `Bookshelf` contains the method `add_book`. A method with the same name is defined in the base class `BookContainer`. This is called *overriding*: if a derived class has a method with the same name as the base class, the derived version overrides the original in instances of the derived class.
+    - The idea in the example above is that a new book added to a `BookContainer` always goes to the top, but with a Bookshelf you can specify the location yourself. The method `list_books` works the same for both classes, as there is no overriding method in the derived class.
+    - Let's try out these classes:
+        ```py
+        if __name__ == "__main__":
+            # Create some books for testing
+            b1 = Book("Old Man and the Sea", "Ernest Hemingway")
+            b2 = Book("Silent Spring", "Rachel Carson")
+            b3 = Book("Pride and Prejudice", "Jane Austen")
+
+            # Create a BookContainer and add the books
+            container = BookContainer()
+            container.add_book(b1)
+            container.add_book(b2)
+            container.add_book(b3)
+
+            # Create a Bookshelf and add the books (always to the beginning)
+            shelf = Bookshelf()
+            shelf.add_book(b1, 0)
+            shelf.add_book(b2, 0)
+            shelf.add_book(b3, 0)
+
+
+            # Tulostetaan
+            print("Container:")
+            container.list_books()
+
+            print()
+
+            print("Shelf:")
+            shelf.list_books()
+        ```
+        Output:
+        ```
+        Container:
+        Old Man and the Sea (Ernest Hemingway)
+        Silent Spring (Rachel Carson)
+        Pride and Prejudice (Jane Austen)
+
+        Shelf:
+        Pride and Prejudice (Jane Austen)
+        Silent Spring (Rachel Carson)
+        Old Man and the Sea (Ernest Hemingway)
+        ```
+
+#### Inheritance and scope of traits
+- A derived class inherits all traits from its base class. Those traits are directly accessible in the derived class, unless they have been defined as private in the base class (with two underscores before the name of the trait).
+
+- As the attributes of a `Bookshelf` are identical to a `BookContainer`, there was no need to rewrite the constructor of `Bookshelf`. We simply called the constructor of the base class:
+    ```py
+    class Bookshelf(BookContainer):
+
+        def __init__(self):
+            super().__init__()
+    ```
+    - Any trait in the base class can be accessed from the derived class with the function `super()`. The `self` argument is left out from the method call, as Python adds it automatically.
+
+- But what if the attributes are not identical; can we still use the base class constructor in some way? Let's have a look at a class named `Thesis` which inherits the `Book` class. The derived class can still call the constructor from the base class:
+    ```py
+    class Book:
+        """ This class models a simple book """
+
+        def __init__(self, name: str, author: str):
+            self.name = name
+            self.author = author
+
+
+    class Thesis(Book):
+        """ This class models a graduate thesis """
+
+        def __init__(self, name: str, author: str, grade: int):
+            super().__init__(name, author)
+            self.grade = grade
+    ```
+    - The constructor in the `Thesis` class calls the constructor in the base class `Book` with the arguments for `name` and `author`. Additionally, the constructor in the derived class sets the value for the attribute `grade`. This naturally cannot be a part of the base class constructor, as the base class has no such attribute.
+    - The above class can be used like this:
+        ```py
+        if __name__ == "__main__":
+            thesis = Thesis("Python and the Universe", "Peter Pythons", 3)
+
+            # Print out the values of the attributes
+            print(thesis.name)
+            print(thesis.author)
+            print(thesis.grade)
+        ```
+        Output:
+        ```
+        Python and the Universe
+        Peter Pythons
+        3
+        ```
+
+- Even if a derived class overrides a method in its base class, the derived class can still call the overridden method in the base class. In the following example we have a basic `BonusCard` and a special `PlatinumCard` for especially loyal customers. The `calculate_bonus` method is overridden in the derived class, but the overriding method calls the base method:
+    ```py
+    class Product:
+
+        def __init__(self, name: str, price: float):
+            self.name = name
+            self.price = price
+
+    class BonusCard:
+
+        def __init__(self):
+            self.products_bought = []
+
+        def add_product(self, product: Product):
+            self.products_bought.append(product)
+
+        def calculate_bonus(self):
+            bonus = 0
+            for product in self.products_bought:
+                bonus += product.price * 0.05
+
+            return bonus
+
+    class PlatinumCard(BonusCard):
+
+        def __init__(self):
+            super().__init__()
+
+        def calculate_bonus(self):
+            # Call the method in the base class
+            bonus = super().calculate_bonus()
+
+            # ...and add five percent to the total
+            bonus = bonus * 1.05
+            return bonus
+    ```
+    - So, the bonus for a `PlatinumCard` is calculated by calling the overriden method in the base class, and then adding an extra 5 percent to the base result. An example of how these classes are used:
+        ```py
+        if __name__ == "__main__":
+            card = BonusCard()
+            card.add_product(Product("Bananas", 6.50))
+            card.add_product(Product("Satsumas", 7.95))
+            bonus = card.calculate_bonus()
+
+            card2 = PlatinumCard()
+            card2.add_product(Product("Bananas", 6.50))
+            card2.add_product(Product("Satsumas", 7.95))
+            bonus2 = card2.calculate_bonus()
+
+            print(bonus)
+            print(bonus2)
+        ```
+        Output:
+        ```
+        0.7225
+        0.7586250000000001
+        ```
