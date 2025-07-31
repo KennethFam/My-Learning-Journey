@@ -6129,3 +6129,454 @@
         ```
         - As you have seen before, using techniques like this carries a price tag, as there is more code to write, so a programmer needs to consider whether that is an acceptable tradeoff.
         - The technique outlined above is called *dependency injection*. As the name implies, the idea is to provide any dependency required by an object from outside the object. It is a very useful tool in a programmer's toolbox, as it makes it easier to implement new features in programs and facilitates automatic testing. This theme will be further explored on the aforementioned courses [Software Development Methods](https://studies.helsinki.fi/courses/cu/hy-CU-118024742-2020-08-01) and [Software Engineering](https://studies.helsinki.fi/courses/cu/hy-CU-118024909-2020-08-01).
+
+### List comprehensions
+- One of the situations where programming is at its most powerful is processing sequences of items and events. Computers are good at repeating things. For example, in the previous parts of this material we have been iterating over strings, lists, and dictionaries in various ways.
+
+- Let's assume we have a list of integers, and we would need the same list of items in string format. A traditional way of completing the task could look like this:    
+    ```py
+    numbers = [1, 2, 3, 6, 5, 4, 7]
+
+    strings = []
+    for number in numbers:
+        strings.append(str(number))
+    ```
+
+- There is also a more "pythonic" way of generating lists from existing lists. These are called *list comprehensions*.
+
+- The idea is to fit on a single line both the description of what should be done to each item on the list, and the assignment of the result to a new list.
+
+- In the above example, the operation performed on each item on the list was very simple: each integer was converted into a string. Let's see what this would look like implemented with a list comprehension:
+    ```py
+    numbers = [1, 2, 3, 6, 5, 4, 7]
+    strings = [str(number) for number in numbers]
+    ```
+    - The second line above contains many of the same elements as the more traditional iterative apporach, but the syntax is different. One way of generalising a list comprehension statement would be: `[<expression> for <item> in <series>]`.
+        - The square brackets around the list comprehension statement signal to Python that the result should be a new list. One by one, each item in the original list is processed, and the result is stored in the new list, just like in the iterative approach above. As a result we have a new list with exactly as many items as were in the original, and all items have been processed in an identical fashion.
+
+- List comprehensions can handle much more complicated operations as well. We can perform calculations, such as multiplying the original items by ten:
+    ```py
+    numbers = list(range(1,10))
+    print(numbers)
+
+    numbers_multiplied = [number * 10 for number in numbers]
+    print(numbers_multiplied)
+    ```
+    Output:
+    ```
+    [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    [10, 20, 30, 40, 50, 60, 70, 80, 90]
+    ```
+
+- In fact, the expression within the list comprehension statement can be any Python expression. You can even call functions you've defined yourself:
+    ```py
+    def factorial(n: int):
+        """ The function calculates the factorial n! for integers above zero """
+        k = 1
+        while n >= 2:
+            k *= n
+            n -= 1
+        return k
+
+    if __name__ == "__main__":
+        numbers = [5, 2, 4, 3, 0]
+        factorials = [factorial(number) for number in numbers]
+        print(factorials)
+    ```
+    Output:
+    ```
+    [120, 2, 24, 6, 1]
+    ```
+    - With the more familiar `for` loop the same process could be expressed like this:
+        ```py
+        def factorial(n: int):
+            """ The function calculates the factorial n! for integers above zero """
+            k = 1
+            while n >= 2:
+                k *= n
+                n -= 1
+            return k
+
+        if __name__ == "__main__":
+            numbers = [5, 2, 4, 3, 0]
+            factorials = []
+            for number in numbers:
+                factorials.append(factorial(number))
+            print(factorials)
+        ```
+        - List comprehensions allow us to express the same functionality more consisely, usually without losing any of the readability.
+    - We can also return a list comprehension statement from a function directly. If we needed a function for producing factorials for lists of numbers, we could achieve it very concisely:
+        ```py
+        def factorials(numbers: list):
+            return [factorial(number) for number in numbers]
+        ```
+
+#### Filtering items
+- In the examples above all of our lists remained the same length before and after a list comprehension operation. In each case, all the items in the original list were used as the basis of the new list. But sometimes we only need some of the original items. How can this be achieved?
+    - A list comprehension statement also allows for a condition, so that we can check the items against the condition and select only those which match. The general syntax is as follows: 
+        ```
+        [<expression> for <item> in <series> if <Boolean expression>]
+        ```
+        - The statement above is otherwise identical to the general form introduced in the beginning of this section, but now there is an if statement at the end. Only those items from the original list for which the Boolean expression is true are used as the basis of the new list.
+
+- In the example below we select all the even items from the original list as the basis of the new list. In fact, these items are not further processed in any way; they are assigned to the new list as is:
+    ```py
+    numbers = [1, 1, 2, 3, 4, 6, 4, 5, 7, 10, 12, 3]
+
+    even_items = [item for item in numbers if item % 2 == 0]
+    print(even_items)
+    ```
+    Output:
+    ```
+    [2, 4, 6, 4, 10, 12]
+    ```
+    - The expression in the list comprehension statement above is just a simple `item`, which means that no operations are to be performed on the items in the list. The expression could be any Python expression, just like in the previous examples. For example, the following list comprehension statement takes all the even items in a list, multiplies each by ten, and stores the result in a new list:
+        ```py
+        numbers = [1, 1, 2, 3, 4, 6, 4, 5, 7, 10, 12, 3]
+
+        even_items = [item * 10 for item in numbers if item % 2 == 0]
+        print(even_items)
+        ```
+        Output:
+        ```
+        [20, 40, 60, 40, 100, 120]
+        ```
+
+- As you come across more and more complicated list comprehensions, you may find it useful to try reading the condition first. After all, the items are processed only if they pass the test, so it often makes sense to first figure out which items pass the filtering stage. Sometimes the expression in a list comprehension statement would not even be possible for all the items in the original list.
+    - For example, the factorial operation is only defined for non-negative integers. If we can't be sure a list only contains values of zero or above, the contents have to be filtered before passing them on to the factorial function we made before:
+        ```py
+        def factorial(n: int):
+            """ The function calculates the factorial n! for integers above zero """
+            k = 1
+            while n >= 2:
+                k *= n
+                n -= 1
+            return k
+
+        if __name__ == "__main__":
+            numbers = [-2, 3, -1, 4, -10, 5, 1]
+            factorials = [factorial(number) for number in numbers if number >= 0]
+            print(factorials)
+        ```
+        Output:
+        ```
+        [6, 24, 120, 1]
+        ```
+
+- As we saw in our very first list comprehension example, where integers were converted into strings, the items in the new list do not have to be of the same type as the items in the original list. Continuing from the factorial example above, we can create a tuple from each original item and its processed counterpart, and store these in a list, combining everything we've learned so far in a single list comprehension statement:
+    ```py
+    def factorial(n: int):
+        """ The function calculates the factorial n! for integers above zero """
+        k = 1
+        while n >= 2:
+            k *= n
+            n -= 1
+        return k
+
+    if __name__ == "__main__":
+        numbers = [-2, 3, 2, 1, 4, -10, 5, 1, 6]
+        # the variable name abbreviated here so that this would be easier to read
+        factorials = [(n, factorial(n)) for n in numbers if n > 0 and n % 2 == 0]
+        print(factorials)
+    ```
+    Output:
+    ```
+    [(2, 2), (4, 24), (6, 720)]
+    ```
+    - Picking the above example apart, we have the Boolean expression `n > 0 and n % 2 == 0`. This means that only items which are both positive and divisible by two are accepted for further processing from the original list.
+    - These positive, even numbers are then each in turn processed into the format `(n, factorial(n))`. This is a tuple, where the first item is the number itself, and the second item is the result returned by the factorial function.
+
+#### Alternative execution with list comprehensions
+- Often when we have a conditional statement, we also include an `else` branch. As we can use conditions in list comprehensions, the `else` branch is also available with list comprehensions. The general syntax of the conditional used with list comprehensions looks like this:
+    ```
+    <expression 1> if <condition> else <expression 2>
+    ```
+
+- Combining the ternary operator syntax with a list comprehension statement yields the following general structure:
+    ```
+    [<expression 1> if <condition> else <expression 2> for <item> in <series>]
+    ```
+    - This may look a little confusing, as the conditional structure now comes before the actual list comprehension part. This is just the way the syntax has been defined, at least at the moment. If there is also an `else` branch, the conditional comes first. If there is just an `if`, it goes to the end. You can try swapping them around and see what happens.
+
+- Including an else operator means that we will again process every item from the original list. Depending on whether the condition is true or false, either `expression 1` or `expression 2` is performed on each item on the list.
+
+- The following example checks if the items on a list are zero or above. Any such item is accepted as is, but all negative items are negated, so that the sign is changed from negative to positive. The result is a list containing the absolute values of the items in the original list.
+    ```py
+    numbers = [1, -3, 45, -110, 2, 9, -11]
+    abs_vals = [number if number >= 0 else -number for number in numbers]
+    print(abs_vals)
+    ```
+    Output:
+    ```
+    [1, 3, 45, 110, 2, 9, 11]
+    ```
+    - Reiterating what happens above: if the condition `number >= 0` is true, the item undergoes expression `number`, and the result is the item itself. If the condition is false, the item undergoes expression `-number`, so that it becomes positive in value.
+
+- In the following example we have the function `string_lengths` which takes a list as its argument, and returns another list with the lengths of any strings in the original list. This function is okay with list items of any type, however. If the item is a string, it calculates its length. If the item is anything else, it inserts -1 in the list it returns.
+    ```py
+    def string_lengths(my_list: list):
+        """ The function returns the lengths of strings in a new list """
+        return [len(item) if type(item) == str else -1 for item in my_list]
+
+    if __name__ == "__main__":
+        test_list = ["hi", 3, True, "there", -123.344, "toodlepip", 2, False]
+        lengths = string_lengths(test_list)
+        print(lengths)
+    ```
+    Output:
+    ```
+    [2, -1, -1, 5, -1, 9, -1, -1]
+    ```
+
+### More comprehensions
+- Lists are perhaps the most common target for comprehensions, but comprehensions work on any series of items, including strings. Just like in the list examples in the previous section, if a list comprehension is performed on a string, the items (i.e. the characters) in the string are plucked one by one, processed according to the expression given, and stored in a list.
+    ```py
+    name = "Peter Python"
+
+    uppercased = [character.upper() for character in name]
+    print(uppercased)
+    ```
+    Output:
+    ```
+    ['P', 'E', 'T', 'E', 'R', ' ', 'P', 'Y', 'T', 'H', 'O', 'N']
+    ```
+    - The result is indeed a list, as dictated by the bracket notation around the comprehension statement. If we wanted a string instead, we could use the string method `join` to parse the list into a string. Remember, the method is called on the string we want to use as the "glue" between the characters. Let's take a look at some examples:
+        ```py
+        name = "Peter"
+        char_list = list(name)
+        print(char_list)
+
+        print("".join(char_list))
+        print(" ".join(char_list))
+        print(",".join(char_list))
+        print(" and ".join(char_list))
+        ```
+        Output:
+        ```
+        ['P', 'e', 't', 'e', 'r']
+        Peter
+        P e t e r
+        P,e,t,e,r
+        P and e and t and e and r
+        ```
+
+- List comprehensions and the `join` method make it easy to create new strings based on other strings. We could, for example, make a string which contains only the vowels from another string:
+    ```py
+    test_string = "Hello there, this is a test!"
+
+    vowels = [character for character in test_string if character in "aeiou"]
+    new_string = "".join(vowels)
+
+    print(new_string)
+    ```
+    Output:
+    ```
+    eoeeiiae
+    ```
+    - In the example above the list comprehension and the `join` method are on separate lines, but they could be combined into a single expression:
+        ```py
+        test_string = "Hello there, this is a test!"
+
+        vowel_string = "".join([character for character in test_string if character in "aeiou"])
+
+        print(vowel_string)
+        ```
+
+- Many Python programmers swear by these oneliners, so it is well worth your while to learn to read them. We could even add the `split` method to the mix, so that we can process entire sentences efficiently with a single statement. In the example below the first character from each word in a sentence is removed:
+    ```py
+    sentence = "Sheila keeps on selling seashells on the seashore"
+
+    sentence_no_initials = " ".join([word[1:] for word in sentence.split()])
+    print(sentence_no_initials)
+    ```
+    Output:
+    ```
+    heila eeps n elling eashells n he eashore
+    ```
+    - Let's go through this step by step:
+        - `word[1:]` extracts a substring from the second character (at index 1) onwards
+        - `sentence.split()` splits the sentence into sections at the given character. In this case there is no argument given to the method, so the sentence is split at space characters by default
+        - `" ".join()` combines the items in the list into a new string using a space character between the items
+    - A more traditional iterative approach could look like this
+        ```py
+        sentence = "Sheila keeps on selling seashells on the seashore"
+
+        word_list = []
+        words = sentence.split()
+        for word in words:
+            word_no_initials = word[1:]
+            word_list.append(word_no_initials)
+
+        sentence_no_initials = " ".join(word_list)
+
+        print(sentence_no_initials)
+        ```
+
+#### Own classes and comprehensions
+- Comprehensions can be a useful tool for processing or formulating instances of your own classes, as we'll see in the following examples.
+
+- First, let's have a look at the class `Country` which is a simple model for a single country, with attributes for the name and the population. In the main function below we first create some `Country` objects, and then use a list comprehension to select only those whose population is greater than five million.
+    ```py
+    class Country:
+        """ This class models a single country with population """
+        def __init__(self, name: str, population: int):
+            self.name = name
+            self.population = population
+
+    if __name__ == "__main__":
+        finland = Country("Finland", 6000000)
+        malta = Country("Malta", 500000)
+        sweden = Country("Sweden", 10000000)
+        iceland = Country("Iceland", 350000)
+
+        countries = [finland, malta, sweden, iceland]
+
+        bigger_countries = [country.name for country in countries if country.population > 5000000]
+        for country in bigger_countries:
+            print(country)
+    ```
+    Output:
+    ```
+    Finland
+    Sweden
+    ```
+    - In the list comprehension above we selected only the name attribute from the Country objects, so the contents of the list could be printed directly. We could also create a new list of the countries themselves and access the name attribute in the `for` loop. This would be useful if the same list of countries was used also later in the program, or if we needed the population attribute in the `for` loop as well:
+        ```py
+        if __name__ == "__main__":
+            finland = Country("Finland", 6000000)
+            malta = Country("Malta", 500000)
+            sweden = Country("Sweden", 10000000)
+            iceland = Country("Iceland", 350000)
+
+            countries = [finland, malta, sweden, iceland]
+
+            bigger_countries = [country for country in countries if country.population > 5000000]
+            for country in bigger_countries:
+                print(country.name, country.population)
+        ```
+
+- In the next example we have a class named `RunningEvent` which models a single foot race event with attributes for the length and the name of the race. We will use list comprehensions to create `RunningEvent` objects based on a list of race lengths. The parameter `name` has a default value in the constructor of the `RunningEvent` class, whIch is why we do not need to pass the name as an argument.
+    ```py
+    class RunningEvent:
+        """ The class models a foot race event of a length of n metres  """
+        def __init__(self, length: int, name: str = "no name"):
+            self.length = length
+            self.name = name
+
+        def __repr__(self):
+            return f"{self.length} m. ({self.name})"
+
+    if __name__ == "__main__":
+        lengths = [100, 200, 1500, 3000, 42195]
+        events = [RunningEvent(length) for length in lengths]
+
+        # Print out all events
+        print(events)
+
+        # Pick one from the list and give it a name
+        marathon = events[-1] # the last item in the list
+        marathon.name = "Marathon"
+
+        # Print out everything again, including the new name
+        print(events)
+    ```
+    Output:
+    ```
+    [100 m. (no name), 200 m. (no name), 1500 m. (no name), 3000 m. (no name), 42195 m. (no name)]
+    [100 m. (no name), 200 m. (no name), 1500 m. (no name), 3000 m. (no name), 42195 m. (Marathon)]
+    ```
+
+- Now, let's find out what makes a series of items "comprehendible". In the previous part we learnt how to make our own classes iterable. It is exactly this same feature which also allows for list comprehensions. If your own class is iterable, it can be used as the basis of a list comprehension statement. The following class definitions are copied directly from [part 10](https://programming-25.mooc.fi/part-10/3-oo-programming-techniques#iterators):
+    ```py
+    class Book:
+        def __init__(self, name: str, author: str, page_count: int):
+            self.name = name
+            self.author = author
+            self.page_count = page_count
+
+    class Bookshelf:
+        def __init__(self):
+            self._books = []
+
+        def add_book(self, book: Book):
+            self._books.append(book)
+
+        # This is the iterator initialization method
+        # The iteration variable(s) should be initialized here
+        def __iter__(self):
+            self.n = 0
+            # the method returns a reference to the object itself as 
+            # the iterator is implemented within the same class definition
+            return self
+
+        # This method returns the next item within the object
+        # If all items have been traversed, the StopIteration event is raised
+        def __next__(self):
+            if self.n < len(self._books):
+                # Select the current item from the list within the object
+                book = self._books[self.n]
+                # increase the counter (i.e. iteration variable) by one
+                self.n += 1
+                # return the current item
+                return book
+            else:
+                # All books have been traversed
+                raise StopIteration
+
+    # Test your classes
+    if __name__ == "__main__":
+        b1 = Book("The Life of Python", "Montague Python", 123)
+        b2 = Book("The Old Man and the C", "Ernest Hemingjavay", 204)
+        b3 = Book("A Good Cup of Java", "Caffee Coder", 997)
+
+        shelf = Bookshelf()
+        shelf.add_book(b1)
+        shelf.add_book(b2)
+        shelf.add_book(b3)
+
+        # Create a list containing the names of all books
+        book_names = [book.name for book in shelf]
+        print(book_names)
+    ```
+
+#### Comprehensions and dictionaries
+- There is nothing intrinsically "listey" about comprehensions. The result is a list because the comprehension statement is encased in square brackets, which indicate a Python list. Comprehensions work just as well with Python dictionaries if you use curly brackets instead. Remember, though, that dictionaries require key-value pairs. Both must be specified when a dictionary is created, also with comprehensions.
+
+- The basis of a comprehension can be any iterable series, be it a list, a string, a tuple, a dictionary, any of your own iterable classes, and so forth.
+
+- In the following example we use a string as the basis of a dictionary. The dictionary contains all the unique characters in the string, along with the number of times they occurred:
+    ```py
+    sentence = "hello there"
+
+    char_counts = {character : sentence.count(character) for character in sentence}
+    print(char_counts)
+    ```
+    Output:
+    ```
+    {'h': 2, 'e': 3, 'l': 2, 'o': 1, ' ': 1, 't': 1, 'r': 1}
+    ```
+
+- The principle of the comprehension statement is exactly the same as with lists, but instead of a single value, the expression now consists of a key and a value. The general syntax looks like this:
+    ```py
+    {<key expression> : <value expression> for <item> in <series>}
+    ```
+
+- To finish off this section, lets take a look at factorials again. This time we store the results in a dictionary. The number itself is the key, while the value is the result of the factorial from our function:
+    ```py
+    def factorial(n: int):
+        """ The function calculates the factorial n! for integers above zero """
+        k = 1
+        while n >= 2:
+            k *= n
+            n -= 1
+        return k
+
+    if __name__ == "__main__":
+        numbers = [-2, 3, 2, 1, 4, -10, 5, 1, 6]
+        factorials = {number : factorial(number) for number in numbers if number > 0}
+        print(factorials)
+    ```
+    Output:
+    ```
+    {3: 6, 2: 2, 1: 1, 4: 24, 5: 120, 6: 720}
+    ```
