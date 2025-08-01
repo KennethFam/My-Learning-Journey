@@ -6580,3 +6580,304 @@
     ```
     {3: 6, 2: 2, 1: 1, 4: 24, 5: 120, 6: 720}
     ```
+
+### Recursion
+- As we have seen many times before, functions can call other functions. For example:
+    ```py
+    def hello(name : str):
+        print("Hello", name)
+
+    def hello_many_times(name : str, times : int):
+        for i in range(times):
+            hello(name)
+    ```
+
+- A function can also call itself, but we as programmers have to be careful when we do that. It is easy to fall into an endless loop of function calls, just like we fell into an infinite loop of repetitions with `while` loops if we left out the appropriate break conditions. So, trying to call a `hello` function with the following definition
+    ```py
+    def hello(name : str):
+        print("Hello", name)
+        hello(name) # function calls itself
+    ```
+    would cause a new kind of error:
+    ```
+    RecursionError: maximum recursion depth exceeded
+    ```
+
+#### What does recursion mean?
+- The *recursion* mentioned in the error above refers to *defining something in terms of itself*. In a programming context it usually refers to a function which calls itself. For this to work without causing any infinite loops, the arguments passed to the function must change each time, so that the nested function calls will stop at some point. The basic principle here is the same as in `while` loops: there must always be a stop condition of some kind, and that condition must be triggered at some point in the execution.
+
+- Let's have a look at a simple function which adds zeroes to a list as long as there are less than 10 items in the list. This time we are not using a loop, however. If the condition is not yet met, the function calls itself:
+    ```py
+    def fill_list(numbers: list):
+        """ If the length of the list is less than 10, add items to the list """
+        if len(numbers) < 10:
+            numbers.append(0)
+            # call the function again
+            fill_list(numbers)
+
+
+    if __name__ == "__main__":
+        test_list = [1,2,3,4]
+        fill_list(test_list)
+        print(test_list)
+    ```
+    Output:
+    ```
+    [1, 2, 3, 4, 0, 0, 0, 0, 0, 0]
+    ```
+
+- This functionality could just as well be achieved with a regular `while` loop:
+    ```py
+    def fill_list(numbers: list):
+        """ If the length of the list is less than 10, add items to the list """
+        while len(numbers) < 10:
+            numbers.append(0)
+
+    if __name__ == "__main__":
+        test_list = [1,2,3,4]
+        fill_list(test_list)
+        print(test_list)
+    ```
+    - The more traditional iterative approach produces a shorter program which is arguably also easier to understand. With the recursive version it is not as clear that throughout the process we are working on the very same list. That is, however, the case, and that is why the recursive function works just as well.
+
+#### Iterative or recursive?
+- Computer science theory often differentiates between *iterative* and *recursive* algorithms, so it is best to become familiar with these terms right from the start. Iterative solutions are ones that are based on sequential processing of items, often using loops. So far we have dealt with iterative methods quite exclusively. Recursive, on the other hand, refers to a method where the function calls itself with changing parameter values.
+
+- In principle it should be possible to solve any problem with either iterative or recursive methods. In practice, however, one or the other is usually clearly better suited to each problem. The ability to determine which is better comes largely with practice.
+
+#### Recursion and return values
+- Recursive functions can also have return values. In the last few sections we've worked with factorials, so let's write a recursive factorial function:
+    ```py
+    def factorial(n: int):
+        """ The function calculates the factorial n! for n >= 0 """
+        if n < 2:
+            # The factorial for 0 and 1 is 1
+            return 1
+
+        # Call the function again with an argument that is one smaller
+        return n * factorial(n - 1)
+
+    if __name__ == "__main__":
+        # Tesing our function
+        for i in range(1, 7):
+            print(f"The factorial of {i} is {factorial(i)}")
+    ```
+    Output:
+    ```
+    The factorial of 1 is 1
+    The factorial of 2 is 2
+    The factorial of 3 is 6
+    The factorial of 4 is 24
+    The factorial of 5 is 120
+    The factorial of 6 is 720
+    ```
+    - If the parameter of the recursive factorial function is 0 or 1, the function returns 1, because this is how the factorial operation is defined. In any other case the function returns the value `n * factorial(n - 1)`, which is the value of its parameter `n` multiplied by the return value of the function call `factorial(n - 1)`.
+    - The crucial part here is that the function definition contains a stop condition. If this is met, the recursion ends. In this case, that condition is `n < 2`. We know it will be reached eventually, because the value passed as the argument to the function is decreased by one on each level of the recursion.
+    - It might make the above example a little clearer if we used helper variables:
+        ```py
+        def factorial(n: int):
+            if n < 2:
+                return 1
+
+            factorial_one_level_down = factorial(n - 1)
+            factorial_now = n * factorial_one_level_down
+            return factorial_now
+            
+        factorial(5)
+        ```
+    - Whenever the recursion call is made, the new call is placed on the call stack. The call stack is built until the limit posed by `n < 2` is reached. Then the final function call in the stack returns with a value - it is `1`, as `n` is now less than 2. This return value is passed to the previous function call in the stack, where it is used to calculate that function call's return value, and so forth back out of the stack.
+
+- Let's have a look at another common recursive example: the Fibonacci number. In a Fibonacci sequence each number is the sum of the two preceding numbers. The first two numbers are here defined as 1 and 1, and the sequence then begins like this: 1, 1, 2, 3, 5, 8, 13, 21, 34.
+    ```py
+    def fibonacci(n: int):
+        """ The function returns the nth number in the Fibonacci sequence (1, 1, 2, 3, 5, 8 etc.); n > 0"""
+
+        if n <= 2:
+            # the first two are ones
+            return 1
+
+        # All other numbers equal the sum of the two preceding numbers in the sequence
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+    # Test that everything works
+    if __name__ == "__main__":
+        for i in range(1, 11):
+            print(f"The {i}. number in the Fibonacci sequence is {fibonacci(i)}")
+    ```
+    Output:
+    ```
+    The 1. number in the Fibonacci sequence is 1
+    The 2. number in the Fibonacci sequence is 1
+    The 3. number in the Fibonacci sequence is 2
+    The 4. number in the Fibonacci sequence is 3
+    The 5. number in the Fibonacci sequence is 5
+    The 6. number in the Fibonacci sequence is 8
+    The 7. number in the Fibonacci sequence is 13
+    The 8. number in the Fibonacci sequence is 21
+    The 9. number in the Fibonacci sequence is 34
+    The 10. number in the Fibonacci sequence is 55
+    ```
+    - This time the stop condition is that the parameter is less than or equal to 2, because the entire sequence is defined from the first two numbers onwards, and we defined the first two numbers to be equal to 1.
+    - So, how does this function work in practice?
+        - If the function is called with 1 or 2 as its argument, it returns 1, as dictated by the condition `n <= 2`.
+        - If the argument is 3 or greater, the function returns the value of `fibonacci(n - 1) + fibonacci(n - 2)`. If the argument is 3 exactly, this value is equal to `fibonacci(2) + fibonacci(1)`, and we already know the result of both of those from the previous step. `1 + 1` equals 2, which is indeed the third number in the Fibonacci sequence.
+        - If the argument is 4, the return value is `fibonacci(3) + fibonacci(2)`, which we now know to be `2 + 1`, which equals 3.
+        - If the argument is 5, the return value is `fibonacci(4) + fibonacci(3)`, which we now know to be `3 + 2`, which equals 5.
+        - And so forth, and so forth.
+
+#### Binary search
+- In a binary search we have a sorted list of items and we are trying to find a certain item within. The order of the items could be, for example, numbers from smallest to greatest, or strings from alphabetically first to last. The method of sorting doesn't matter, as long as it is known and relevant to the item we are trying to find.
+
+- The idea of a binary search is to always look at the item at the very centre of the list. We then have three possible scenarios. If the item at the centre is
+    - the one we are looking for: we can return an indication that we found the item
+    - smaller than the one we are looking for: we can re-do the search in the greater half of the list
+    - greater than the one we are looking for: we can re-do the search in the smaller half of the list.
+
+- If the list is empty, we can determine that the item was not found, and return an indication of that.
+
+- In the following image we can see how a binary search progresses as it looks for the number 24:
+
+    ![alt text](images/binary_search.png)
+
+- Here is a recursive algorithm for a binary search:
+    ```py
+    def binary_search(target: list, item: int, left : int, right : int):
+        """ The function returns True if the item is contained in the target list, False otherwise """
+        # If the search area is empty, item was not found
+        if left > right:
+            return False
+
+        # Calculate the centre of the search area, integer result
+        centre = (left+right)//2
+
+        # If the item is found at the centre, return
+        if target[centre] == item:
+            return True
+
+        # If the item is greater, search the greater half
+        if target[centre] < item:
+            return binary_search(target, item, centre+1, right)
+        # Else the item is smaller, search the smaller half
+        else:
+            return binary_search(target, item, left, centre-1)
+
+
+    if __name__ == "__main__":
+        # Test your function
+        target = [1, 2, 4, 5, 7, 8, 11, 13, 14, 18]
+        print(binary_search(target, 2, 0, len(target)-1))
+        print(binary_search(target, 13, 0, len(target)-1))
+        print(binary_search(target, 6, 0, len(target)-1))
+        print(binary_search(target, 15, 0, len(target)-1))
+    ```
+    Output
+    ```
+    True
+    True
+    False
+    False
+    ```
+    - The binary_search function takes four arguments: the target list, the item being searched for, and the left and right edges of the search area. When the function is first called, the search area covers the entire target list. The left edge is at index `0` and the right edge is at index `len(target)-1`. The function calculates the central index and checks that position on the list. Either the item was found, or the search continues to the smaller or greater half of the target list.
+    - Let's compare this to a simple linear search. In a linear search, the search area is traversed from the beginning onwards, until either the item is found, or we run out of search area. The number of steps needed to cover the entire search area grows linearly at the same pace as the size of the search area. Each search step covers only one search candidate from the beginning of the search area. Let's assume the item searched for is not found. If the search area is a million items long, we would have to take a million search steps to make sure the item is not in the search area.
+    - In a binary search, on the other hand, the number of steps needed grows logarithmically. Let's assume again that the item searched for is not found. The search area is cut in half with each step, as we know that the item is either smaller or greater than the current search candidate at the centre. 2 to the power of 20 (2^20) is already well over 1 million, so it will take at most 20 steps to cover the entire search area with a binary search. So, when we are dealing with sorted search areas, as we often are when dealing with computers and materials that are meant to be automatically processed, a binary search is much more efficient than a linear search.
+
+#### More recursion examples
+- The real advantages of recursion become evident when we come across problems where iterative solutions are difficult to write. Let's take a look at binary trees, for instance. A binary tree is a branched structure where we have nodes, and at each node the structure branches, at most, into two child branches with nodes of their own. A binary tree could then look like this (computer science is often considered a branch of the natural sciences, but our understanding of trees is a little topsy-turvy, as you'll notice):
+
+    ![alt text](images/binary_tree.png)
+
+    - Binary trees should at least theoretically be easy to handle recursively: if we want to perform some operation on every node in the tree, our algorithm simply needs to
+        1. Process the current node
+        2. Call itself on the child node on the left
+        3. Call itself on the child node on the right
+
+    ![alt text](images/left_right_subtree.png)
+
+    - As you can see from the image above, both the left and right "subtrees" are fully fledged binary trees themselves, and the only node left outside the recursive calls is the parent node, which is processed in step 1, before calling the function recursively. So, we can be sure that when the execution of the function finishes, each node has been visited exactly once.
+    - An iterative version of a binary tree traversal would be much more complicated, as we would have to somehow keep track of all the nodes we have already visited. The same principles are true for all computational tree structures, not just binary ones.
+    - A binary tree is easily modelled in Python code as well. We only need to write a class definition for a single node. It has a value attribute and attributes for the left and right child nodes:
+        ```py
+        class Node:
+            """ The class represents a single node in a binary tree """
+            def __init__(self, value, left_child:'Node' = None, right_child:'Node' = None):
+                self.value = value
+                self.left_child = left_child
+                self.right_child = right_child
+        ```
+
+- Now let's assume we want to model the following tree:
+
+    ![alt text](images/bt_model.png)
+
+    - We could achieve this with the following code:
+        ```py
+        if __name__ == "__main__":
+            tree = Node(2)
+
+            tree.left_child = Node(3)
+            tree.left_child.left_child = Node(5)
+            tree.left_child.right_child = Node(8)
+
+            tree.right_child = Node(4)
+            tree.right_child.right_child = Node(11)
+        ```
+
+#### Recursive binary tree algorithms
+- First, let's take a look at an algorithm which prints out all the nodes in a binary tree one by one. In these following examples we will be working with the binary tree defined above. The argument to the printing function is the root node of the binary tree. This is the node at the very top in our illustration above. All other nodes are children to this node:
+    ```py
+    def print_nodes(root: Node):
+        print(root.value)
+
+        if root.left_child is not None:
+            print_nodes(root.left_child)
+
+        if root.right_child is not None:
+            print_nodes(root.right_child)
+    ```
+    - The function prints the value of the node passed as an argument, and then calls itself on the left and right child nodes, assuming the nodes are defined. This is a very simple algorithm, but it efficiently and reliably traverses all nodes in the tree, no matter the size of the tree. Crucially, no node is visited twice. Each value is printed only once.
+    - If we pass the root node `tree` of the binary tree illustrated above as an argument to the function, it prints out
+        ```
+        2
+        3
+        5
+        8
+        4
+        11
+        ```
+        - As you can see from the order of the nodes in the printout, the algorithm first moves down the "left leg" of the tree down to the very bottom, and from there traverses the other nodes in order.
+    - Similarly, we can write an algorithm for calculating the sum of all the values stored in the nodes of the tree:
+        ```py
+        def sum_of_nodes(root: Node):
+            node_sum = root.value
+
+            if root.left_child is not None:
+                node_sum += sum_of_nodes(root.left_child)
+
+            if root.right_child is not None:
+                node_sum += sum_of_nodes(root.right_child)
+
+            return node_sum
+        ```
+        - The variable `node_sum` is initialised to equal the value of the current node. The value in the variable is then augmented by recursive calls to the node sums of the left and right child trees (first making sure they exist, of course). This result is then returned
+
+#### A sorted binary tree
+- A binary tree is especially useful when the nodes are sorted in a certain way. This makes finding nodes in the tree fast and efficient.
+
+- Let's take a look a tree which is sorted as follows: the left child of each node is smaller than the node itself, and the right child is correspondingly greater.
+
+    ![alt text](images/sorted_bt.png)
+
+    - Now we can write a recursive algorithm for searching for nodes. The idea is very similar to the binary search from the previous section: if the current node is the node we are looking for, return `True`. Else, continue recursively with either the left or the right child tree. If the node is not defined, return `False`.
+        ```py
+        def find_node(root: Node, value):
+            if root is None:
+                return False
+
+            if value == root.value:
+                return True
+
+            if value > root.value:
+                return find_node(root.right_child, value)
+
+            return find_node(root.left_child, value)
+        ```
