@@ -11,6 +11,11 @@
 - [Best practices for setting up WSL](https://learn.microsoft.com/en-us/windows/wsl/setup/environment).
 - To turn on copy and paste, right click the tab, click properties, and check "Ctrl+Shift+C/V as Copy/Paste".
 
+## SSH Set-Up
+- [How to Port Forward Ubuntu/WSL](https://www.youtube.com/watch?v=6XIewWXXSNs)
+    - This is needed if you want to connect from other devices on your local network.
+- [Ubuntu/WSL SSH Server Setup Guide](https://www.youtube.com/watch?v=VjkE4dqdHX8)
+
 ## Links
 - [Using WSL with VS Code](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode).
 - [Run Linux GUI apps (e.g. Chrome) on the Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps)
