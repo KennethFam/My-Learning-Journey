@@ -594,7 +594,7 @@
             ```bash
             $ echo $PATH
             ```
-            Example Output:
+            Sample Output:
             ```
             /usr/local/sbin:/usr/local/bin:/usr/sbin:/bin
             ```
@@ -1236,7 +1236,7 @@
     ```bash
     $ ls -la /etc/shadow
     ```
-    Example output:
+    Sample output:
     ```bash
     -rw-r----- 1 root shadow 1134 Dec 1 11:45 /etc/shadow
     ```
@@ -1282,7 +1282,7 @@
     ```bash
     $ sudo cat /etc/shadow
     ```
-    Example output:
+    Sample output:
     ```bash
     root:MyEPTEa$6Nonsense:15000:0:99999:7:::
     ```
@@ -1303,7 +1303,7 @@
     ```bash
     $ cat /etc/group
     ```
-    Example output:
+    Sample output:
     ```bash
     root:*:0:pete
     ```
@@ -1343,7 +1343,7 @@
     ```bash
     $ ls -l Desktop/
     ```
-    Example output:
+    Sample output:
     ```bash
     drwxr-xr-x 2 pete penguins 4096 Dec 1 11:45 .
     ```
@@ -1430,7 +1430,7 @@
         ```bash
         $ ls -l /etc/shadow
         ```
-        Example output:
+        Sample output:
         ```bash
         -rw-r----- 1 root shadow 1134 Dec 1 11:45 /etc/shadow
         ```
@@ -1441,7 +1441,7 @@
         $ ls -l /usr/bin/passwd
         ```
 
-        Example output:
+        Sample output:
 
         ```bash
         -rwsr-xr-x 1 root root 47032 Dec 1 11:45 /usr/bin/passwd
@@ -1466,7 +1466,7 @@
     ```bash
     $ ls -l /usr/bin/wall
     ```
-    Example output:
+    Sample output:
     ```bash
     -rwxr-sr-x 1 root tty 19024 Dec 14 11:45 /usr/bin/wall
     ```
@@ -1506,7 +1506,7 @@
     ```bash
     $ ls -ld /tmp
     ```
-    Example output:
+    Sample output:
     ```bash
     drwxrwxrwxt 6 root root 4096 Dec 15 11:45 /tmp
     ```
@@ -1532,7 +1532,7 @@
     ```bash
     $ ps
     ```
-    Example Output:
+    Sample Output:
     ```bash
     PID        TTY     STAT   TIME          CMD
     41230    pts/4    Ss        00:00:00     bash
@@ -1715,7 +1715,7 @@
             ```bash
             $ jobs
             ```
-            Example output:
+            Sample output:
             ```bash
             [1]    Running     sleep 1000 &
             [2]-   Running     sleep 1001 &
@@ -1925,7 +1925,7 @@
     ```bash
     $ ls -l /dev
     ```
-    Example output:
+    Sample output:
     ```
     brw-rw----   1 root disk      8,   0 Dec 20 20:13 sda
     crw-rw-rw-   1 root root      1,   3 Dec 20 20:13 null
@@ -2103,7 +2103,7 @@
     ```bash
     $ df -T
     ```
-    Example Output:
+    Sample Output:
     ```
     Filesystem     Type     1K-blocks    Used Available Use% Mounted on
 
@@ -2148,7 +2148,7 @@
     ```bash
     $ sudo parted -l
     ```
-    Example Output:
+    Sample Output:
     ```
     Model: Seagate (scsi)
     Disk /dev/sda: 21.5GB
@@ -2200,7 +2200,7 @@
         select /dev/sdb2
         ```
         - To select the device you'll be working with, select it by its device name.
-    - View current partition table. Example output:
+    - View current partition table. Sample output:
         ```
         (parted) print                                                            
         Model: Seagate (scsi)
@@ -2268,7 +2268,7 @@
     ```bash
     $ sudo blkid
     ```
-    Example output:
+    Sample output:
     ```
     /dev/sda1: UUID="130b882f-7d79-436d-a096-1e594c92bb76" TYPE="ext4" 
     /dev/sda5: UUID="22c3d34b-467e-467c-b44d-f03803c2c526" TYPE="swap" 
@@ -2285,7 +2285,7 @@
     ```bash
     $ cat /etc/fstab
     ```
-    Example Output:
+    Sample Output:
     ```
     UUID=130b882f-7d79-436d-a096-1e594c92bb76 /               ext4    relatime,errors=remount-ro 0       1
     UUID=78d203a0-7c18-49bd-9e07-54f44cdb5726 /home           xfs     relatime        0       2
@@ -2325,7 +2325,7 @@
     ```bash
     $ df -h
     ```
-    Example output:
+    Sample output:
     ```
     Filesystem     1K-blocks    Used Available Use% Mounted on
     /dev/sda1       6.2G  2.3G  3.6G  40% /
@@ -2373,7 +2373,7 @@
         ```bash
         $ ls -li
         ```
-        Example output:
+        Sample output:
         ```
         140 drwxr-xr-x 2 pete pete 6 Jan 20 20:13 Desktop
         141 drwxr-xr-x 2 pete pete 6 Jan 20 20:01 Documents
@@ -2383,7 +2383,7 @@
             ```bash
             $ stat ~/Desktop/
             ```
-            Example output:
+            Sample output:
             ```
               File: ‘/home/pete/Desktop/’
               Size: 6               Blocks: 0          IO Block: 4096   directory
@@ -2406,7 +2406,7 @@
     ```bash
     ls -li
     ```
-    Example output:
+    Sample output:
     ```
     140 drwxr-xr-x 2 pete pete 6 Jan 20 20:13 Desktop
     141 drwxr-xr-x 2 pete pete 6 Jan 20 20:01 Documents
@@ -2549,7 +2549,7 @@
     ```bash
     $ uname -r
     ```
-    Example output:
+    Sample output:
     ```
     3.19.0-43-generic
     ```
@@ -2688,7 +2688,7 @@
     ```bash
     $ ls /etc/init
     ```
-    Example output:
+    Sample output:
     ```
     acpid.conf                   mountnfs.sh.conf
     alsa-restore.conf            mtab.sh.conf
@@ -2716,7 +2716,7 @@
     ```bash
     $ initctl list
     ```
-    Example output:
+    Sample output:
     ```bash
     shutdown stop/waiting
     console stop/waiting
@@ -2728,7 +2728,7 @@
     ```bash
     $ initctl status networking
     ```
-    Example output:
+    Sample output:
     ```
     networking start/running
     ```
@@ -2851,7 +2851,7 @@
 
 - `top`
     - We've discussed `top` before, but we're going to dig into the specifics of what it's actually displaying. Remember `top` is the tool we used to get a real time view of the system utilization by our processes:
-        Example output:
+        Sample output:
         ```
         top - 18:06:26 up 6 days,  4:07,  2 users,  load average: 0.92, 0.62, 0.59
         Tasks: 389 total,   1 running, 387 sleeping,   0 stopped,   1 zombie
@@ -2907,7 +2907,7 @@
             ```bash
             $ lsof .
             ```
-            Example output:
+            Sample output:
             ```
             COMMAND    PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
             lxsession 1491 pete  cwd    DIR    8,6     4096  131 .
@@ -2925,7 +2925,7 @@
             ```bash
             $ fuser -v .
             ```
-            Example output:
+            Sample output:
             ```
                                  USER        PID ACCESS COMMAND
 
@@ -2954,7 +2954,7 @@
     ```bash
     $ ps m
     ```
-    Example output:
+    Sample output:
     ```
       PID TTY      STAT   TIME COMMAND
       2207 pts/2    -      0:01 bash
@@ -2971,7 +2971,7 @@
     ```bash
     $ uptime
     ```
-    Example output:
+    Sample output:
     ```
      17:23:35 up 1 day,  5:59,  2 users,  load average: 0.00, 0.02, 0.05
     ```
@@ -2985,7 +2985,7 @@
     ```bash
     $ iostat
     ```
-    Example output:
+    Sample output:
     ```
     Linux 3.13.0-39-lowlatency (icebox)     01/28/2016      _i686_  (1 CPU)
 
@@ -3014,7 +3014,7 @@
     ```bash
     $ vmstat
     ```
-    Example output:
+    Sample output:
     ```
     procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
      r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
@@ -3103,7 +3103,7 @@
         ```bash
         $ less /var/log/syslog
         ```
-        Example output:
+        Sample output:
         ```
         Jan 27 07:41:32 icebox anacron[4650]: Job `cron.weekly' started
         ```
@@ -3116,7 +3116,7 @@
     ```bash
     less /etc/rsyslog.d/50-default.conf 
     ```
-    Example output:
+    Sample output:
     ```
     # First some standard log files.  Log by facility.
     #
