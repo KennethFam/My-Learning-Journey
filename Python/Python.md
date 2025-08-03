@@ -7206,3 +7206,133 @@
         copy_lines("first.txt", "second.txt", lambda line: line[-1] != ".")
     ```
     - The function definition contains a default value for the keyword parameter `criterion: lambda x: True`. This anonymous function always returns `True` regardless of the input. So, the default behaviour is to copy all lines. As usual, if a value is given for a parameter with a default value, the new value replaces the default value.
+
+### Generators
+- We have already come across situations where we're dealing with a series of items, and we'd need the next item(s) in the series, but we wouldn't necessarily want to formulate the entire series up to that point each time a new item is required. Some recursive series, such as the Fibonacci number, are a good example of such a situation. If each function call recursively generates the entire series up to the desired point, we end up generating the beginning of the series many times over.
+
+- Python generators are a way of producing just the next item in a series when it is needed, essentially running the generation process for the series only once (for a given execution of a program). They work mostly like normal functions, as they can be called and will return values, but the value a generator function returns differs from a normal function. A normal function should return the same value every time, given the same arguments. A generator function, on the other hand, should remember its current state and return the next item in the series, which may be different from the previous item.
+
+- Just as there are many ways of solving most any programming problem, there are many ways of achieving a functionality similar to generators, but generators can help make the program easier to understand, and can in certain situations save memory or other computational resources.
+
+#### The keyword `yield`
+- A generator function must contain the keyword `yield`, which marks out the value which the function returns. Let's take a look at a function which generates integer numbers, starting from zero and ending at a pre-determined maximum value:
+    ```py
+    def counter(max_value: int):
+        number = 0
+        while number <= max_value:
+            yield number
+            number += 1
+    ```
+    - Now the `counter` function can be passed as an argument to the function `next()`:
+        ```py
+        if __name__ == "__main__":
+            numbers = counter(10)
+            print("First value:")
+            print(next(numbers))
+            print("Second value:")
+            print(next(numbers))
+        ```
+        Output:
+        ```
+        First value:
+        0
+        Second value:
+        1
+        ```
+    - As you can see from the example above, the keyword `yield` is similar to the keyword `return`: both are used to define a return value. The difference is that `yield` doesn't "close" the function in the same sense as `return`. A generator function with the `yield` keyword keeps track of its state, and the next time it is called, it will continue from the same state. 
+    - This generator also requires a maximum value, which was 10 in the example above. When the generator runs out of values, it will raise a `StopIteration` exception:
+        ```py
+        if __name__ == "__main__":
+            # creates a generator with maximum value 1
+            numbers = counter(1)
+            print(next(numbers))
+            print(next(numbers))
+            print(next(numbers))
+        ```
+        Output:
+        ```
+        0
+        1
+        Traceback (most recent call last):
+        File "generator_example.py", line 11, in 
+        print(next(numbers))
+        StopIteration
+        ```
+        - The exception can be caught with a `try` - `except` block:
+            ```py
+            if __name__ == "__main__":
+            numbers = counter(1)
+            try:
+                print(next(numbers))
+                print(next(numbers))
+                print(next(numbers))
+            except StopIteration:
+                print("ran out of numbers")
+            ```
+            Output:
+            ```
+            0
+            1
+            ran out of numbers
+            ```
+    - Traversing through all the items in a generator is easily done with a `for` loop:
+        ```py
+        if __name__ == "__main__":
+            numbers = counter(5)
+            for number in numbers:
+                print(number)
+        ```
+        Output:
+        ```
+        0
+        1
+        2
+        3
+        4
+        5
+        ```
+    - Generators do not have to have a defined maximum value or termination point. They can generate values infinitely (within other computational and physical constraints, naturally).
+    - Pay mind, though: traversing a generator with a `for` loop only works if the generator terminates at some point. If the generator is built on an infinite loop, trying to traverse it with a simple `for` loop will cause an endless execution, just like a `while` loop with no end or break condition would.
+
+#### Generator comprehensions
+- You do not necessarily need a function definition to create a generator. We can use a structure similar to a list comprehension instead. This time we use *round* brackets to signify a generator instead of a list or a dictionary:
+    ```py
+    # This generator returns squares of integers
+    squares = (x ** 2 for x in range(1, 64))
+
+    print(squares) # the printout of a generator object isn't too informative
+
+    for i in range(5):
+        print(next(squares))
+    ```
+    Output:
+    ```
+    <generator object <genexpr> at 0x000002B4224EBFC0>
+    1
+    4
+    9
+    16
+    25
+    ```
+
+- In the following example we print out substrings of the English alphabet, each three characters long. This prints out the first 10 items in the generator:
+    ```py
+    substrings = ("abcdefghijklmnopqrstuvwxyz"[i : i + 3] for i in range(24))
+
+    # print out first 10 substrings
+    for i in range(10):
+        print(next(substrings))
+    ```
+    Output:
+    ```
+    abc
+    bcd
+    cde
+    def
+    efg
+    fgh
+    ghi
+    hij
+    ijk
+    jkl
+    ```
