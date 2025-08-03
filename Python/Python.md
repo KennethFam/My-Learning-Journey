@@ -7152,6 +7152,18 @@
     U2 (Joshua Tree), 1986. 50 min.
     ```
 
+- Note: We mentioned that lambdas are just nameless functions, so you can return anything a function can. For example, if you need to sort a list of objects by two values, you can do that by returning a tuple in your lambda function:
+    ```py
+    def get_n_players_by_most_goals(self, n: int):
+        return sorted( 
+            self.__players,
+            key=lambda p: (p.goals, -p.games),
+            reverse=True
+        )[:n]
+    ```
+    - This function returns a list of n players sorted by the most amount of goals to the least amount of goals. If the amount of goals are the same, we then pick the player with less games to be the greater object. 
+    - Note: Notice how we're able to manipulate the order by flipping the value of p.games using the `-` operator.
+
 #### Functions as arguments within your own functions
 - We established above that it is possible to pass a reference to a function as an argument to another function. To wrap this section up, let's write our very own function which takes a function as its argument.
     ```py
@@ -7760,3 +7772,174 @@
     ```
 
     - In the above case, when `reduce` tries to execute the `balance_sum_helper` function for the first time, the arguments it uses are the two first items in the list, which are both of type BankAccount. Specifically, the value assigned to the parameter `balance_sum` is the first item in the list. The `balance_sum_helper` function tries to add an integer value to it, but adding an integer directly to a `BankAccount` object is not a supported operation.
+
+### Regular Expressions
+- We have already established that Python is an excellent environment for processing text. One additional powerful tool for text processing is *regular expressions*, often shortened as *regex* or *regexp*. They are a way of selecting and searching for strings which follow a certain pattern. This section introduces you to the basics of regular expression, but you will find much more information online, including in the Python [tutorial](https://docs.python.org/3/howto/regex.html).
+
+#### What are regular expressions?
+- Regular expressions are not just a Python feature. They represent, in a way, a programming language within a programming language. They are, to an extent, compatible across many different programming languages. Regular expressions have their own specific syntax. The idea is to define a collection of strings which follow certain rules.
+
+- Let's begin with a simple example, before diving deeper into the syntax:
+    ```py
+    import re
+
+    words = ["Python", "Pantone", "Pontoon", "Pollute", "Pantheon"]
+
+    for word in words:
+        # the string should begin with "P" and end with "on"
+        if re.search("^P.*on$", word):
+            print(word, "found!")
+    ```
+    Output:
+    ```
+    Python found!
+    Pontoon found!
+    Pantheon found!
+    ```
+    - We need to `import` the `re` module in order to use regular expressions in Python. The `re` module contains many functions for working with regular expressions. In the example above, the `search` function takes two string arguments: the pattern string, and the target string where the pattern is looked for.
+
+ - This second example looks for any numbers in a string. The `findall` function returns a list of all the instances which match the pattern:
+    ```py
+    import re
+
+    sentence = "First, 2 !#third 44 five 678xyz962"
+
+    numbers = re.findall("\d+", sentence)
+
+    for number in numbers:
+        print(number)
+    ```
+    Output:
+    ```
+    2
+    44
+    678
+    962
+    ```
+
+#### The syntax of regular expressions
+- Let's get familiar with the basic syntax of regular expressions. Most of the following examples make use of this testing program:
+    ```py
+    import re
+
+    expression = input("Please type in an expression: ")
+
+    while True:
+        input_string = input("Please type in a string: ")
+        if input_string == "":
+            break
+        if re.search(expression, input_string):
+            print("Found!")
+        else:
+            print("Not found.")
+    ```
+
+##### Alternate substrings
+- The vertical bar `|`, also called the pipe character, allows you to match alternate substrings. Its significance is thus *or*. For example, the expression `911|112` matches strings which include either the substring `911` or the substring `112`.
+
+- An example with the testing program:
+    ```
+    Please type in an expression: aa|ee|ii
+    Please type in a string: aardvark
+    Found!
+    Please type in a string: feelings
+    Found!
+    Please type in a string: radii
+    Found!
+    Please type in a string: smooch
+    Not found.
+    Please type in a string: continuum
+    Not found.
+    ```
+
+##### Groups of characters
+- Square brackets are used to signify groups of accepted characters. For example, the expression `[aeio]` would match all strings which contain any of the characters `a`, `e`, `i`, or `o`.
+
+- A dash is also allowed for matching ranges of characters. For example, the expression `[0-68a-d]` would match all strings which contain a digit between `0` and `6`, or an `8`, or a character between `a` and `d`. In this notation all ranges are inclusive.
+
+- Combining two sets of brackets lets you match two consecutive characters. For example, the expression `[1-3][0-9]` would match any two digit number between `10` and `39`, inclusive.
+
+- An example with the testing program:
+    ```
+    Please type in an expression: [C-FRSO]
+    Please type in a string: C
+    Found!
+    Please type in a string: E
+    Found!
+    Please type in a string: G
+    Not found.
+    Please type in a string: R
+    Found!
+    Please type in a string: O
+    Found!
+    Please type in a string: T
+    Not found.
+    ```
+
+##### Repeated matches
+- Any part of an expression can be repeated with the following operators:
+    - `*` repeats for any number of times, including zero
+    - `+` repeats for any number of times, but at least once
+    - `{m}` repeats for exactly m times
+
+    These operators work on the part of the expression immediately preceding the operator. For example, the expression `ba+b` would match the substrings `bab`, `baab` and `baaaaaaaaaaab`, among others. The expression `A[BCDE]*Z` would match the substrings `AZ`, `ADZ` or `ABCDEBCDEBCDEZ`, among others.
+
+- An example with the testing program:
+    ```
+    Please type in an expression: 1[234]*5
+    Please type in a string: 15
+    Found!
+    Please type in a string: 125
+    Found!
+    Please type in a string: 145
+    Found!
+    Please type in a string: 12342345
+    Found!
+    Please type in a string: 126
+    Not found.
+    Please type in a string: 165
+    Not found.
+    ```
+
+##### Other special characters
+- A dot is a wildcard character which can match any single character. For example, the expression `c...o` would match any five character substring beginning with a `c` and ending with an `o`, such as `c-3po` or `cello`.
+
+- The `^` character specifies that the match must be at the beginning of the string, and `$` specifies that the match must be at the end of the string. These can also be used to exclude from the matches any other characters than those specified:
+    ```
+    Please type in an expression: ^[123]*$
+    Please type in a string: 4
+    Not found.
+    Please type in a string: 1221
+    Found!
+    Please type in a string: 333333333
+    Found!
+    ```
+
+- Sometimes you need to match for the special characters reserved for regular expression syntax. The backslash `\` can be used to escape special characters. So, the expression `1+` matches one or more numbers `1`, but the expression `1\+` matches the string `1+`.
+    ```
+    Please type in an expression: ^\*
+    Please type in a string: moi*
+    Not found.
+    Please type in a string: m*o*i
+    Not found.
+    Please type in a string: *moi
+    Found!
+    ```
+
+- Round brackets can be used to group together different parts of the expression. For example, the expression `(ab)+c` would match the substrings `abc`, `ababc` and `ababababababc`, but not the strings `ac` or `bc`, as the entire substring ab would have to appear at least once.
+    ```
+    Please type in an expression: ^(jabba).*(hut)$
+    Please type in a string: jabba the hut
+    Found!
+    Please type in a string: jabba a hut
+    Found!
+    Please type in a string: jarjar the hut
+    Not found.
+    Please type in a string: jabba the smut
+    Not found.
+    ```
+    - Another example:
+        ```
+        ^([0-1][0-9]|2[0-4])$
+        ```
+        - This would match 00-24.
