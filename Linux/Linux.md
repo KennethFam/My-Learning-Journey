@@ -3175,7 +3175,10 @@
 ### Network Sharing
 
 #### Setting Up SSH
-- You will need to set up an ssh server to practice the network commands that will be discussed. Please check out this [video](https://www.youtube.com/watch?v=VjkE4dqdHX8) to see how to set one up. Ignore the PowerShell set-up unless you are using WSL.
+- You will need to set up an ssh server to practice the network commands that will be discussed. Here are some set-up tutorials:   
+    - [WSL Ubuntu](https://www.youtube.com/watch?v=VjkE4dqdHX8) 
+    - [Ubuntu](https://youtu.be/Wlmne44M6fQ?si=nyBekz14vDs-ttcZ)
+   
 
 #### File Sharing Overview
 - You usually are not the only computer on your network, this is especially the case if you're working in a commercial environment. When we want to transfer data from one machine to another, sometimes it maybe easier to connect a USB drive and manually copy them. But for the most part, if you're working with machines on the same network, the way to transfer data is through network file sharing.
