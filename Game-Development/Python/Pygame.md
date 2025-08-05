@@ -121,7 +121,7 @@
     - The program uses this image of a robot, which is stored in the file `robot.png`:
 
         <p align="center">
-            <img src="images/robot.png">
+            <img src="images/robot_big.png">
         </p>
 
     - The file `robot.png` has to be in the same directory with the source code of the your program, or the program won't be able to find it.
@@ -562,3 +562,448 @@
 
     - Here the method `pygame.font.SysFont` creates a font object, which uses the system font Arial in size 24. The the method `render` creates an image of the specified text in the given colour. This image is drawn on the window with the `blit` method, just as before.
     - Note: Different systems will have different fonts available. If the system this program is executed on doesn't have the Arial font, even though Arial is a very common font available on most systems, the default system font is used instead. If you need to have a specific font available for your game, you can include the font file in the game directory and specify its location for the `pygame.font.Font` method.
+
+### Determining object/image overlap
+- Let's say I have a `robot` image, an `asteroid` image, and an array `asteroids` which store the coordinates of a few asteroids, and I want to determine when the robot overlaps ("touches") an asteroid. Well, I can do this by determining whether they overlap vertically. If they do overlap vertically, I can check for horizantal overlap by getting the distance between their midpoints and checking whether it's less than or equal to the sum of their widths halved. For example:
+    ```py
+    if asteroids[i][1] + asteroid.get_height() >= y:
+        robot_mid = x + robot.get_width()/2
+        asteroid_mid = asteroids[i][0] + asteroid.get_width()/2
+        if abs(robot_mid - asteroid_mid) <= (robot.get_width() + asteroid.get_width())/2:
+            points += 1
+            asteroids[i][0] = randint(0,width-asteroid.get_width())
+            asteroids[i][1] = -randint(100,1000)
+    ```
+    - `y` stores the robot's y-coordinate, and `asteroids` stores the x- and y-coordinate respectively of an asteroid.
+    - When an asteroid and the robot collide, the asteroid gets moved back up to the top at a random y-coordinate.
+
+### Game project
+- In this part we will use pygame to create a somewhat larger game. It is a variation of the classic Sokoban game, where the player moves a robot on a grid and pushes boxes into correct locations with as few moves as possible. The end result will look like this:
+
+    ![alt text](images/sokoban_game.png)
+
+#### The game map
+- Let's begin by drawing the map used in the game. The game is implemented in the class `Sokoban`, which will contain all functionality required to play the game. In this first stage, the contents of the class are as follows:
+    ```py
+    import pygame
+
+    class Sokoban:
+        def __init__(self):
+            pygame.init()
+            
+            self.load_images()
+            self.new_game()
+            
+            self.height = len(self.map)
+            self.width = len(self.map[0])
+            self.scale = self.images[0].get_width()
+
+            window_height = self.scale * self.height
+            window_width = self.scale * self.width
+            self.window = pygame.display.set_mode((window_width, window_height))
+
+            pygame.display.set_caption("Sokoban")
+
+            self.main_loop()
+
+        def load_images(self):
+            self.images = []
+            for name in ["floor", "wall", "target", "box", "robot", "done", "target_robot"]:
+                self.images.append(pygame.image.load(name + ".png"))
+
+        def new_game(self):
+            self.map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                        [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1],
+                        [1, 2, 3, 0, 0, 0, 1, 0, 0, 1, 2, 3, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 1, 2, 3, 0, 2, 3, 0, 0, 0, 1, 0, 0, 0, 1],
+                        [1, 0, 4, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1],
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+
+        def main_loop(self):
+            while True:
+                self.check_events()
+                self.draw_window()
+
+        def check_events(self):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    exit()
+
+        def draw_window(self):
+            self.window.fill((0, 0, 0))
+
+            for y in range(self.height):
+                for x in range(self.width):
+                    square = self.map[y][x]
+                    self.window.blit(self.images[square], (x * self.scale, y * self.scale))
+
+            pygame.display.flip()
+
+    if __name__ == "__main__":
+        Sokoban()
+    ```
+    - Running the program should display a window with the initial state of the game. Let's take a closer look at the code which achieves this.
+
+##### The constructor
+- The constructor of the class initializes the pygame modules and the essential variables and data structures involved in the game. It also calls the main loop method of the game.
+    ```py
+    def __init__(self):
+        pygame.init()
+        
+        self.load_images()
+        self.new_game()
+        
+        self.height = len(self.map)
+        self.width = len(self.map[0])
+        self.scale = self.images[0].get_width()
+
+        window_height = self.scale * self.height
+        window_width = self.scale * self.width
+        self.window = pygame.display.set_mode((window_width, window_height))
+
+        pygame.display.set_caption("Sokoban")
+
+        self.main_loop()
+    ```
+    - The `load_images` method loads the images used in the game into a list named `images`. The `new_game` method creates a two-dimensional list named `map`, which contains the state of the game grid in the beginning of the game.
+    - The variables `height` and `width` are initialized based on the dimensions of the game grid. The variable `scale` contains the length of the side of one square in the grid. As each image is a square of the exact same size, the size of all squares is covered by this one variable, and the width of the first image will do just fine for the value. This same value can be used to calculate the width and height of the entire grid, which lets us create a window of the appropriate size to display the game grid.
+
+##### Loading images
+- The `load_images` method loads all the images used in the game:
+    ```py
+    def load_images(self):
+        self.images = []
+        for name in ["floor", "wall", "target", "box", "robot", "done", "target_robot"]:
+            self.images.append(pygame.image.load(name + ".png"))
+    ```
+
+- The game makes use of the following images:
+    - Floor square
+
+        <p align="center">
+            <img src="images/floor.png">
+        </p>
+
+        - Filename: `floor.png`
+        - Position in list: 0
+    - Wall square
+
+        <p align="center">
+            <img src="images/wall.png">
+        </p>
+
+        - Filename: `wall.png`
+        - Position in list: 1
+    - Target Square
+
+        <p align="center">
+            <img src="images/target.png">
+        </p>
+
+        - Filename: `target.png`
+        - Position in list: 2
+    - Box
+
+        <p align="center">
+            <img src="images/box.png">
+        </p>
+
+        - Filename: `box.png`
+        - Position in list: 3
+    - Robot
+
+        <p align="center">
+            <img src="images/robot.png">
+        </p>
+
+        - Filename: `robot.png`
+        - Position in list: 4
+    - Box on a target square
+
+        <p align="center">
+            <img src="images/done.png">
+        </p>
+
+        - Filename: `done.png`
+        - Position in list: 5
+        - The box has been moved to the target square
+    - Robot on a target square
+
+        <p align="center">
+            <img src="images/target_robot.png">
+        </p>
+
+        - Filename: `target_robot.png`
+        - Position in list: 6
+        - The robot can also be on an empty target square
+
+##### Creating the grid
+- The `new_game` method creates the initial state of the game grid:
+    ```py
+    def new_game(self):
+        self.map = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                    [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1],
+                    [1, 2, 3, 0, 0, 0, 1, 0, 0, 1, 2, 3, 0, 0, 0, 0, 1],
+                    [1, 0, 0, 1, 2, 3, 0, 2, 3, 0, 0, 0, 1, 0, 0, 0, 1],
+                    [1, 0, 4, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1],
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+    ```
+    - The method creates a two.dimensional list named map which uses the numbered positions of the images in their list to mark up which image goes where. This way the game contains a record of the state of the game grid at all times.
+    - Note: In the beginning, all spaces on the grid contain a number between 0 and 4. The numbers 5 and 6 are not included, as in the beginning no box or robot is on a target square.
+
+##### The main loop
+- The main_loop method is rather short. With each iteration it calls two methods: `check_events` goes through any events collected since the previous iteration, and the `draw_window` method updates the contents of the window.
+    ```py
+    def main_loop(self):
+        while True:
+            self.check_events()
+            self.draw_window()
+
+    def check_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+
+    def draw_window(self):
+        self.window.fill((0, 0, 0))
+
+        for y in range(self.height):
+            for x in range(self.width):
+                square = self.map[y][x]
+                self.window.blit(self.images[square], (x * self.scale, y * self.scale))
+
+        pygame.display.flip()
+    ```
+    - At this stage the only event actually handled by the game is closing the game window, e.g. from the exit button. The game then exits by calling the Python `exit` function.
+    - Each time `draw_window` method is called the entire game grid is matrix is traversed, and the image corresponding to each square in the grid is drawn in the correct location.
+    - Note: The coordinates x and y are used in two different ways in the game. When dealing with the indexes of a two-dimensional list, it is logical to give the y coordinate first, as the y refers to the number of the row while x is the number of the column. On the other hand, when using pygame methods, x is usually passed first, as it quite often is when dealing with graphics, and also in mathematical contexts.
+
+#### Robot and boxes
+- The most difficult thing to implement in a Sokoban style game tends to be moving the robot so that it can push boxes in the desired direction. The game should be able to tell when the robot can move in a direction specified, and be able to handle any situation where a box should move also. Let's tackle this challenge now.
+
+##### Handling key events
+- The player guides the robot with the four arrow keys, so our event handler should also be able to react to the appropriate key events:
+    ```py
+    def check_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.move(0, -1)
+                if event.key == pygame.K_RIGHT:
+                    self.move(0, 1)
+                if event.key == pygame.K_UP:
+                    self.move(-1, 0)
+                if event.key == pygame.K_DOWN:
+                    self.move(1, 0)
+
+            if event.type == pygame.QUIT:
+                exit()
+    ```
+    - Now whenever the player presses an arrow key, the method `move` is called with an appropriate pair of arguments. The first argument contains the movement in the vertical direction, while the second contains the movement in the horizontal direction.
+
+##### Searching for the robot
+- The game has to know the location of the robot in order to move it correctly. Let's add the method `find_robot` which figures out the location of the robot:  
+    ```py
+    def find_robot(self ):
+        for y in range(self.height):
+            for x in range(self.width):
+                if self.map[y][x] in [4, 6]:
+                    return (y, x)
+    ```
+    - The method goes through all the squares in the game grid and returns the coordinates of the square which contains either the number 4 (the robot on its own) or the number 6 (the robot on a target square).
+    - The idea is that whenever the player presses an arrow key, first the location of the robot is established by going through the squares of the grid. This may seem a bit slow and superfluous, as we could just as well keep the location of the robot in a separate variable or two. The advantage of this search approach is that we are not storing the location of the robot in two different locations (in the game grid and separate variables), but instead we just have to worry about the one location (the game grid), which means that the state of the game in computer memory is simpler to handle.
+
+##### Changes to the game grid
+- We already called the method `move` above, but we haven't actually defined it yet. Let's do that now.
+
+- The `move` method takes the direction the player wants to move to as its arguments. It then updates the game grid accordingly, or determines the move is not allowed and leaves the grid unchanged.
+    ```py
+    def move(self, move_y, move_x):
+        robot_old_y, robot_old_x = self.find_robot() 
+        robot_new_y = robot_old_y + move_y
+        robot_new_x = robot_old_x + move_x
+
+        if self.map[robot_new_y][robot_new_x] == 1:
+            return
+
+        if self.map[robot_new_y][robot_new_x] in [3, 5]:
+            box_new_y = robot_new_y + move_y
+            box_new_x = robot_new_x + move_x
+
+            if self.map[box_new_y][box_new_x] in [1, 3, 5]:
+                return
+
+            self.map[robot_new_y][robot_new_x] -= 3
+            self.map[box_new_y][box_new_x] += 3
+
+        self.map[robot_old_y][robot_old_x] -= 4
+        self.map[robot_new_y][robot_new_x] += 4
+    ```
+    - The method has quite a lot of different stages, so let's take a look at each one in turn:
+        - **The old and new location of the robot**
+            ```py
+            robot_old_y, robot_old_x = self.find_robot() 
+            robot_new_y = robot_old_y + move_y
+            robot_new_x = robot_old_x + move_x
+            ```
+            - First, the method calls the `find_robot` in order to find the current location of the robot, before the move. This is stored in the variables `robot_old_y` and `robot_old_x`.
+            - Then the new location of the robot after the prospective move is stored in the variables robot_new_y and robot_new_x. The new coordinates can be easily calculated by adding the values passed as arguments to the old location of the robot, as both contained vertical and horizontal values.
+        - **Did the robot hit a wall?**
+            ```py
+            if self.map[robot_new_y][robot_new_x] == 1:
+                return
+            ```
+            - The `if` statement above takes care of the situation where the robot would hit a wall as a result of the move. Remember, 1 was the position of a wall square in the list of images. This is not allowed, so the method simply returns without any further ado.
+        - **Moving a box**
+            ```py
+            if self.map[robot_new_y][robot_new_x] in [3, 5]:
+                box_new_y = robot_new_y + move_y
+                box_new_x = robot_new_x + move_x
+
+                if self.map[box_new_y][box_new_x] in [1, 3, 5]:
+                    return
+
+                self.map[robot_new_y][robot_new_x] -= 3
+                self.map[box_new_y][box_new_x] += 3
+            ```
+            - If the new prospective location of the robot contains a number 3 (a box on its own) or a number 5 (a box in a target square), the robot attempts to move the box to the next square along. For this purpose we need two new variables: `box_new_y` and `box_new_x`, which contain the location of the box after the move.
+            - Similarly to the robot, the box cannot be moved to a wall square, with the identifier 1. Neither can the box move onto another box, or a target square with a box on it. If this would happen as a result of the move, the method again simply returns without making any changes to the grid.
+            - In any other casec the box can move. The value in the box's current grid location is decreased by 3, and the value in its new grid location is increased by 3. Because of the clever ordering of the items in the `images` list, this works out correctly both when the squares involved are floor squares and target squares.
+        - **Moving the robot**
+            ```py
+            self.map[robot_old_y][robot_old_x] -= 4
+            self.map[robot_new_y][robot_new_x] += 4
+            ```
+            - If the execution of the method has reached this point without returning, it is time to move the robot as well. The procedure is similar to moving the box, but the value subtracted from and added to the appropriate locations in the grid is 4 this time around. This ensures, again through the clever ordering of the items in the `images` list, that the final result on the grid is correct both when floor and target squares are involved in the move.
+
+##### Refactoring?
+- Using only the grid to store the state of the game at all times is very handy in the sense that only one variable is permanently involved in the whole process, and it is relatively easy to update the state of the grid through simple additions and subtractions.
+
+- The downside is that it can be a tad difficult to understand the program code of the game. If someone unfamiliar with the logic used saw this following line of code, they would likely be a bit perplexed:
+    ```py
+    if self.map[box_new_y][box_new_x] in [1, 3, 5]:
+    ```
+    - The code snippet above makes use of *magic numbers* to represent the squares in the grid. Anyone reading the code would have to know that 1 means wall, 3 means a box and 5 means a box in a target square.
+
+- The lines involving the clever subtractions and additions would look even more baffling:
+    ```py
+    self.map[robot_new_y][robot_new_x] -= 3
+    ```
+    - The number 3 meant a box just previously, but now it is subtracted from the value of a square on the grid. This works in the context of our numbering scheme, as it changes a box (3) into a normal floor square (0), or a target square with a box (5) into an empty target square (2), but understanding this requiares a primer in the numbering scheme used.
+
+- We could make it easier for anyone reading the code by **refactoring** our implementation. That means improving the structure and readability of the code. One way to achieve this would be to use the names of the squares instead of the numbers 0 to 6, even though this would still not explain how and why numbers can be added and subtracted while maintaining the integrity of the grid.
+
+- Making the program code truly accessible would likely require much more fundamentally transformative refactoring. For example, we could keep the structure of the game map in one location, and store the locations of the robot and the boxes in some separate data structure. The downside of this would be that this would likely result in a lot more code, and the internal structure of the game would become much more complicated.
+
+#### Finishing the game
+- Our game is already quite functional, so it is time to add some finishing touches to it. We will add a counter for displaying the moves taken, an option to start a new game and close the game with keyboard input, and a notification for when the player succeeds in solving the game.
+
+##### Move counter
+- The move counter near the bottom edge of the game window displays the number of moves taken by the player so far. This can be used to find the solution with the least number of moves.
+
+- The counter requires some shanges to the code. First, let's change the constructor so that there is adequate space for the counter, and that we have an appropriate font at our disposal in order to draw the text:
+    ```py
+    def __init__(self):
+        ...
+        self.window = pygame.display.set_mode((window_width, window_height + self.scale))
+
+        self.game_font = pygame.font.SysFont("Arial", 24)
+        ...
+    ```
+
+- The move counter is initialized to zero at the beginning of the game. Each move increases it by one:
+    ```py
+    def new_game(self):
+        ...
+        self.moves = 0
+    ```
+    ```py
+    def move(self, move_y, move_x):
+        ...
+        self.moves += 1
+    ```
+
+- Each time the window contents are updated, the number of moves taken shown on the screen should also be updated:
+    ```py
+    def draw_window(self):
+        ...
+        game_text = self.game_font.render("Moves: " + str(self.moves), True, (255, 0, 0))
+        self.window.blit(game_text, (25, self.height * self.scale + 10))
+        ...
+    ```
+
+##### New game and exiting the game
+- Next, let's add keyboard commands for starting a new game with F2 and exiting the game with Esc. Both are rather easy to implement:
+    ```py
+    def check_events(self):
+        ...
+                if event.key == pygame.K_F2:
+                    self.new_game()
+                if event.key == pygame.K_ESCAPE:
+                    exit()
+        ...
+    ```
+
+- We should also add information about this functionality for the player to see:
+    ```py
+    def draw_window(self):
+        ...
+        game_text = self.game_font.render("F2 = new game", True, (255, 0, 0))
+        self.window.blit(game_text, (200, self.height * self.scale + 10))
+
+        game_text = self.game_font.render("Esc = exit game", True, (255, 0, 0))
+        self.window.blit(game_text, (400, self.height * self.scale + 10))
+        ...
+    ```
+
+##### Solving the game
+- The player has solved the game when each box is in one of the target squares. The following method takes care of checking this:
+    ```py
+    def game_solved(self):
+        for y in range(self.height):
+            for x in range(self.width):
+                if self.map[y][x] in [2, 6]:
+                    return False
+        return True
+    ```
+    - The method goes through all the squares in the game grid. If any of the squares is a 2 (an empty target square) or a 6 (a robot in a target square) the game is not yet solved, so the method returns `False`. If no such square is present in the grid, all target squares must be occupied by boxes, the game is solved, and the method returns `True`.
+
+- If the player solves the game, we should display an appropriate message with the draw_window method:
+    ```py
+    def draw_window(self):
+        ...
+        if self.game_solved():
+            game_text = self.game_font.render("Congratulations, you solved the game!", True, (255, 0, 0))
+            game_text_x = self.scale * self.width / 2 - game_text.get_width() / 2
+            game_text_y = self.scale * self.height / 2 - game_text.get_height() / 2
+            pygame.draw.rect(self.window, (0, 0, 0), (game_text_x, game_text_y, game_text.get_width(), game_text.get_height()))
+            self.window.blit(game_text, (game_text_x, game_text_y))
+        ...
+    ```
+
+- For completeness' sake, let's also change the `move` method so that the player can no longer move when they have solved the game:
+    ```py
+    def move(self, move_y, move_x):
+        if self.game_solved():
+            return
+        ...
+    ```
+    - The player can still see the game grid and the final state of the game, however.
+
+##### A hint for testing
+- When developing games it often happens that you'd want to check what happens in some later situation in the game. For example, in this game, the moment where the game is solved is one such situation.
+
+- It can be difficult to test the correct functioning of a situation like that, as you'd normally have to solve the game to reach that point in the game. As programmers we can make some temporary alleviations in our games, to make it easier to test them. For example, we could add the following to make it temporarily easier to solve the game:
+    ```py
+    def game_solved(self):
+        return True
+    ```
+    - Now the method always returns `True`, which means that the game is "solved" to begin with. This makes it easy to check that the noification at the end looks good and the player can no longer move on the grid after solving. When this functionality is thoroughly tested, we can revoke the changes.
+
+##### Your game on GitHub?
+- The game is now finished. If you want an easy way to play around with the code and images, you can retrieve the source code from [GitHub](https://github.com/moocfi/sokoban).
+
+##### How many moves are required?
+- The grid in this game is quite small, but the game is not all that easy. The first challenge is simply passing the game, but the next stage is trying to do so with as few moves as possible. How short is the shortest path to a solution?
+
+- Looking for the shortest possible solution is not an easy task at all, but there are computational solutions to this as well. They are one of the subjects of the *Data Structures and Algorithms* course.
