@@ -577,6 +577,99 @@
     - `y` stores the robot's y-coordinate, and `asteroids` stores the x- and y-coordinate respectively of an asteroid.
     - When an asteroid and the robot collide, the asteroid gets moved back up to the top at a random y-coordinate.
 
+### Clock Example
+```py
+# MOOC Solution for Part 13, Clock Exercise
+import pygame
+import math
+from datetime import datetime
+ 
+pygame.init()
+width, height = 640, 480
+screen = pygame.display.set_mode((width, height))
+ 
+def circle(color: int, radius: int):
+    pygame.draw.circle(screen, color, (middle_x, middle_y), radius)
+ 
+def hand(length: int, thickness: int, proportion: float):
+    angle = 2*math.pi*proportion-math.pi/2
+    end_x = middle_x+math.cos(angle)*length
+    end_y = middle_y+math.sin(angle)*length
+ 
+    pygame.draw.line(screen, (0, 0, 255), (middle_x, middle_y), (end_x, end_y), thickness)
+ 
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            exit()
+ 
+    hours = datetime.now().hour%12
+    minutes = datetime.now().minute
+    seconds = datetime.now().second
+ 
+    pygame.display.set_caption(str(datetime.now().time())[:8])
+ 
+    screen.fill((0, 0, 0))
+ 
+    middle_x = width/2
+    middle_y = height/2
+ 
+    circle((255, 0, 0), 200)
+    circle((0, 0, 0), 195)
+    circle((255, 0, 0), 10)
+ 
+    hand(185, 1, seconds/60)
+    hand(180, 2, (minutes+seconds/60)/60)
+    hand(150, 5, (hours+minutes/60+seconds/3600)/12)
+ 
+    pygame.display.flip()
+```
+- This code displays a clock face which displays the system time. I will break down the hardest part of this code, which is understanding how to position your second, minute, and hour hands:
+    1. Get the current time:
+        ```py
+        hours = datetime.now().hour%12
+        minutes = datetime.now().minute
+        seconds = datetime.now().second
+        ```
+        - Note that a clock only has 12 hours, so mod the current hour (which is in the range [0, 23]) by 12.
+    2. Get the midpoint of your window because that's where the first point of your clock hand lines will be.
+        ```py
+        middle_x = width/2
+        middle_y = height/2
+        ```
+    3. Calculate the proportions of the seconds, minutes, and hours relative to the clock face, and draw the hands:
+        ```py
+        def hand(length: int, thickness: int, proportion: float):
+            angle = 2*math.pi*proportion-math.pi/2
+            end_x = middle_x+math.cos(angle)*length
+            end_y = middle_y+math.sin(angle)*length
+
+            pygame.draw.line(screen, (0, 0, 255), (middle_x, middle_y), (end_x, end_y), thickness)
+        
+        hand(185, 1, seconds/60)
+        hand(180, 2, (minutes+seconds/60)/60)
+        hand(150, 5, (hours+minutes/60+seconds/3600)/12)
+        ```
+        - So, we are plotting the hands based on their proportions relative to the circle. To do this, we can use the angle (in radians). To obtain the angle, we use this:
+            ```py
+            angle = 2*math.pi*proportion-math.pi/2
+            ```
+            - `2*math.pi` represents the full circle or 360°.
+            - `proportion` is the proportion of the hand relative to the full circle or 2π.
+            - We subtract π/2 because we want the hands to point up (align with the positive y-axis) instead of pointing to the right (aligning with the positive x-axis) when the angle is 0.
+        - We get the x- and y-coordinates using the cosine and sine functions respectively.
+        - We add `middle_x` and `middle_y` to the x- and y-coordinates respectively because we are trying to draw the line with respect to the middle, so we need to add the offset.
+        - `length` is simply how long we want the clock hand to be, i.e. the magnitude of the clock hand.
+        - We calculcate the proportions in the function calls:
+            ```py
+            hand(185, 1, seconds/60)
+            hand(180, 2, (minutes+seconds/60)/60)
+            hand(150, 5, (hours+minutes/60+seconds/3600)/12)
+            ```
+            - The second hand should only tick 60 times, so we divide the circle into 60 parts.
+            - The minute hand's position not only relies on the current minute but also the number of seconds (converted to minutes). We then divide the result of `minutes+seconds/60` by 60 because there are 60 minutes on a clock.
+            - The hour hand's position depends on both the minutes and seconds. So, we convert minutes and seconds into hours, add it to the current hour and divide the result by 12, since there are 12 hours on a clock.
+
 ### Game project
 - In this part we will use pygame to create a somewhat larger game. It is a variation of the classic Sokoban game, where the player moves a robot on a grid and pushes boxes into correct locations with as few moves as possible. The end result will look like this:
 
