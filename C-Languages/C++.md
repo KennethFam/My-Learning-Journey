@@ -1032,6 +1032,96 @@
 
 </details>
 
+### Uninitialized variables and undefined behavior
+
+#### Uninitialized variables
+- Unlike some programming languages, C/C++ does not automatically initialize most variables to a given value (such as zero). When a variable that is not initialized is given a memory address to use to store data, the default value of that variable is whatever (garbage) value happens to already be in that memory address! A variable that has not been given a known value (through initialization or assignment) is called an **uninitialized variable**.
+    - Initialized = The object is given a known value at the point of definition.
+    - Assignment = The object is given a known value beyond the point of definition.
+    - Uninitialized = The object has not been given a known value yet.
+
+- Using the values of uninitialized variables can lead to unexpected results. Consider the following short program:
+    ```cpp
+    #include <iostream>
+
+    int main()
+    {
+        // define an integer variable named x
+        int x; // this variable is uninitialized because we haven't given it a value
+
+        // print the value of x to the screen
+        std::cout << x << '\n'; // who knows what we'll get, because x is uninitialized
+
+        return 0;
+    }
+    ```
+    - In this case, the computer will assign some unused memory to `x`. It will then send the value residing in that memory location to std::cout, which will print the value (interpreted as an integer). But what value will it print? The answer is “who knows!”, and the answer may (or may not) change every time you run the program. When the author ran this program in Visual Studio, std::cout printed the value `7177728` one time, and `5277592` the next. Feel free to compile and run the program yourself. 
+    - Most modern compilers will attempt to detect if a variable is being used without being given a value. If they are able to detect this, they will generally issue a compile-time warning or error. For example, compiling the above program on Visual Studio produced the following warning:
+        ```
+        c:\VCprojects\test\test.cpp(11) : warning C4700: uninitialized local variable 'x' used
+        ```
+    - If your compiler won’t let you compile and run the above program (e.g. because it treats the issue as an error), here is a possible solution to get around this issue:
+        ```cpp
+        #include <iostream>
+
+        void doNothing(int&) // Don't worry about what & is for now, we're just using it to trick the compiler into thinking variable x is used
+        {
+        }
+
+        int main()
+        {
+            // define an integer variable named x
+            int x; // this variable is uninitialized
+
+            doNothing(x); // make the compiler think we're assigning a value to this variable
+
+            // print the value of x to the screen (who knows what we'll get, because x is uninitialized)
+            std::cout << x << '\n';
+
+            return 0;
+        }
+        ```
+
+- Using uninitialized variables is one of the most common mistakes that novice programmers make, and unfortunately, it can also be one of the most challenging to debug (because the program may run fine anyway if the uninitialized variable happened to get assigned to a spot of memory that had a reasonable value in it, like 0). This is the primary reason for the “always initialize your variables” best practice.
+
+#### Undefined behavior
+- Using the value from an uninitialized variable is our first example of undefined behavior. **Undefined behavior** (often abbreviated **UB**) is the result of executing code whose behavior is not well-defined by the C++ language. In this case, the C++ language doesn’t have any rules determining what happens if you use the value of a variable that has not been given a known value. Consequently, if you actually do this, undefined behavior will result.
+
+- Code implementing undefined behavior may exhibit any of the following symptoms:
+    - Your program produces different results every time it is run.
+    - Your program consistently produces the same incorrect result.
+    - Your program behaves inconsistently (sometimes produces the correct result, sometimes not).
+    - Your program seems like it’s working but produces incorrect results later in the program.
+    - Your program crashes, either immediately or later.
+    - Your program works on some compilers but not others.
+    - Your program works until you change some other seemingly unrelated code.
+    
+    Or, your code may actually produce the correct behavior anyway.
+
+- C++ contains many cases that can result in undefined behavior if you’re not careful.
+
+- Rule: Take care to avoid all situations that result in undefined behavior, such as using uninitialized variables.
+
+#### Implementation-defined behavior and unspecified behavior
+- A specific compiler and the associated standard library it comes with are called an **implementation** (as these are what actually implements the C++ language). In some cases, the C++ language standard allows the implementation to determine how some aspect of the language will behave, so that the compiler can choose a behavior that is efficient for a given platform. Behavior that is defined by the implementation is called **implementation-defined behavior**. Implementation-defined behavior must be documented and consistent for a given implementation.
+
+- Let’s look at a simple example of implementation-defined behavior:
+    ```cpp
+    #include <iostream>
+
+    int main()
+    {
+        std::cout << sizeof(int) << '\n'; // print how many bytes of memory an int value takes
+
+        return 0;
+    }
+    ```
+    - On most platforms, this will produce `4`, but on others it may produce `2`.
+
+- **Unspecified behavior** is almost identical to implementation-defined behavior in that the behavior is left up to the implementation to define, but the implementation is not required to document the behavior.
+
+- Best practice: Avoid implementation-defined and unspecified behavior whenever possible, as they may cause your program to malfunction on other implementations.
+
 ## Vocabulary
 - statement: an instruction in a computer program that tells the computer to perform an action. Most (but not all) statements in C++ end in a semicolon. If you see a line that ends in a semicolon, it’s probably a statement.
 
@@ -1083,6 +1173,15 @@
 
 - instance: instantiated object. Most often, this term is applied to class type objects, but it is occasionally applied to objects of other types as well.
 
+- uninitialized variable: a variable that has not been given a known value (through initialization or assignment)
+
+- undefined behavior (ub): the result of executing code whose behavior is not well-defined by the C++ language
+
+- implementation: a specific compiler and the associated standard library it comes with
+    - implementation-defined behavior: behavior that is defined by the implementation
+
+- unspecified behavior: almost identical to implementation-defined behavior in that the behavior is left up to the implementation to define, but the implementation is not required to document the behavior
+
 - encapsulation: combining a number of items, such as variables and functions, into a single package such as an object of a class
 
 - volatile: a type qualifier that informs the compiler that a variable's value can be modified by external factors, such as hardware, interrupt service routines (ISRs), or another thread, in ways the compiler cannot predict.
@@ -1119,6 +1218,10 @@
 
 - Output a newline whenever a line of output is complete.
 
-- Prefer \n over std::endl when outputting text to the console.
+- Prefer `\n` over `std::endl` when outputting text to the console.
 
 - There’s some debate over whether it’s necessary to initialize a variable immediately before you give it a user provided value via another source (e.g. std::cin), since the user-provided value will just overwrite the initialization value. In line with our previous recommendation that variables should always be initialized, best practice is to initialize the variable first.
+
+- Always initialize your variables.
+
+- Avoid implementation-defined and unspecified behavior whenever possible, as they may cause your program to malfunction on other implementations.
