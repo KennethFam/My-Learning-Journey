@@ -1,6 +1,6 @@
 # C++
 
-## Information
+## Source
 - My notes will be taken from [learncpp](https://www.learncpp.com/).
 
 ## Background
@@ -1122,6 +1122,139 @@
 
 - Best practice: Avoid implementation-defined and unspecified behavior whenever possible, as they may cause your program to malfunction on other implementations.
 
+### Keywords and naming identifiers
+
+### Keywords
+- C++ reserves a set of 92 words (as of C++23) for its own use. These words are called **keywords** (or reserved words), and each of these keywords has a special meaning within the C++ language.
+
+- Here is a list of all the C++ keywords (through C++23):
+
+    ![alt text](images/keywords.png)
+
+    - The keywords marked (C++20) were added in C++20. If your compiler is not C++20 compliant (or does have C++20 functionality, but it’s turned off by default), these keywords may not be functional.
+
+- C++ also defines special identifiers: *override*, *final*, *import*, and *module*. These have a specific meaning when used in certain contexts but are not reserved otherwise.
+
+- You have already run across some of these keywords, including *int* and *return*. Along with a set of operators, these keywords and special identifiers define the entire language of C++ (preprocessor commands excluded). Because keywords and special identifiers have special meaning, your IDEs will likely change the text color of these words to make them stand out from other identifiers.
+
+### Identifier naming rules
+- As a reminder, the name of a variable (or function, type, or other kind of item) is called an identifier. C++ gives you a lot of flexibility to name identifiers as you wish. However, there are a few rules that must be followed when naming identifiers:
+    - The identifier can not be a keyword. Keywords are reserved.
+    - The identifier can only be composed of letters (lower or upper case), numbers, and the underscore character. That means the name can not contain symbols (except the underscore) nor whitespace (spaces or tabs).
+    - The identifier must begin with a letter (lower or upper case) or an underscore. It can not start with a number.
+    - C++ is case sensitive, and thus distinguishes between lower and upper case letters. `nvalue` is different than `nValue` is different than `NVALUE`.
+
+### Identifier naming best practices
+- Now that you know how you can name a variable, let’s talk about how you should name a variable (or function).
+    1. It is conventional in C++ that variable names should begin with a lowercase letter. If the variable name is a single word or acronym, the whole thing should be written in lowercase letters.
+
+        ```cpp
+        int value; // conventional
+
+        int Value; // unconventional (should start with lower case letter)
+        int VALUE; // unconventional (should start with lower case letter and be in all lower case)
+        int VaLuE; // unconventional (see your psychiatrist) ;)
+        ```
+
+        Most often, function names are also started with a lowercase letter (though there’s some disagreement on this point). We’ll follow this convention, since function main (which all programs must have) starts with a lowercase letter, as do all of the functions in the C++ standard library.
+
+        Identifier names that start with a capital letter are typically used for user-defined types (such as structs, classes, and enumerations, all of which we will cover later).
+
+        If the variable or function name is multi-word, there are two common conventions: words separated by underscores (sometimes called snake_case), or intercapped (sometimes called camelCase, since the capital letters stick up like the humps on a camel).
+
+        ```cpp
+        int my_variable_name;   // conventional (separated by underscores/snake_case)
+        int my_function_name(); // conventional (separated by underscores/snake_case)
+
+        int myVariableName;     // conventional (intercapped/camelCase)
+        int myFunctionName();   // conventional (intercapped/camelCase)
+
+        int my variable name;   // invalid (whitespace not allowed)
+        int my function name(); // invalid (whitespace not allowed)
+
+        int MyVariableName;     // unconventional (should start with lower case letter)
+        int MyFunctionName();   // unconventional (should start with lower case letter)
+        ```
+
+        In this tutorial, we will typically use the intercapped approach because it’s easier to read (it’s easy to mistake an underscore for a space in dense blocks of code). But it’s common to see either -- the C++ standard library uses the underscore method for both variables and functions. Sometimes you’ll see a mix of the two: underscores used for variables and intercaps used for functions.
+
+        It’s worth noting that if you’re working in someone else’s code, it’s generally considered better to match the style of the code you are working in than to rigidly follow the naming conventions laid out above.
+        
+        Best practice: When working in an existing program, use the conventions of that program (even if they don’t conform to modern best practices). Use modern best practices when you’re writing new programs.
+    
+    2. Avoid naming your identifiers starting with an underscore. Although syntactically legal, these names are typically reserved for OS, library, and/or compiler use.
+
+    3. The name of your identifiers should make clear what the value they are holding means (particularly if the units aren’t obvious). Identifiers should be named in a way that would help someone who has no idea what your code does be able to figure it out as quickly as possible. In 3 months, when you look at your program again, you’ll have forgotten how it works, and you’ll thank yourself for picking variable names that make sense.
+
+        However, giving a trivial identifier an overly-complex name impedes overall understanding of what the program is doing almost as much as giving a non-trivial identifier an inadequate name. A good rule of thumb is to make the length of an identifier proportional to how specific and accessible the identifier is. This means:
+        - An identifier that exists for only a few statements (e.g. in the body of a short function) can have a shorter name.
+        - An identifier that is accessible from anywhere might benefit from a longer name.
+        - An identifier that represents a non-specific number (e.g. anything the user provides) can have a shorter name.
+        - An identifier that represents a specific value (e.g. the length of an inseam in millimeters) should have a longer name.
+
+        ![alt text](images/identifiers.png)
+
+    4. Avoid abbreviations, except when they are common and unambiguous (e.g. `num`, `cm`, `idx`).
+        - Key insight: Code is read more often than it is written, so any time saved while writing the code is time that every reader, including future you, will waste while reading it. If you’re looking to write code faster, use your editor’s auto-complete feature.
+    
+    5. For variable declarations, it can be useful to use a comment to describe what a variable is going to be used for, or to explain anything else that might not be obvious. For example, say we’ve declared a variable that is supposed to store the number of characters in a piece of text. Does the text “Hello World!” have 10, 11, 12 characters? It depends on whether we’re including whitespace or punctuation. Rather than naming the variable `numCharsIncludingWhitespaceAndPunctuation`, which is rather lengthy, a well placed comment on or above the declaration line should help the user figure it out:
+        ```cpp
+        // a count of the number of chars in a piece of text, including whitespace and punctuation
+        int numChars {};
+        ```
+
+### Quiz
+<details>
+<summary><strong> Question </strong></summary>
+
+- Based on how you should name a variable, indicate whether each variable name is conventional (follows best practices), unconventional (compiler will accept but does not follow best practices), or invalid (will not compile), and why.
+    ```cpp
+    int sum {}; // Assume it’s obvious what we’re summing
+    ```
+    - conventional
+
+    ```cpp
+    int _apples {};
+    ```
+    - Unconventional -- variable names should not start with an underscore.
+
+    ```cpp
+    int VALUE {};
+    ```
+    - Unconventional -- single word names should be in all lower case.
+
+    ```cpp
+    int my variable name {};
+    ```
+    - Invalid -- variable names can not contain spaces.
+
+    ```cpp
+    int TotalCustomers {};
+    ```
+    - Unconventional -- variable names should start with a lower case letter.
+
+    ```cpp
+    int void {};
+    ```
+    - Invalid -- void is a keyword.
+
+    ```cpp
+    int numFruit {};
+    ```
+    - Conventional.
+
+    ```cpp
+    int 3some {};
+    ```
+    - Invalid -- variable names can not start with a number.
+
+    ```cpp
+    int meters_of_pipe {};
+    ```
+    - Conventional.
+
+</details>
+
 ## Vocabulary
 - statement: an instruction in a computer program that tells the computer to perform an action. Most (but not all) statements in C++ end in a semicolon. If you see a line that ends in a semicolon, it’s probably a statement.
 
@@ -1182,6 +1315,8 @@
 
 - unspecified behavior: almost identical to implementation-defined behavior in that the behavior is left up to the implementation to define, but the implementation is not required to document the behavior
 
+- keywords: words that C++ reserves for its own use (92 exist as of C++23)
+
 - encapsulation: combining a number of items, such as variables and functions, into a single package such as an object of a class
 
 - volatile: a type qualifier that informs the compiler that a variable's value can be modified by external factors, such as hardware, interrupt service routines (ISRs), or another thread, in ways the compiler cannot predict.
@@ -1225,3 +1360,5 @@
 - Always initialize your variables.
 
 - Avoid implementation-defined and unspecified behavior whenever possible, as they may cause your program to malfunction on other implementations.
+
+- When working in an existing program, use the conventions of that program (even if they don’t conform to modern best practices). Use modern best practices when you’re writing new programs.
