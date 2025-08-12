@@ -1,20 +1,5 @@
 # Bash Scripting
 
-<details>
-<summary><strong> Exercise </strong></summary>
-
-- 
-    ```shell
-    ```
-    **Expected Output**:
-    ```shell
-    ```
-    - **Solution**:
-        ```shell
-        ```
-
-</details>
-
 ## Background
 - I will be taking notes from [learnshell](https://www.learnshell.org/).
 

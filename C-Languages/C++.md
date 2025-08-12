@@ -1576,11 +1576,17 @@ Best practice: Using the automatic formatting feature is highly recommended to k
 <summary><strong>Question</strong></summary>
 
 - For each of the following, indicate what output they produce:
-    - `std::cout << 3 + 4 << '\n';`
+    - ```cpp
+      std::cout << 3 + 4 << '\n';
+      ```
         - 7
-    - `std::cout << 3 + 4 - 5 << '\n';`
+    - ```cpp
+      std::cout << 3 + 4 - 5 << '\n';
+      ```
         - 2
-    - `std::cout << 2 + 3 * 4 << '\n';`
+    - ```cpp
+      std::cout << 2 + 3 * 4 << '\n';
+      ```
         - Multiplication goes before addition, so `3 * 4` goes first, producing the result 12. 2 + 12 is 14.
     - 
         ```cpp
@@ -1588,6 +1594,141 @@ Best practice: Using the automatic formatting feature is highly recommended to k
         std::cout << (x = 5) << '\n';
         ```
         - `x = 5` assigns the value `5` to `x`, and then returns `x`. The value of `x` (now `5`) is then printed to the console.
+
+</details>
+
+### Introduction to expressions
+
+#### Expressions
+- Consider the following series of statements, each of which defines a variable and initializes it:
+    ```cpp
+    // five() is a function that returns the value 5
+    int five()
+    {
+        return 5;
+    }
+
+    int main()
+    {
+        int a{ 2 };             // initialize variable a with literal value 2
+        int b{ 2 + 3 };         // initialize variable b with computed value 5
+        int c{ (2 * 3) + 4 };   // initialize variable c with computed value 10
+        int d{ b };             // initialize variable d with variable value 5
+        int e{ five() };        // initialize variable e with function return value 5
+
+        return 0;
+    }
+    ```
+    - Note that the initializers above make use of a variety of different entities: literals, variables, operators, and function calls. Somehow, C++ is converting all of these different things into a single value that can then be used as the initial value for the variable.
+    - What do all of these initializers have in common? They make use of an expression. In general programming, an **expression** is a non-empty sequence of literals, variables, operators, and function calls that calculates a value. The process of executing an expression is called **evaluation**, and the resulting value produced is called the **result** of the expression (also sometimes called the return value).
+
+- In C++, the result of an expression is one of the following:
+    - A value (most commonly)
+    - An object or a function.
+    - Nothing. These are the result of non-value returning function calls that are called only for their side effects.
+
+- When an expression is evaluated, each of the terms inside the expression are evaluated, until a single value remains. Here are some examples of different kinds of expressions, with comments indicating how they evaluate:
+    ```cpp
+    2               // 2 is a literal that evaluates to value 2
+    "Hello world!"  // "Hello world!" is a literal that evaluates to text "Hello world!"
+    x               // x is a variable that evaluates to the value held by variable x
+    2 + 3           // operator+ uses operands 2 and 3 to evaluate to value 5
+    five()          // evaluates to the return value of function five()
+    ```
+
+- Expressions involving operators with side effects are a little more tricky:
+    ```cpp
+    x = 5           // x = 5 has side effect of assigning 5 to x, evaluates to x
+    x = 2 + 3       // has side effect of assigning 5 to x, evaluates to x
+    std::cout << x  // has side effect of printing value of x to console, evaluates to std::cout
+    ```
+
+- Key insight: Wherever a single value is expected in C++, you can use an value-producing expression instead, and the expression will be evaluated to produce a single value.
+
+- Expressions do not end in a semicolon, and cannot be compiled by themselves. For example, if you were to try compiling the expression `x = 5`, your compiler would complain (probably about a missing semicolon). Rather, expressions are always evaluated as part of statements. For example, take this statement:
+    ```cpp
+    int x{ 2 + 3 }; // 2 + 3 is an expression that has no semicolon -- the semicolon is at the end of the statement containing the expression
+    ```
+    - If you were to break this statement down into its syntax, it would look like this:
+
+        ```
+        type identifier { expression };
+        ```
+
+        *type* could be any valid type (we chose `int`). *identifier* could be any valid name (we chose `x`). And *expression* could be any valid expression (we chose `2 + 3`, which uses two literals and an operator).
+
+#### Expression statements
+- Certain expressions (such as `x = 5`) are used primarily for their side effects (in this case, to assign the value `5` to the variable `x`) rather than the value they produce. However, we mentioned above that expressions cannot be executed by themselves -- they must exist as part of a statement. Fortunately, it’s trivial to convert any expression into an equivalent statement. An **expression statement** is a statement that consists of an expression followed by a semicolon. When the expression statement is executed, the expression will be evaluated.
+    - Thus, we can take any expression (such as `x = 5`), and turn it into an expression statement (`x = 5;`) that will compile.
+    - When an expression is used in an expression statement, any result generated by the expression is discarded (because it is not used). For example, when the expression `x = 5` evaluates, the return value of operator= is discarded. And that’s fine, because we just wanted to assign `5` to `x` anyway.
+
+##### Useless expression statements
+- We can also make expression statements that compile but have no effect. For example, the expression statement (`2 * 3;`) is an expression statement whose expression evaluates to the result value of 6, which is then discarded. While syntactically valid, such expression statements are useless. Some compilers (such as gcc and Clang) will produce warnings if they can detect that an expression statement is useless.
+
+#### Subexpressions, full expressions, and compound expressions
+- We occasionally need to talk about specific kinds of expressions. For this purpose, we will define some related terms. Consider the following expressions:
+    ```cpp
+    2               // 2 is a literal that evaluates to value 2
+    2 + 3           // 2 + 3 uses operator+ to evaluate to value 5
+    x = 4 + 5       // 4 + 5 evaluates to value 9, which is then assigned to variable x
+    ```
+    - Simplifying a bit, a **subexpression** is an expression used as an operand. For example, the subexpressions of `x = 4 + 5` are `x` and `4 + 5`. The subexpressions of `4 + 5` are `4` and `5`.
+    - A **full expression** is an expression that is not a subexpression. All three expressions above (`2`, `2 + 3`, and `x = 4 + 5`) are full expressions.
+    - In casual language, a **compound expression** is an expression that contains two or more uses of operators. `x = 4 + 5` is a compound expression because it contains two uses of operators (operator= and operator+). `2` and `2 + 3` are not compound expressions.
+
+#### Quiz
+<details>
+<summary><strong> Question(s) </strong></summary>
+
+1. What is the difference between a statement and an expression? 
+    - Statements are used when we want the program to perform an action. Expressions are used when we want the program to calculate a value.
+
+2. Indicate whether each of the following lines are *statements that do not contain expressions*, *statements that contain expressions*, or are *expression statements*.
+    - ```cpp
+      int x;
+      ```
+        - Statement does not contain an expression. This is a variable definition statement. `x` is not an expression in this context because it is being defined, not evaluated.
+    - ```cpp
+      int x = 5;
+      ```
+        - Statement contains an expression. `int x` is a variable definition. The `=` is part of the syntax for copy initialization. The initializer to the right of the equals sign is an expression.
+    - ```cpp
+      x = 5;
+      ```
+        - Expression statement. `x = 5` is a call to operator= with two operands: `x` and `5`. The semicolon makes it an expression statement.
+    - ```cpp
+      foo(); // foo is a function
+      ```
+        - Function calls are part of an expression, so this is an expression statement.
+    - ```cpp
+      std::cout << x; // Hint: operator<< is a binary operator. 
+      ```
+        - `operator<<` is a binary operator, so `std::cout` must be the left-hand operand, and `x` must be the right-hand operand. Since that’s the entire statement, this must be an expression statement.
+
+3. Determine what values the following program outputs. Do not compile this program. Just work through it line by line in your head.
+    ```cpp
+    #include <iostream>
+
+    int main()
+    {
+        std::cout << 2 + 3 << '\n';
+
+        int x{ 6 };
+        int y{ x - 2 };
+        std::cout << y << '\n';
+
+        int z{};
+        z = x;
+        std::cout << z * x << '\n';
+
+        return 0;
+    }
+    ```
+    - ```
+      5
+      4
+      36
+      ```
 
 </details>
 
@@ -1659,9 +1800,8 @@ Best practice: Using the automatic formatting feature is highly recommended to k
 
 - literal (constant): a fixed value that has been inserted directly into the source code.
 
-- operand: input value
-
 - operation: a process involving zero or more input values (called operands) that produces a new value (called an output value)
+    - operand: input value
 
 - operator: denotes specific operation to be performed
 
@@ -1672,6 +1812,14 @@ Best practice: Using the automatic formatting feature is highly recommended to k
     - nullary: zero operands
 
 - side effect: when an operator (or function) that has some observable effect beyond producing a return value (e.g. printing, assigning, etc.). It is an observable effect of an operator or function beyond producing a return value.
+
+- expression: a non-empty sequence of literals, variables, operators, and function calls that calculates a value
+    - evaluation: process of executing an expression
+    - result (return value): the resulting value produced from an expression
+    - expression statement: a statement that consists of an expression followed by a semicolon. When the expression statement is executed, the expression will be evaluated.
+    - subexpression: an expression used as an operand. For example, the subexpressions of `x = 4 + 5` are `x` and `4 + 5`. The subexpressions of `4 + 5` are `4` and `5`.
+    - full expression: an expression that is not a subexpression. For example, `x = 4 + 5` is a full expression.
+    - compound expression: an expression that contains two or more uses of operators. `x = 4 + 5` is a compound expression because it contains two uses of operators (operator= and operator+).
 
 ## Vocab from old slides (will be updated if needed) 
 - encapsulation: combining a number of items, such as variables and functions, into a single package such as an object of a class
@@ -1723,3 +1871,11 @@ Best practice: Using the automatic formatting feature is highly recommended to k
 
 ## Extra Notes:
 - Big 3 for dynamic usage in classes are copy constructor, assignment operator, and destructor. If you need one, you need the rest.
+
+<details>
+<summary><strong> Question(s) </strong></summary>
+
+- 
+    - 
+
+</details>

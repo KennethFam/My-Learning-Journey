@@ -1,13 +1,5 @@
 # Linux
 
-<details>
-<summary><strong> Exercise </strong></summary>
-
-- 
-    - Ans: 
-
-</details>
-
 ## Source(s)
 - [Linux Journey](https://linuxjourney.com/)
 
