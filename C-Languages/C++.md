@@ -1571,6 +1571,26 @@ Best practice: Using the automatic formatting feature is highly recommended to k
         - For example, `x = y = 5` evaluates as `x = (y = 5)`. First `y = 5` assigns `5` to `y`. This operation then returns `y`, which can then be assigned to `x`.
         - `std::cout << "Hello " << "world!"` evaluates as `(std::cout << "Hello ") << "world!"`. This first prints `"Hello "` to the console. This operation returns `std::cout`, which can then be used to print `"world!"` to the console as well.
 
+#### Quiz
+<details>
+<summary><strong>Question</strong></summary>
+
+- For each of the following, indicate what output they produce:
+    - `std::cout << 3 + 4 << '\n';`
+        - 7
+    - `std::cout << 3 + 4 - 5 << '\n';`
+        - 2
+    - `std::cout << 2 + 3 * 4 << '\n';`
+        - Multiplication goes before addition, so `3 * 4` goes first, producing the result 12. 2 + 12 is 14.
+    - 
+        ```cpp
+        int x { 2 };
+        std::cout << (x = 5) << '\n';
+        ```
+        - `x = 5` assigns the value `5` to `x`, and then returns `x`. The value of `x` (now `5`) is then printed to the console.
+
+</details>
+
 ## Vocabulary
 - statement: an instruction in a computer program that tells the computer to perform an action. Most (but not all) statements in C++ end in a semicolon. If you see a line that ends in a semicolon, it’s probably a statement.
 
