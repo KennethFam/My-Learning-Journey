@@ -728,6 +728,52 @@
     print("Done!")
     ```
 
+### Save and Load the Model
+- [Save and Load the Model](https://docs.pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html)
+    ```py
+    '''
+    In this section we will look at how to persist model state with saving, loading and running model predictions.
+    '''
+
+    import torch
+    import torchvision.models as models
+
+    # Saving and Loading Model Weights -----------------------------------------------------------------------------
+    '''
+    PyTorch models store the learned parameters in an internal state dictionary, called state_dict. These can be persisted via the torch.save method:
+    '''
+    model = models.vgg16(weights='IMAGENET1K_V1')
+    torch.save(model.state_dict(), 'model_weights.pth')
+
+    '''
+    To load model weights, you need to create an instance of the same model first, and then load the parameters using load_state_dict() method.
+
+    In the code below, we set weights_only=True to limit the functions executed during unpickling to only those necessary for loading weights. Using weights_only=True is considered a best practice when loading weights.
+    '''
+    model = models.vgg16() # we do not specify ``weights``, i.e. create untrained model
+    model.load_state_dict(torch.load('model_weights.pth', weights_only=True))
+    '''
+    Be sure to call model.eval() method before inferencing to set the dropout and batch normalization layers to evaluation mode. Failing to do this will yield inconsistent inference results.
+    '''
+    model.eval()
+
+    # Saving and Loading Models with Shapes -----------------------------------------------------------------------------
+    '''
+    When loading model weights, we needed to instantiate the model class first, because the class defines the structure of a network. We might want to save the structure of this class together with the model, in which case we can pass model (and not model.state_dict()) to the saving function:
+    '''
+
+    torch.save(model, 'model.pth')
+
+    '''
+    We can then load the model as demonstrated below.
+
+    As described in Saving and loading torch.nn.Modules (https://pytorch.org/docs/main/notes/serialization.html#saving-and-loading-torch-nn-modules), saving state_dict is considered the best practice. However, below we use weights_only=False because this involves loading the model, which is a legacy use case for torch.save.
+
+    This approach uses Python pickle (https://docs.python.org/3/library/pickle.html) module when serializing the model, thus it relies on the actual class definition to be available when loading the model.
+    '''
+    model = torch.load('model.pth', weights_only=False)
+    ```
+
 ## Datasets
 - PyTorch offers domain-specific libraries such as [TorchText](https://pytorch.org/text/stable/index.html), [TorchVision](https://pytorch.org/vision/stable/index.html), and [TorchAudio](https://pytorch.org/audio/stable/index.html), all of which include datasets. For this tutorial, we will be using a TorchVision dataset.
 
