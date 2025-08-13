@@ -1957,7 +1957,7 @@ int main()
         {
             std::cout << "Enter an integer: ";
 
-            int num{ };
+            int num{};
             std::cin >> num;
 
             std::cout << "Double " << num << " is: " << num * 2 << '\n';
@@ -1969,13 +1969,59 @@ int main()
 
 </details>
 
+### Quiz on the last few sections
+<details>
+<summary><strong> Question(s) </strong></summary>
+
+1. What is the difference between initialization and assignment? How many times can a variable be initialized or assigned a value?
+    - Initialization provides a variable with an initial value (at the point of creation). Assignment gives a variable a new value after the variable has already been defined. Since a variable is only created once, it can only be initialized once. A variable can be assigned a value as many times as desired.
+
+2. When does undefined behavior occur? What are the consequences of undefined behavior?
+    - Undefined behavior occurs when the programmer does something that is ill-specified by the C++ language. The consequences could be almost anything, from crashing to producing the wrong answer to working correctly anyway.
+
+3. Write a program that asks the user to enter a number, and then enter a second number. The program should tell the user what the result of adding and subtracting the two numbers is. The output of the program should match the following (assuming inputs of 6 and 4):
+
+    ```
+    Enter an integer: 6
+    Enter another integer: 4
+    6 + 4 is 10.
+    6 - 4 is 2.
+    ```
+
+    Hint: To print a period and a newline, use `".\n"`, not `'.\n'`.
+
+    - Solution:
+        ```cpp
+        #include <iostream>
+
+        int main()
+        {
+            std::cout << "Enter an integer: ";
+            int x{};
+            std::cin >> x;
+
+            std::cout << "Enter another integer: ";
+            int y{};
+            std::cin >> y;
+
+            std::cout << x << " + " << y << " is " << x + y << ".\n";
+            std::cout << x << " - " << y << " is " << x - y << ".\n";
+
+            return 0;
+        }
+        ```
+
+</details>
+
 ## Vocabulary
 - statement: an instruction in a computer program that tells the computer to perform an action. Most (but not all) statements in C++ end in a semicolon. If you see a line that ends in a semicolon, it’s probably a statement.
 
-- function: collection of statements that executes sequentially
+- function: collection of statements that executes sequentially. Every C++ program must include a special function named main. When you run your program, execution starts at the top of the main function.
     - When discussing functions, it’s fairly common shorthand to append a pair of parenthesis to the end of the function’s name. For example, if you see the term `main()` or `doSomething()`, this is shorthand for functions named `main` or `doSomething` respectively. This helps differentiate functions from other things with names (such as variables) without having to write the word “function” each time.
 
 - identifier: name of a function (or object, type, template, etc…)
+
+- comments: allow the programmer to leave notes in the code. C++ supports two types of comments. Line comments start with a `//` and run to the end of the line. Block comments start with a `/*` and go to the paired `*/` symbol. Don’t nest block comments. You can use comments to temporarily disable lines or sections of code. This is called commenting out your code.
 
 - character: a written symbol or mark, such as a letter, digit, punctuation mark, or mathematical symbol
 
@@ -2012,7 +2058,8 @@ int main()
 
 - integer: a number that can be written without a fractional component, such as `4`, `27`, `0`, `-2`, or `-12`
 
-- initialization: process of specifying an initial value for an object
+- initialization: process of specifying an initial value for an object. Simplified, C++ supports 6 basic types of initialization:
+    ![alt text](images/initialization_types.png)
 
 - initializer: syntax used to initialize an object
 
