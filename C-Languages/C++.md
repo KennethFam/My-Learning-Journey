@@ -2013,11 +2013,634 @@ int main()
 
 </details>
 
+### Introduction to functions
+- We defined a function as a collection of statements that execute sequentially. While that is certainly true, that definition doesn’t provide much insight into why functions are useful. Let’s update our definition: A **function** is a reusable sequence of statements designed to do a particular job.
+
+- As programs start to get longer and longer, putting all the code inside the main() function becomes increasingly hard to manage. Functions provide a way for us to split our programs into small, modular chunks that are easier to organize, test, and use. Most programs use many functions. The C++ standard library comes with plenty of already-written functions for you to use -- however, it’s just as common to write your own. Functions that you write yourself are called **user-defined functions**.
+
+- A program will be executing statements sequentially inside one function when it encounters a function call. A **function call** tells the CPU to interrupt the current function and execute another function. The CPU essentially “puts a bookmark” at the current point of execution, executes the function named in the function call, and then **returns** to the point it bookmarked and resumes execution.
+
+#### An example of a user-defined function
+- First, let’s start with the most basic syntax to define a user-defined function. For the next few lessons, all user-defined functions will take the following form:
+    ```cpp
+    returnType functionName() // This is the function header (tells the compiler about the existence of the function)
+    {
+        // This is the function body (tells the compiler what the function does)
+    }
+    ```
+    - The first line is informally called the **function header**, and it tells the compiler about the existence of a function, the function’s name, and some other information that we’ll cover in future lessons (like the return type).
+        - In this lesson, we’ll use a returnType of int (for function main()) or void (otherwise). For now, don’t worry about these, as we’ll talk more about return types and return values later on.
+        - Just like variables have names, so do user-defined functions. The *functionName* is the name (identifier) of your user-defined function.
+        - The parentheses after the identifier tell the compiler that we’re defining a function.
+    - The curly braces and statements in-between are called the **function body**. This is where the statements that determine what your function does will go.
+    - To call a function, we use the function’s name followed by a set of parentheses (e.g. `functionName()` calls the function whose name is `functionName`). Conventionally, the parenthesis are placed adjacent to the function name (with no whitespace between them).
+
+- Here is a sample program that illustrates a user-defined function being defined and called:
+    ```cpp
+    #include <iostream> // for std::cout
+
+    // Definition of user-defined function doPrint()
+    // doPrint() is the called function in this example
+    void doPrint()
+    {
+        std::cout << "In doPrint()\n";
+    }
+
+    // Definition of user-defined function main()
+    int main()
+    {
+        std::cout << "Starting main()\n";
+        doPrint();                        // Interrupt main() by making a function call to doPrint().  main() is the caller.
+        std::cout << "Ending main()\n";   // This statement is executed after doPrint() ends
+
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    Starting main()
+    In doPrint()
+    Ending main()
+    ```
+    - This program begins execution at the top of function `main()`, and the first line to be executed prints `Starting main()`.
+    - The second line in `main()` is a function call to the function `doPrint()`. We know it’s a function call due to the trailing parentheses. When calling a function, don’t forget the parentheses `()` after the function’s name. If you forget the parentheses, your program may not compile (and if it does, the function will not be called).
+    - Because a function call was made, execution of statements in `main()` is suspended, and execution jumps to the top of called function `doPrint()`. The first (and only) line in `doPrint()` prints `In doPrint()`. When `doPrint()` terminates, execution returns back to the caller (`main()`) and continues from the point just beyond the function call. Consequently, the next statement executed in `main()` prints `Ending main()`.
+
+#### Calling functions more than once
+- One useful thing about functions is that they can be called more than once. Here’s a program that demonstrates this:
+    ```cpp
+    #include <iostream> // for std::cout
+
+    void doPrint()
+    {
+        std::cout << "In doPrint()\n";
+    }
+
+    // Definition of function main()
+    int main()
+    {
+        std::cout << "Starting main()\n";
+        doPrint(); // doPrint() called for the first time
+        doPrint(); // doPrint() called for the second time
+        std::cout << "Ending main()\n";
+
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    Starting main()
+    In doPrint()
+    In doPrint()
+    Ending main()
+    ```
+    - Since `doPrint()` gets called twice by `main()`, `doPrint()` executes twice, and In `doPrint()` gets printed twice (once for each call).
+
+#### Functions can call functions that call other functions
+- You’ve already seen that function `main()` can call other functions (such as function `doPrint()` in the example above). The functions called by `main()` can also call other functions (and those functions can call functions too, etc…). In the following program, function `main()` calls function `doA()`, which calls function `doB()`:
+    ```cpp
+    #include <iostream> // for std::cout
+
+    void doB()
+    {
+        std::cout << "In doB()\n";
+    }
+
+
+    void doA()
+    {
+        std::cout << "Starting doA()\n";
+
+        doB();
+
+        std::cout << "Ending doA()\n";
+    }
+
+    // Definition of function main()
+    int main()
+    {
+        std::cout << "Starting main()\n";
+
+        doA();
+
+        std::cout << "Ending main()\n";
+
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    Starting main()
+    Starting doA()
+    In doB()
+    Ending doA()
+    Ending main()
+    ```
+
+#### Nested functions are not supported
+- A function whose definition is placed inside another function is a **nested function**. Unlike some other programming languages, in C++, functions cannot be nested. The following program is not legal:
+
+    ```cpp
+    #include <iostream>
+
+    int main()
+    {
+        void foo() // Illegal: this function is nested inside function main()
+        {
+            std::cout << "foo!\n";
+        }
+
+        foo(); // function call to foo()
+
+        return 0;
+    }
+    ```
+
+    The proper way to write the above program is:
+
+    ```cpp
+    #include <iostream>
+
+    void foo() // no longer inside of main()
+    {
+        std::cout << "foo!\n";
+    }
+
+    int main()
+    {
+        foo();
+
+        return 0;
+    }
+    ```
+
+- “foo” is a meaningless word that is often used as a placeholder name for a function or variable when the name is unimportant to the demonstration of some concept. Such words are called [metasyntactic variables](https://en.wikipedia.org/wiki/Metasyntactic_variable) (though in common language they’re often called “placeholder names” since nobody can remember the term “metasyntactic variable”). Other common metasyntactic variables in C++ include “bar”, “baz”, and 3-letter words that end in “oo”, such as “goo”, “moo”, and “boo”. For those interested in etymology (how words evolve), [RFC 3092](https://datatracker.ietf.org/doc/html/rfc3092) is an interesting read.
+
+#### Quiz
+<details>
+<summary><strong> Question(s) </strong></summary>
+
+1. In a function definition, what are the curly braces and statements in-between called?
+    - The function body
+
+2. What does the following program print? Do not compile this program, just trace the code yourself.
+    ```cpp
+    #include <iostream> // for std::cout
+
+    void doB()
+    {
+        std::cout << "In doB()\n";
+    }
+
+    void doA()
+    {
+        std::cout << "In doA()\n";
+
+        doB();
+    }
+
+    // Definition of function main()
+    int main()
+    {
+        std::cout << "Starting main()\n";
+
+        doA();
+        doB();
+
+        std::cout << "Ending main()\n";
+
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    Starting main()
+    In doA()
+    In doB()
+    In doB()
+    Ending main()
+    ```
+
+</details>
+
+### Function return values (value-returning functions)
+- Consider the following program:
+    ```cpp
+    #include <iostream>
+
+    int main()
+    {
+        // get a value from the user
+        std::cout << "Enter an integer: ";
+        int num{};
+        std::cin >> num;
+
+        // print the value doubled
+        std::cout << num << " doubled is: " << num * 2 << '\n';
+
+        return 0;
+    }
+    ```
+    - This program is composed of two conceptual parts: First, we get a value from the user. Then we tell the user what double that value is.
+    - Although this program is trivial enough that we don’t need to break it into multiple functions, what if we wanted to? Getting an integer value from the user is a well-defined job that we want our program to do, so it would make a good candidate for a function. So let’s write a program to do this:
+        ```cpp
+        // This program doesn't work
+        #include <iostream>
+
+        void getValueFromUser()
+        {
+            std::cout << "Enter an integer: ";
+            int input{};
+            std::cin >> input;
+        }
+
+        int main()
+        {
+            getValueFromUser(); // Ask user for input
+
+            int num{}; // How do we get the value from getValueFromUser() and use it to initialize this variable?
+
+            std::cout << num << " doubled is: " << num * 2 << '\n';
+
+            return 0;
+        }
+        ```
+        - While this program is a good attempt at a solution, it doesn’t quite work.
+        - When function `getValueFromUser` is called, the user is asked to enter an integer as expected. But the value they enter is lost when `getValueFromUser` terminates and control returns to `main`. Variable `num` never gets initialized with the value the user entered, and so the program always prints the answer `0`. What we’re missing is some way for `getValueFromUser` to return the value the user entered back to `main` so that `main` can make use of that data.
+
+#### Return values
+- When you write a user-defined function, you get to determine whether your function will return a value back to the caller or not. To return a value back to the caller, two things are needed.
+    1. First, your function has to indicate what type of value will be returned. This is done by setting the function’s **return type**, which is the type that is defined before the function’s name. In the example above, function `getValueFromUser` has a return type of `void` (meaning no value will be returned to the caller), and function `main` has a return type of `int` (meaning a value of type `int` will be returned to the caller). Note that this doesn’t determine what specific value is returned -- it only determines what *type* of value will be returned.
+    2. Second, inside the function that will return a value, we use a **return statement** to indicate the specific value being returned to the caller. The return statement consists of the `return` keyword, followed by an expression (sometimes called the **return expression**), ending with a semicolon. 
+
+- When the return statement is executed:
+    - The return expression is evaluated to produce a value.
+    - The value produced by the return expression is copied back to the caller. This copy is called the **return value** of the function.
+    - The function exits, and control returns to the caller.
+
+- The process of returning a copied value back to the caller is named **return by value**.
+
+- Note: The return expression produces the value to be returned. The return value is a copy of that value.
+
+- A value-returning function will return a value each time it is called.
+
+- Let’s take a look at a simple function that returns an integer value, and a sample program that calls it:
+    ```cpp
+    #include <iostream>
+
+    // int is the return type
+    // A return type of int means the function will return some integer value to the caller (the specific value is not specified here)
+    int returnFive()
+    {
+        // the return statement provides the value that will be returned
+        return 5; // return the value 5 back to the caller
+    }
+
+    int main()
+    {
+        std::cout << returnFive() << '\n'; // prints 5
+        std::cout << returnFive() + 2 << '\n'; // prints 7
+
+        returnFive(); // okay: the value 5 is returned, but is ignored since main() doesn't do anything with it
+
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    5
+    7
+    ```
+    - Execution starts at the top of main. In the first statement, the function call to `returnFive()` is evaluated, which results in function `returnFive()` being called. The return expression `5` is evaluated to produce the value `5`, which is returned back to the caller and printed to the console via `std::cout`.
+    - In the second function call, the function call to `returnFive` is evaluated, which results in function `returnFive` being called again. Function `returnFive` returns the value of `5` back to the caller. The expression `5 + 2` is evaluated to produce the result `7`, which is then printed to the console via `std::cout`.
+    - In the third statement, function `returnFive` is called again, resulting in the value `5` being returned back to the caller. However, function main does nothing with the return value, so nothing further happens (the return value is ignored).
+        - Note: Return values will not be printed unless the caller sends them to the console via `std::cout`. In the last case above, the return value is not sent to `std::cout`, so nothing is printed.
+
+- Tip: When a called function returns a value, the caller may decide to use that value in an expression or statement (e.g. by using it to initialize a variable, or sending it to `std::cout`) or ignore it (by doing nothing else). If the caller ignores the return value, it is discarded (nothing is done with it).
+
+#### Fixing our challenge program
+- With this in mind, we can fix the program we presented at the top of the lesson:
+    ```cpp
+    #include <iostream>
+
+    int getValueFromUser() // this function now returns an integer value
+    {
+        std::cout << "Enter an integer: ";
+        int input{};
+        std::cin >> input;
+
+        return input; // return the value the user entered back to the caller
+    }
+
+    int main()
+    {
+        int num { getValueFromUser() }; // initialize num with the return value of getValueFromUser()
+
+        std::cout << num << " doubled is: " << num * 2 << '\n';
+
+        return 0;
+    }
+    ```
+    - When this program executes, the first statement in `main` will create an `int` variable named `num`. When the program goes to initialize `num`, it will see that there is a function call to `getValueFromUser()`, so it will go execute that function. Function `getValueFromUser`, asks the user to enter a value, and then it returns that value back to the caller (`main()`). This return value is used as the initialization value for variable `num`. `num` can then be used as many times as needed within `main()`.
+
+- Tip: If you need to use the return value of a function call more than once, initialize a variable with the return value, and then use that variable as many times as needed.
+
+#### Revisiting main()
+- You now have the conceptual tools to understand how the `main()` function actually works. When the program is executed, the operating system makes a function call to `main()`. Execution then jumps to the top of `main()`. The statements in `main()` are executed sequentially. Finally, `main()` returns an integer value (usually `0`), and your program terminates.
+
+- In C++, there are two special requirements for `main()`:
+    - `main()` is required to return an `int`.
+    - Explicit function calls to `main()` are disallowed.
+        ```cpp
+        void foo()
+        {
+            main(); // Compile error: main not allowed to be called explicitly
+        }
+
+        void main() // Compile error: main not allowed to have non-int return type
+        {
+            foo();
+        }
+        ```
+
+- Key insight: C does allow main() to be called explicitly, so some C++ compilers will allow this for compatibility reasons.
+
+- For now, you should also define your main() function at the bottom of your code file, below other functions, and avoid calling it explicitly.
+
+- Note: It is a common misconception that `main` is always the first function that executes. Global variables are initialized prior to the execution of `main`. If the initializer for such a variable invokes a function, then that function will execute prior to `main`.
+
+#### Status codes
+- You may be wondering why we return `0` from `main()`, and when we might return something else.
+
+- The return value from `main()` is sometimes called a **status code** (or less commonly, an **exit code**, or rarely a **return code**). The status code is used to signal whether your program was successful or not.
+
+- By convention, a status code of `0` means the program ran normally (meaning the program executed and behaved as expected).
+
+- Best practice: Your `main` function should return the value `0` if the program ran normally.
+
+- A non-zero status code is often used to indicate some kind of failure (and while this works fine on most operating systems, strictly speaking, it’s not guaranteed to be portable).
+
+- The C++ standard only defines the meaning of 3 status codes: `0`, `EXIT_SUCCESS`, and `EXIT_FAILURE`. `0` and `EXIT_SUCCESS` both mean the program executed successfully. `EXIT_FAILURE` means the program did not execute successfully. `EXIT_SUCCESS` and `EXIT_FAILURE` are preprocessor macros defined in the `<cstdlib>` header:
+
+    ```cpp
+    #include <cstdlib> // for EXIT_SUCCESS and EXIT_FAILURE
+
+    int main()
+    {
+        return EXIT_SUCCESS;
+    }
+    ```
+
+    If you want to maximize portability, you should only use `0` or `EXIT_SUCCESS` to indicate a successful termination, or `EXIT_FAILURE` to indicate an unsuccessful termination.
+
+- The status code is passed back to the operating system. The OS will typically make the status code available to whichever program launched the program returning the status code. This provides a crude mechanism for any program launching another program to determine whether the launched program ran successfully or not.
+
+#### A value-returning function that does not return a value will produce undefined behavior
+- A function that returns a value is called a **value-returning function**. A function is value-returning if the return type is anything other than `void`.
+
+- A value-returning function *must* return a value of that type (using a return statement), otherwise undefined behavior will result.
+
+- Here’s an example of a function that produces undefined behavior:
+    ```cpp
+    #include <iostream>
+
+    int getValueFromUserUB() // this function returns an integer value
+    {
+        std::cout << "Enter an integer: ";
+        int input{};
+        std::cin >> input;
+
+        // note: no return statement
+    }
+
+    int main()
+    {
+        int num { getValueFromUserUB() }; // initialize num with the return value of getValueFromUserUB()
+
+        std::cout << num << " doubled is: " << num * 2 << '\n';
+
+        return 0;
+    }
+    ```
+    - A modern compiler should generate a warning because `getValueFromUserUB` is defined as returning an `int` but no return statement is provided. Running such a program would produce undefined behavior, because `getValueFromUserUB()` is a value-returning function that does not return a value.
+
+- In most cases, compilers will detect if you’ve forgotten to return a value. However, in some complicated cases, the compiler may not be able to properly determine whether your function returns a value or not in all cases, so you should not rely on this.
+
+- Best practice: Make sure your functions with non-void return types return a value in all cases. Failure to return a value from a value-returning function will cause undefined behavior. 
+
+#### Function main will implicitly return 0 if no return statement is provided
+- The only exception to the rule that a value-returning function must return a value via a return statement is for function `main()`. The function `main()` will implicitly return the value `0` if no return statement is provided. That said, it is best practice to explicitly return a value from `main`, both to show your intent, and for consistency with other functions (which will exhibit undefined behavior if a return value is not specified).
+
+#### Functions can only return a single value
+- A value-returning function can only return a single value back to the caller each time it is called.
+
+- Note that the value provided in a return statement doesn’t need to be literal -- it can be the result of any valid expression, including a variable or even a call to another function that returns a value. In the `getValueFromUser()` example above, we returned a variable `input`, which held the number the user input.
+
+- There are various ways to work around the limitation of functions only being able to return a single value, which we’ll cover later on.
+
+#### The function author can decide what the return value means
+- The meaning of the value returned by a function is determined by the function’s author. Some functions use return values as status codes, to indicate whether they succeeded or failed. Other functions return a calculated or selected value. Other functions return nothing (we’ll see examples of these later on). Because of the wide variety of possibilities here, it’s a good idea to document your function with a comment indicating what the return values mean. For example:
+    ```cpp
+    // Function asks user to enter a value
+    // Return value is the integer entered by the user from the keyboard
+    int getValueFromUser()
+    {
+        std::cout << "Enter an integer: ";
+        int input{};
+        std::cin >> input;
+
+        return input; // return the value the user entered back to the caller
+    }
+    ```
+
+#### Reusing functions
+- Now we can illustrate a good case for function reuse. Consider the following program:
+    ```cpp
+    #include <iostream>
+
+    int main()
+    {
+        int x{};
+        std::cout << "Enter an integer: ";
+        std::cin >> x;
+
+        int y{};
+        std::cout << "Enter an integer: ";
+        std::cin >> y;
+
+        std::cout << x << " + " << y << " = " << x + y << '\n';
+
+        return 0;
+    }
+    ```
+    - While this program works, it’s a little redundant. In fact, this program violates one of the central tenets of good programming: **Don’t Repeat Yourself** (often abbreviated **DRY**). Why is repeated code bad? If we wanted to change the text `“Enter an integer:”` to something else, we’d have to update it in two locations. And what if we wanted to initialize 10 variables instead of 2? That would be a lot of redundant code (making our programs longer and harder to understand), and a lot of room for typos to creep in.
+
+- Let’s update this program to use our `getValueFromUser` function that we developed above:
+    ```cpp
+    #include <iostream>
+
+    int getValueFromUser()
+    {
+        std::cout << "Enter an integer: ";
+        int input{};
+        std::cin >> input;
+
+        return input;
+    }
+
+    int main()
+    {
+        int x{ getValueFromUser() }; // first call to getValueFromUser
+        int y{ getValueFromUser() }; // second call to getValueFromUser
+
+        std::cout << x << " + " << y << " = " << x + y << '\n';
+
+        return 0;
+    }
+    ```
+    Sample output:
+    ```
+    Enter an integer: 5
+    Enter an integer: 7
+    5 + 7 = 12
+    ```
+    - In this program, we call `getValueFromUser` twice, once to initialize variable `x`, and once to initialize variable `y`. That saves us from duplicating the code to get user input, and reduces the odds of making a mistake. Once we know `getValueFromUser` works, we can call it as many times as we desire. This is the essence of modular programming: the ability to write a function, test it, ensure that it works, and then know that we can reuse it as many times as we want, and it will continue to work (so long as we don’t modify the function -- at which point we’ll have to retest it).
+
+- Best practice: Follow DRY: “Don’t repeat yourself”. If you need to do something more than once, consider how to modify your code to remove as much redundancy as possible. Variables can be used to store the results of calculations that need to be used more than once (so we don’t have to repeat the calculation). Functions can be used to define a sequence of statements we want to execute more than once. And loops (which we’ll cover later on) can be used to execute a statement more than once. Like all best practices, DRY is meant to be a guideline, not an absolute. DRY can harm overall comprehension when code is broken into pieces that are too small.
+
+#### Conclusion
+- Return values provide a way for functions to return a single value back to the function’s caller.
+
+- Functions provide a way to minimize redundancy in our programs.
+
+#### Quiz 
+<details>
+<summary><strong> Question(s) </strong></summary>
+
+1. Inspect (do not compile) each of the following programs. Determine what the program will output, or whether the program will generate a compiler error. Assume you have “treat warnings as errors” turned off.
+    - Part a:
+        ```cpp
+        #include <iostream>
+
+        int return7()
+        {
+            return 7;
+        }
+
+        int return9()
+        {
+            return 9;
+        }
+
+        int main()
+        {
+            std::cout << return7() + return9() << '\n';
+
+            return 0;
+        }
+        ```
+        - This program prints the number `16`.
+    - Part b:
+        ```cpp
+        #include <iostream>
+
+        int return7()
+        {
+            return 7;
+
+            int return9()
+            {
+                return 9;
+            }
+        }
+
+        int main()
+        {
+            std::cout << return7() + return9() << '\n';
+
+            return 0;
+        }
+        ```
+        - This program will not compile. Nested functions are not allowed.
+
+    - Part c:
+        ```cpp
+        #include <iostream>
+
+        int return7()
+        {
+            return 7;
+        }
+
+        int return9()
+        {
+            return 9;
+        }
+
+        int main()
+        {
+            return7();
+            return9();
+
+            return 0;
+        }
+        ```
+        - This program compiles but does not produce any output. The return values from the functions are not used for anything (and are thus discarded).
+
+    - Part d: 
+        ```cpp
+        #include <iostream>
+
+        int getNumbers()
+        {
+            return 5;
+            return 7;
+        }
+
+        int main()
+        {
+            std::cout << getNumbers() << '\n';
+            std::cout << getNumbers() << '\n';
+
+            return 0;
+        }
+        ```
+        - This program prints `5` twice (on separate lines). Both times when function `getNumbers()` is called, the `return 5;` statement executes, and the program returns the value `5` back to the caller. The `return 7;` statement never executes.
+    
+    - Part e:
+        ```cpp
+        #include <iostream>
+
+        int return 5()
+        {
+            return 5;
+        }
+
+        int main()
+        {
+            std::cout << return 5() << '\n';
+
+            return 0;
+        }
+        ```
+        - This program will not compile because the function has an invalid name. The name here is `return 5`, which has a keyword (`return`), space, and number (`5`), which makes the name invalid.
+
+2. What does “DRY” stand for, and why is it a useful practice to follow?
+    - DRY stands for “Don’t Repeat Yourself”. It is a practice that involves writing your code in such a way so as to minimize redundancy. This makes your programs more concise, less error prone, and more maintainable.
+
+</details>
+
 ## Vocabulary
 - statement: an instruction in a computer program that tells the computer to perform an action. Most (but not all) statements in C++ end in a semicolon. If you see a line that ends in a semicolon, it’s probably a statement.
 
-- function: collection of statements that executes sequentially. Every C++ program must include a special function named main. When you run your program, execution starts at the top of the main function.
-    - When discussing functions, it’s fairly common shorthand to append a pair of parenthesis to the end of the function’s name. For example, if you see the term `main()` or `doSomething()`, this is shorthand for functions named `main` or `doSomething` respectively. This helps differentiate functions from other things with names (such as variables) without having to write the word “function” each time.
+- function: a reusable sequence of statements designed to do a particular job.. Every C++ program must include a special function named main. When you run your program, execution starts at the top of the main function.
+    - nested function: a function whose definition is placed inside another function. Unlike some other programming languages, in C++, functions cannot be nested.
+    - function body: statements in-between the curly braces at the start and end of the function
+    - function call: tells the CPU to interrupt the current function and execute another function
+    - return type: type of value a function returns
+    - return statement: indicates the specific value being returned to the caller. The return statement consists of the `return` keyword, followed by an expression (sometimes called the return expression), ending with a semicolon.
+    - return value: value produced by the return expression that's copied back to the caller
+    - return by value: process of returning a copied value back to the caller 
 
 - identifier: name of a function (or object, type, template, etc…)
 
@@ -2105,6 +2728,10 @@ int main()
     - full expression: an expression that is not a subexpression. For example, `x = 4 + 5` is a full expression.
     - compound expression: an expression that contains two or more uses of operators. `x = 4 + 5` is a compound expression because it contains two uses of operators (operator= and operator+).
 
+- status code (or less commonly, an exit code, or rarely a return code): value returned from `main`. The status code is used to signal whether your program was successful or not.
+
+- value-returning function: a function that returns a value
+
 ## Vocab from old slides (will be updated if needed) 
 - encapsulation: combining a number of items, such as variables and functions, into a single package such as an object of a class
 
@@ -2154,6 +2781,12 @@ int main()
 - Using the automatic formatting feature is highly recommended to keep your code’s formatting style consistent.
 
 - New programmers often try to write an entire program all at once, and then get overwhelmed when it produces a lot of errors. A better strategy is to add one piece at a time, make sure it compiles, and test it. Then when you’re sure it’s working, move on to the next piece.
+
+- Your `main` function should return the value `0` if the program ran normally. It is best practice to explicitly return a value from `main`, both to show your intent, and for consistency with other functions (which will exhibit undefined behavior if a return value is not specified).
+
+- Make sure your functions with non-void return types return a value in all cases. Failure to return a value from a value-returning function will cause undefined behavior. 
+
+- Follow DRY: “Don’t repeat yourself”. If you need to do something more than once, consider how to modify your code to remove as much redundancy as possible. Variables can be used to store the results of calculations that need to be used more than once (so we don’t have to repeat the calculation). Functions can be used to define a sequence of statements we want to execute more than once. And loops (which we’ll cover later on) can be used to execute a statement more than once. Like all best practices, DRY is meant to be a guideline, not an absolute. DRY can harm overall comprehension when code is broken into pieces that are too small.
 
 ## Extra Notes:
 - Big 3 for dynamic usage in classes are copy constructor, assignment operator, and destructor. If you need one, you need the rest.
