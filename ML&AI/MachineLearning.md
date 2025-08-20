@@ -849,6 +849,85 @@
     
     - Notice that these equations look just like the ones for gradient descent. The difference is how $ f_{\vec{w}, b}(\vec{x}^{(i)}) $ is implemented.
 
+### The Problem of Overfitting
+- Regression example:
+
+    ![alt text](images/overfitting_1.png)
+
+    - Let's use our old linear regression example which was about predicting house prices.
+    - When we try to fit a linear line to the data, it does not fit very well because the price of houses seems to flatten out as the size gets bigger. This is what's called **underfitting**; the algorithm does not fit the training data well. Another term is **high bias**.
+        - Another way to think of this form of bias is as if the learning algorithm has a very strong preconception, or we say a very strong bias, that the housing prices are going to be a completely linear function of the size despite data to the contrary. This preconception that the data is linear causes it to fit a straight line that fits the data poorly, leading it to underfitted data. 
+        - Keep in mind that there are other definitions of bias in machine learning, e.g. bias based on characteristics such as gender or ethnicity.
+    - **Generalization** is the idea that you want your learning algorithm to do well, even on examples that are not on the training set. Technically we say that you want your learning algorithm to generalize well, which means to make good predictions even on brand new examples that it has never seen before. 
+    - **Overfit** means that the model has fit the data almost too well. Look at the graph all the way to the right, and you will see that the curve is wiggly (goes up and down a lot) which may result in getting undesireable outputs for outside data. Overfitting can also be referred to as **high variance**, i.e. adding one new training example to an overfit model could result in the function that the algorithm fits being totally different.
+        - Overfit models may do well in the training set, but they may not generalize will to new examples.
+    - The goal of machine learning is to find a generalized model like the one in the middle.
+
+- Overfitting applies to classification as well:
+
+    ![alt text](images/overfitting_2.png)
+
+#### Addressing Overfitting
+- Here's an overfit price prediction model:
+
+    ![alt text](images/addressing_overfitting_1.png)
+
+    - One way to address this problem is to collect more training examples. You can continue to fit a high order polynomial or some of the function with a lot of features, and if you have enough training examples, it will still do okay. 
+    - Getting more data isn't always an option, but when the data is available, this method can work really well.
+
+    Here's another method to address overfitting:
+
+    ![alt text](images/addressing_overfitting_2.png)
+
+    - You can try to see if you can use fewer features.
+        - Try not using so many polynomial features.
+        - Your learning algorithm may also overfit your training set if you have a lot of features but not enough data. Picking a subset of the most relevant features may result in a model that is not as overfit. Choosing the most appropriate features to use is called **feature selection**. A disadvantage of this is that the algorithm is throwing away some of the information that you have about the houses.
+    
+    Here's a third technique for addressing overfitting called regularization:
+
+    ![alt text](images/addressing_overfitting_3.png)
+
+    - Regularization is a way to more gently reduce the impacts of some of the features without doing something as harsh as eliminating it outright. 
+    - **Regularization** encourages the learning algorithm to shrink the values of the parameters without necessarily demanding that the parameter is set to exactly 0. Reducing some parameters may result in a curve that fits the training data much better.
+    - Basically, regularization lets you keep all of your features, but they just prevents the features from having an overly large effect, which is what sometimes can cause overfitting.
+    - We usually just regularize $ w_{j} $. It doesn't make a huge difference whether you regularize the parameter b as well, you could do so if you want or not if you don't. Andrew Ng does not. In practice, it should make very little different whether you regularize `b` or not.
+
+    Here's a summary of all of the ways that we went over to address overfitting:
+
+    ![alt text](images/addressing_overfitting_4.png)
+
+#### Cost Function with Regularization
+- Here's an old example:
+
+    ![alt text](images/cost_function_regularization_1.png)
+
+    - A quadratic function fits the data well while a very high order polynomial does not fit it very well.
+    - Suppose that we had a way to make $ w_{3} $ and $ w_{4} $ really small. 
+    - Let's say we add to the cost function $ 1000w_{3}^{2} + 1000w_{4}^{2} $. This would penalize the model for large values of $ w_{3} $ and $ w_{4} $. When we minimize this cost function, we'll end up with $ w_{3} $ and $ w_{4} $ close to 0, nearly canceling out $ x^{3} $ and $ x^{4} $ and getting rid of $ 1000w_{3}^{2} + 1000w_{4}^{2} $.
+
+    Here's the general idea behind regularization:
+    
+    ![alt text](images/cost_function_regularization_2.png)
+
+    - If there are smaller values for the paramters, then it's a bit like having a simpler model, maybe one with fewer features which is therefore less prone to overfitting.
+    - We previously penalized $ w_{3} $ and $ w_{4} $, but for models with many features, it will be hard to choose which ones to regularize. So, regularization will generally penalize all features (penalize all $ w_{j} $ parameters). It's possible to show that this will usually result in fitting a smoother simpler, less wiggly function that's less prone to overfitting.
+    - So for this example, if you have data with 100 features for each house, it may be hard to pick in advance which features to include and which ones to exclude. So let's build a model that uses all 100 features. Because we don't know which of these parameters are going to be the important ones, let's penalize all of them a bit and shrink all of them by adding this new term: $ \frac{\lambda}{2m} \sum_{j = 1}^{n} w_{j}^{2} $ where `n` is the number of features. $ \lambda $ is the Greek letter "lambda" and is usually called the **regularization parameter**. Similar to picking $ \alpha $, you will now have to choose $ \lambda $. $ \frac{\lambda}{2m} $ so that both terms are scaled by 2m, making it easier to choose a value for $ \lambda $ since they're both scaled the same way. As the number of training examples grow, $ \lambda $ is more likely to work if it's scaled by `2m`.
+    - Again, in practice, penalizing `b` makes little difference, so we will not be penalizing `b`. Some implementations will include $ \frac{\lambda}{2m} b^{2} $, but this makes very little difference. The more common convention is to only regularize $ w_{j} $.
+
+    To summarize:
+
+
+
+    - The new cost function is shown above with the regularization term. Let's break it down:
+        - $ \frac{1}{2m}\sum_{i = 1}^m (f_{w, b}(x^{(i)}) - y^{(i)})^{2} $ fits the data.
+        - $ \frac{\lambda}{2m} \sum_{j = 1}^{n} w_{j}^{2} $ keeps $ w_{j} $ small so as not to overfit the data.
+        - The value of $ \lambda $ that you choose, specifies the relative importance or the relative trade off or how you balance between these two goals. 
+    - Let's look at how $ \lambda $ affects our model by looking at two extremes:
+        - Small number: $ \lambda = 0 $, the model may overfit
+        - Large number: $ \lambda = 10^{10} $, all $ w_{j} $ are made irrelevant and $ f(x) $ is basically equal to `b`, i.e. the model underfits.
+    - You want to choose a value of $ \lambda $ that is not too small and not too large, but just right, then hopefully you end up able to fit a 4th order polynomial, keeping all of these features, but with a function that looks like this (purple line).
+
+
 ## common symbols
     - ($ x^{(i)} $, $ y^{(i)} $)
     - $ \hat{y} $
@@ -894,9 +973,11 @@
 
 - [Cost Function for Logistic Regression](https://colab.research.google.com/drive/1mH5XEv2OPEgTbC68H_oK9WIg5MUnayR4?authuser=4)
 
-- [Gradient Descent for Logistic Regression]()
+- [Gradient Descent for Logistic Regression](https://colab.research.google.com/drive/1TvkN5SDS4omTfzhS_eGy32_5B_HACWtP?authuser=4)
 
-- [Logistic Regression using Scikit-Learn]()
+- [Logistic Regression using Scikit-Learn](https://colab.research.google.com/drive/1eyM5Cb3FwdHlJXGvCGhUxxdrS-nICh1Q?authuser=4)
+
+- [Overfitting]()
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1rGsXkWMDhlgNMToyl4wN_Ao5iswULCgh?authuser=4)
