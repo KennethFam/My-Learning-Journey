@@ -1022,7 +1022,7 @@
 - [Regularization](https://colab.research.google.com/drive/14vJS0eRiyBsRadFCYcA2jv8JNXj9rCKb?authuser=4)
 
 ### Practice Lab: Logistic Regression
-- []
+- [Logistic Regression](https://colab.research.google.com/drive/1QytfJfK_GVjPXh5GlRTAC8_SegIzF5RS?authuser=4)
 
 ## common symbols
     - ($ x^{(i)} $, $ y^{(i)} $)
@@ -1080,4 +1080,4 @@
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1rGsXkWMDhlgNMToyl4wN_Ao5iswULCgh?authuser=4)
 
-- [Logistic Regression]()
+- [Logistic Regression](https://colab.research.google.com/drive/1QytfJfK_GVjPXh5GlRTAC8_SegIzF5RS?authuser=4)
