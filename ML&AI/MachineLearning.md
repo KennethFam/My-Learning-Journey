@@ -916,7 +916,7 @@
 
     To summarize:
 
-
+    ![alt text](images/cost_function_regularization_3.png)
 
     - The new cost function is shown above with the regularization term. Let's break it down:
         - $ \frac{1}{2m}\sum_{i = 1}^m (f_{w, b}(x^{(i)}) - y^{(i)})^{2} $ fits the data.
@@ -927,6 +927,41 @@
         - Large number: $ \lambda = 10^{10} $, all $ w_{j} $ are made irrelevant and $ f(x) $ is basically equal to `b`, i.e. the model underfits.
     - You want to choose a value of $ \lambda $ that is not too small and not too large, but just right, then hopefully you end up able to fit a 4th order polynomial, keeping all of these features, but with a function that looks like this (purple line).
 
+#### Regularized Linear Regression
+- ![alt text](images/regularized_linear_regression_1.png)
+    
+    - Note that the update step for $ w_{j} $ in gradient descent has an extra term. `b` does not have an extra term because we are not regularizing it.
+
+    Here's what the new gradient descent algorithm will look like: 
+
+    ![alt text](images/regularized_linear_regression_2.png)
+
+    Now let's get a better understanding of how the equation for $ w_{j} $ was derived:
+
+    ![alt text](images/regularized_linear_regression_3.png)
+
+    - Here, we're rewriting $ w_{j} $.
+    - So now, instead of $ w_{j} $ subtracting the usual update term, we're now multiplying $ w_{j} $ by a number before subtracting.
+    - On the right, we can see what multiplying $ w_{j} $ by a number does. The number is slightly less than 1, so by multiplying it with $ w_{j} $, we're shrinking it just a little bit.
+    - Regularization has the effect of shrinking the parameter $ w_{j} $ a little bit on every iteration.
+
+    Here's how the partial derivatives are calculated:
+
+    ![alt text](images/regularized_linear_regression_4.png)
+    
+    - The summation remains for the first term due to the chain rule in calculus.
+
+#### Regularized Logistic Regression
+- ![alt text](images/regularized_logistic_regression_1.png)
+
+    - As seen before, logistic regression can be prone to overfitting if you fit it with very high order polynomial features like this. More generally, when you train logistic regression with a lot of features, whether polynomial features or some other features, there could be a higher risk of overfitting.
+    - When you minimize this cost function as a function of `w` and `b`, it has the effect of penalizing parameters $ w_{1} $ through $ w_{n} $, and preventing them from being too large. 
+
+    Let's take a look at how to implement gradient descent:
+
+    ![alt text](images/regularized_logistic_regression_2.png)
+
+    - Note that this is identical to regularized linear regression. The only difference is the definition of `f`.
 
 ## common symbols
     - ($ x^{(i)} $, $ y^{(i)} $)
@@ -977,7 +1012,9 @@
 
 - [Logistic Regression using Scikit-Learn](https://colab.research.google.com/drive/1eyM5Cb3FwdHlJXGvCGhUxxdrS-nICh1Q?authuser=4)
 
-- [Overfitting]()
+- [Overfitting](https://colab.research.google.com/drive/1GgH49dUYW-AKrfKev-o0s5Sk25XugN5J?authuser=4)
+
+- [Regularization](https://colab.research.google.com/drive/14vJS0eRiyBsRadFCYcA2jv8JNXj9rCKb?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1rGsXkWMDhlgNMToyl4wN_Ao5iswULCgh?authuser=4)
