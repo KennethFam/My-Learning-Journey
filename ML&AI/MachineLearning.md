@@ -118,6 +118,9 @@
 ## Jupyter Notebooks
 - The most widely used tool by machine learning and data science practitioners today is the Jupyter Notebook. This is the default environments that a lot of them use to code up, experiment, and try things out. This is not some made up, simplified environment. This is the exact same environments, the exact same tool, the Jupyter Notebook that developers are using in many large countries right now.
 
+### Optional Lab: Python and Jupyter Notebooks
+- - [Python and Jupyter Notebooks](https://colab.research.google.com/drive/1Htu0vzGqOZEzYUtb_nX8X2OR-Gi3C79t?authuser=4)
+
 ## Supervised Learning
 
 ### Linear Regression Model
@@ -168,6 +171,9 @@
     This particular model has a name; it's called *linear regression*. More specifically, this is **linear regression with one variable**, where the phrase one variable means that there's a single input variable or feature `x`, namely the size of the house. Another name for a linear model with one input variable is **univariate linear regression**, where *uni* means one in Latin, and where *variate* means variable. *Univariate* is just a fancy way of saying one variable. Later on, you'll also see a variation of regression where you'll want to make a prediction based not just on the size of a house, but on a bunch of other things that you may know about the house such as number of bedrooms and other features. 
 
     So, that's linear regression. In order for you to make this work, one of the most important things you have to do is construct a cost function. The idea of a cost function is one of the most universal and important ideas in machine learning and is used in both linear regression and in training many of the most advanced AI models in the world. 
+
+#### Optional Lab: Model Representation
+- [Model Representation](https://colab.research.google.com/drive/1QQjYvNZ5aQQSH6FOYa9VuT8vJO8R1cTW?authuser=4)
 
 #### Cost Function
 - ![alt text](images/w_and_b.png)
@@ -292,6 +298,9 @@
     - This is a pretty good fit to the training set.
     - If we look at the contour plot, our fit is pretty close to the minimum but not exactly.
     - You can see the vertical distances between the data points and the predicted values on the straight line. The sum of squared errors for these data points is pretty close to the minimum possible sum of squared errors among all possible straight line fits.
+
+##### Optional Lab: Cost Function
+- [Cost Function](https://colab.research.google.com/drive/1VI0qs3C2wHiX67b3nQPznL-bdxBigpru?authuser=4)
 
 #### Gradient Descent
 - We saw that we can minimize the cost function by picking the minimum point on the graph, but this is not practical. There is an efficient algorithm that can find parameters `w` and `b` that give you the best fit line that minimizes the cost function `J`: gradient descent. It's a very important algorithm that's used to train some of the most complex models in AI, not just regression models.
@@ -437,6 +446,9 @@
     - "Batch" refers to the fact that we're looking at all of the training examples on every step of gradient descent instead of a subset of the training data. When computing the derivatives, we're computing a sum of the whole data (1 to m).
     - There are other versions of gradient descent that looks at only a subset of the training data at each update step.
 
+##### Optional Lab: Gradient Descent for Linear Regression
+- [Gradient Descent for Linear Regression](https://colab.research.google.com/drive/1d7kiBqHDFMq9XwHRm3Mf71EosW4hHxOw?authuser=4)
+
 #### Multiple Features
 - ![alt text](images/one_feature.png)
 
@@ -511,6 +523,9 @@
         - Behind the scenes, the computer takes these NumPy arrays, `w` and `d`, and uses parallel processing hardware to carry out all 16 computations efficiently. Using a vectorized implementation, you should get a much more efficient implementation of linear regression.
         - Maybe the speed difference won't be huge if you have 16 features, but if you have thousands of features and perhaps very large training sets, this type of vectorized implementation will make a huge difference in the running time of your learning algorithm. It could be the difference between codes finishing in one or two minutes, versus taking many hours to do the same thing.
 
+##### Optional Lab: Python, NumPy and Vectorization
+- [Python, NumPy and Vectorization](https://colab.research.google.com/drive/1G4HOM4G60YQWv5cZVL9naw_V3xAgOwB9?authuser=4)
+
 ##### Gradient Descent for Multiple Linear Regression with Vectorization
 - Let's review multiple linear regression and its simplified vector notation:
 
@@ -522,7 +537,7 @@
 
     - Notice the changes in gradient descent when we have multiple features. `w` and `x` are now vectors in `f`. We are now also updated `n` `w`s.
 
-#### An Alternative to Gradient Descent
+##### An Alternative to Gradient Descent
 - Normal equation
     - algorithm works only for linear reqression
     - solves for `w`, `b` without iterations
@@ -531,6 +546,9 @@
     - What you need to know:
         - normal equation method may be used in machine learning libraries that implement linear regression.
         - gradient descent is the recommended method for finding parameters `w`, `b`
+
+##### Optional Lab: Multiple Variable Linear Regression
+- [Multiple Variable Linear Regression](https://colab.research.google.com/drive/1vp26959r7TZFMqr1GSz3hYELf0C1t_3A?authuser=4)
 
 #### Feature Scaling
 - Enables gradient descent to run faster.
@@ -645,6 +663,9 @@
     - For each choice of $ \alpha $, you might run gradient descent just for a handful of iterations and plot the cost function `J` as a function of the number of iterations and after trying a few different values, you might then pick the value of $ \alpha $ that seems to decrease the learning rate rapidly, but also consistently.
     - "In fact, what I actually do is try a range of values like this. After trying 0.001, I'll then increase the learning rate threefold to 0.003. After that, I'll try 0.01, which is again about three times as large as 0.003. threefold to 0.003. After that, I'll try 0.01, which is again about three times as large as 0.003. So these are roughly trying out gradient descents with each value of Alpha being roughly three times bigger than the previous value. So, what I'll do is try a range of values until I found the value of that's too small and then also make sure I've found a value that's too large. I'll slowly try to pick the largest possible learning rate, or just something slightly smaller than the largest reasonable value that I found. When I do that, it usually gives me a good learning rate for my model." - Andrew Ng
 
+#### Optional Lab: Feature scaling and Learning Rate (Multi-variable)
+- [Feature scaling and Learning Rate (Multi-variable)](https://colab.research.google.com/drive/1BOviDzz5KKutNudV4o98HSwogU42lKUi?authuser=4)
+
 #### Feature Engineering
 - The choice of features can have a huge impact on your learning algorithm's performance. In fact, for many practical applications, choosing or entering the right features is a critical step to making the algorithm work well.
 
@@ -689,6 +710,15 @@
 
 - We will discuss how to decide which features to use later on.
 
+#### Optional Lab: Feature Engineering and Polynomial Regression
+- [Feature Engineering and Polynomial Regression](https://colab.research.google.com/drive/1EaTB8a2-39QwkY-9n5D8LMomhps9g56g?authuser=4)
+
+#### Optional Lab: Linear Regression using Scikit-Learn
+- [Linear Regression using Scikit-Learn](https://colab.research.google.com/drive/1FAJZ4kab5US13-CT50M4qZuNqq4PFOhz?authuser=4)
+
+#### Practice Lab: Linear Regression
+- [Linear Regression](https://colab.research.google.com/drive/1rGsXkWMDhlgNMToyl4wN_Ao5iswULCgh?authuser=4)
+
 ### Classification
 - Classification is where your output variable `y` can take on only one of a small handfull of possible values instead of any number in an infinite range of numbers like regression.
 
@@ -715,6 +745,9 @@
     - You could try using a threshold, e.g. the threshold is 0.5, and anything below it is classified as `0` and anything above or equal is `1`.
         - Notice where the threshold horizontal line intersects with `f`. If you draw a vertical line there, everything on the left is `0`and everything on the right is `1`. Now let's say we added a new point all the way to the right. `f` will shift, and the former statement will no longer be true. Adding a new value ended up with us learning a much worse function for this classification problem. Linear regression caused the best fit line, when we added one more example to the right, to shift over, therefore causing the dividing line (aka vertical line aka *decision boundary*) to shift over.
     - Logistic regression outputs a value between 0 and 1. Note that logistic regression is used for classification, specially binary classfication problems with binary output label `y` as either `0` or `1`.
+
+#### Optional Lab: Classification
+- [Classification](https://colab.research.google.com/drive/1N-1XmRO_24tH75sCHS2b97ZrgXVKTfBg?authuser=4)
 
 #### Logistic Regression
 - Probably the single most widely used classification algorithm in the world.
@@ -750,6 +783,9 @@
     - $ P(y = 0) = 1 - P(y = 1) = 1 - 0.7 = 0.3 = 30% $
         - $ P(y = 0) $ or probability that y = 0
 
+##### Optional Lab: Logistic Regression
+- [Logistic Regression](https://colab.research.google.com/drive/1YaCILZUeQg4xSR7hfaON7lLlVXZDRFCv?authuser=4)
+
 ##### Decision Boundary
 - ![alt text](images/decision_boundary_1.png)
 
@@ -778,6 +814,9 @@
     - This implementation of logistic regression will predict $ \hat{y} = 1 $ inside the shape and $ \hat{y} = 0 $ outside the shape.
         - Note that this is just for this example. The reverse could be true depending on the training data.
     - If we do not include higher order polynomials, the decision boundary will always be linear.
+
+###### Optional Lab: Logistic Regression, Decision Boundary
+- [Logistic Regression, Decision Boundary](https://colab.research.google.com/drive/1eIY6fIr6jHILn-G_UApSa72z2Xgr7vLr?authuser=4)
 
 ##### Cost Function for Logistic Regression
 - The squared error cost function is not an ideal cost function for logistic regression.
@@ -816,6 +855,8 @@
 
     ![alt text](images/logistic_regression_cost_function_5.png)
 
+###### Optional Lab: Logistic Regression, Logistic Loss
+- [Logistic Regression, Logistic Loss](https://colab.research.google.com/drive/18vsO8h3wpN6kBZ64v-svVaReW7LE4bo4?authuser=4)
 
 ##### Simplified Cost Function
 - Now let's look at the simplified version of the cost function, which will simplify the implementation of gradient descent for fitting the parameters of a logistic regression model:
@@ -831,6 +872,9 @@
     ![alt text](images/logistic_regression_simplified_cost_function_3.png)
 
     - You might be wondering, why do we choose this particular function when there could be tons of other costs functions we could have chosen? Well, this particular cost function is derived from statistics using a statistical principle called maximum likelihood estimation, which is an idea from statistics on how to efficiently find parameters for different models. This cost function has the nice property that it is convex. But don't worry about learning the details of maximum likelihood. It's just a deeper rationale and justification behind this particular cost function. 
+
+###### Optional Lab: Cost Function for Logistic Regression
+- [Cost Function for Logistic Regression](https://colab.research.google.com/drive/1mH5XEv2OPEgTbC68H_oK9WIg5MUnayR4?authuser=4)
 
 ##### Gradient Descent Implementation for Logistic Regression
 - ![alt text](images/logistic_regression_gradient_descent_1.png)
@@ -848,6 +892,12 @@
     ![alt text](images/logistic_regression_gradient_descent_3.png)
     
     - Notice that these equations look just like the ones for gradient descent. The difference is how $ f_{\vec{w}, b}(\vec{x}^{(i)}) $ is implemented.
+
+###### Optional Lab: Gradient Descent for Logistic Regression
+- [Gradient Descent for Logistic Regression](https://colab.research.google.com/drive/1TvkN5SDS4omTfzhS_eGy32_5B_HACWtP?authuser=4)
+
+##### Optional Lab: Logistic Regression using Scikit-Learn
+- [Logistic Regression using Scikit-Learn](https://colab.research.google.com/drive/1eyM5Cb3FwdHlJXGvCGhUxxdrS-nICh1Q?authuser=4)
 
 ### The Problem of Overfitting
 - Regression example:
@@ -896,7 +946,12 @@
 
     ![alt text](images/addressing_overfitting_4.png)
 
-#### Cost Function with Regularization
+#### Optional Lab: Overfitting
+- [Overfitting](https://colab.research.google.com/drive/1GgH49dUYW-AKrfKev-o0s5Sk25XugN5J?authuser=4)
+
+#### Regularization
+
+##### Cost Function with Regularization
 - Here's an old example:
 
     ![alt text](images/cost_function_regularization_1.png)
@@ -927,7 +982,7 @@
         - Large number: $ \lambda = 10^{10} $, all $ w_{j} $ are made irrelevant and $ f(x) $ is basically equal to `b`, i.e. the model underfits.
     - You want to choose a value of $ \lambda $ that is not too small and not too large, but just right, then hopefully you end up able to fit a 4th order polynomial, keeping all of these features, but with a function that looks like this (purple line).
 
-#### Regularized Linear Regression
+##### Regularized Linear Regression
 - ![alt text](images/regularized_linear_regression_1.png)
     
     - Note that the update step for $ w_{j} $ in gradient descent has an extra term. `b` does not have an extra term because we are not regularizing it.
@@ -951,7 +1006,7 @@
     
     - The summation remains for the first term due to the chain rule in calculus.
 
-#### Regularized Logistic Regression
+##### Regularized Logistic Regression
 - ![alt text](images/regularized_logistic_regression_1.png)
 
     - As seen before, logistic regression can be prone to overfitting if you fit it with very high order polynomial features like this. More generally, when you train logistic regression with a lot of features, whether polynomial features or some other features, there could be a higher risk of overfitting.
@@ -962,6 +1017,12 @@
     ![alt text](images/regularized_logistic_regression_2.png)
 
     - Note that this is identical to regularized linear regression. The only difference is the definition of `f`.
+
+##### Optional Lab: Regularization
+- [Regularization](https://colab.research.google.com/drive/14vJS0eRiyBsRadFCYcA2jv8JNXj9rCKb?authuser=4)
+
+### Practice Lab: Logistic Regression
+- []
 
 ## common symbols
     - ($ x^{(i)} $, $ y^{(i)} $)
@@ -1018,3 +1079,5 @@
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1rGsXkWMDhlgNMToyl4wN_Ao5iswULCgh?authuser=4)
+
+- [Logistic Regression]()
