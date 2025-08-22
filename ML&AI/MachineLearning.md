@@ -1024,6 +1024,53 @@
 ### Practice Lab: Logistic Regression
 - [Logistic Regression](https://colab.research.google.com/drive/1QytfJfK_GVjPXh5GlRTAC8_SegIzF5RS?authuser=4)
 
+## Neural Networks
+- The original motivation for the invention of neural networks was to write software that could mimic how the human brain or how the biological brain learns and thinks.
+
+- Sometimes called **artifical neural networks**.
+
+- Neural networks have become very different than how any of us might think about how the brain actually works and learns. Some of the biological motivations still remain in the way we think about artificial neural networks or computer neural networks today.
+
+- The human brain, or maybe more generally the biological brain, demonstrates a higher level or more capable level of intelligence than anything else we've been able to build so far.
+
+- ![alt text](images/neurons_and_the_brain_1.png)
+    
+    - The first application area that modern neural networks or deep learning had a huge impact on was probably speech recognition, where we started to see much better speech recognition systems.
+    - Then it started to make inroads into computer vision.
+    - Then the next few years, it made us inroads into texts or into natural language processing, and so on and so forth. Now, neural networks are used in everything from climate change to medical imaging to online advertising to prouduct recommendations and really lots of application areas of machine learning now use neural networks. 
+    - Even though today's neural networks have almost nothing to do with how the brain learns, there was the early motivation of trying to build software to mimic the brain. 
+
+    So how does the brain work?
+
+    ![alt text](images/neurons_and_the_brain_2.png)
+
+    - All of human thought is from neurons like this in your brain and mine, sending electrical impulses and sometimes forming new connections of other neurons.
+    - Given a neuron like this one, it has a number of inputs where it receives electrical impulses from other neurons, and then the neuron at the top right carries out some computations and will then send this outputs to other neurons by this electrical impulses, and this upper neuron's output in turn becomes the input to this neuron down below, which again aggregates inputs from multiple other neurons to then maybe send its own output, to yet other neurons, and this is the stuff of which human thought is made.
+
+    Here's a simplified diagram of a biological neuron:
+
+    ![alt text](images/neurons_and_the_brain_3.png)
+
+    - The input wires in a biological neuron are called dendrites.
+    - The output wire is called the axon.
+    - This biological neuron may then send electrical impulses that become the input to another neuron.
+    - The aritifical neural network uses a simplified mathematical model of what a biological neuron does.
+        - The circles on the right represent neurons. A neuron takes some inputs (1 or more) which are numbers, does some computation, and outputs some other number which then can be an input to a second neuron.
+        - Rather than building one neuron at a time, you often want to simulate many such neurons at the same time. What these neurons do collectively is input a few numbers, carry out some computation, and output some other numbers. 
+    - One caveat is that we have almost no idea about how the brain works in the present age, so a neural netowrk is just an attempt to blindly mimic what we know of the human brain today. So as you go deeper into neural networks and into deep learning, even though the origins were biologically motivated, don't take the biological motivation too seriously. In fact, deep learning researchers have shifted away from looking to biological motivation that much. But instead, they're just using engineering principles to figure out how to build algorithms that are more effective.
+
+    Why have neural networks only taken off in the past few years when they've been around for a long time?
+
+
+
+    - The horizontal axis is the amount of data you have for a problem, and the vertical axis is the performance or the accuracy of a learning algorithm applied to that problem.
+    - The amount of data in the digital age has greatly increased compared to the past.
+    - Neural networks scaled well with data compared to traditional learning algorithms like linear regression and logistic regression.
+    - What the graph is referring to when mentioning the size of the neural network is the amount of neurons that it has. More neurons usually results in an increase in performance.
+    - If you were to train a very large neural network, meaning one with a lot of these artificial neurons, then for some applications the performance will just keep on going up. This was due to two things:
+        1. For a certain class of applications where you do have a lot of data, sometimes you hear the term *big data* tossed around, if you're able to train a very large neural network to take advantage of that huge amount of data you have, then you could attain performance on anything ranging from speech recognition, to image recognition, to natural language processing applications and many more that just were not possible with earlier generations of learning algorithms. This caused deep learning algorithms to take off.
+        2. Faster computer processors, including the rise of GPUs or graphics processor units (hardware originally designed to generate nice-looking computer graphics), turned out to be really powerful for deep learning as well. That was also a major force in allowing deep learning algorithms to become what it is today.
+
 ## common symbols
     - ($ x^{(i)} $, $ y^{(i)} $)
     - $ \hat{y} $
