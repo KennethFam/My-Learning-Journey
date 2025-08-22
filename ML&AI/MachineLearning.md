@@ -1061,7 +1061,7 @@
 
     Why have neural networks only taken off in the past few years when they've been around for a long time?
 
-
+    ![alt text](images/neurons_and_the_brain_4.png)
 
     - The horizontal axis is the amount of data you have for a problem, and the vertical axis is the performance or the accuracy of a learning algorithm applied to that problem.
     - The amount of data in the digital age has greatly increased compared to the past.
