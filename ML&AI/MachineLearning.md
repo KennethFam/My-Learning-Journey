@@ -1253,6 +1253,118 @@
 ### Optional Lab: Neurons and Layers
 - [Neurons and Layers](https://colab.research.google.com/drive/1mu6HX5uMIwO2U0nfQ_5_JbzXrfvNSPh2?authuser=4)
 
+### TensorFlow Implementation
+- **TensorFlow** is one of the leading frameworks to implementing deep learning algorithms.
+
+#### Inference in Code
+- One of the remarkable things about neural networks is the same algorithm can be applied to so many different applications.
+
+- ![alt text](images/inference_in_code_1.png)
+    
+    - Can the learning algorithm help optimize the quality of the beans you get from a roasting process like this:
+
+        ![alt text](images/inference_in_code_2.png)
+    
+    - When roasting coffee beans, you can control two parameters: duration and temperature.
+
+    - In this slightly simplified example, we've created the datasets of different temperatures and different durations, as well as labels showing whether the coffee you roasted is good-tasting coffee. Where cross here, the cross, y = 1, corresponds to good coffee, and all the circles, y = 0, correspond to bad coffee.
+
+    - Only the points within the triangle correspond to good coffee.
+
+    - The task is given a feature $ \vec{x} $ with both temperature and duration, say 200 degrees Celsius for 17 minutes, how can we do inference in a neural network to get it to tell us whether or not this temperature and duration setting will result in good coffee or not? 
+
+    Well, it looks like this:
+
+    ![alt text](images/inference_in_code_3.png)
+
+    - Set `x` to be an array of two numbers.
+    - Create the first hidden layer using `Dense` with 3 (hidden) units and the sigmoid function as the activation function. 
+        - `Dense` is another name for the layers of a neural network that we've learned about so far. As you learn more about neural networks, you learn about other types of layers as well. But for now, we'll just use the `Dense` layer, which is the layer type you've learned about in the last few sections.
+    - Compute $ \vec{a}^{[1]} $ by taking `layer_1`, which is actually a function, and applying this function `layer_1` to the values of `x`. `a1` will contain a list of 3 numbers because `layer_1` has 3 units.
+
+    Let's implement the output layer:
+
+    ![alt text](images/inference_in_code_4.png)
+
+    - That's how you do inference in the neural network using TensorFlow.
+    - There are some additional details that weren't covered here, such as how to load the TensorFlow library and how to also load the parameters $ \vec{w} $ and $ b $ of the neural network, but we'll go over that in the next lab.
+
+- Now let's go back to the handwritten digit classification problem and try to implement inference:
+
+    ![alt text](image/inference_in_code_5.png)
+
+#### Data in TensorFlow
+- Unfortunately, there are some inconsistencies between how data is represented in NumPy and in TensorFlow. So it's good to be aware of these conventions so that you can implement correct code and hopefully get things running in your neural networks.
+
+- Let's start by taking a look at how TensorFlow represents data. Let's say you have a data set like this from the coffee example:
+
+    ![alt text](images/data_in_tensorflow_1.png)
+
+    To understand why we used double bracks `[[]]`, let's take a look at an example of a matrix:
+
+    ![alt text](images/data_in_tensorflow_2.png)
+
+    - By conventation, we describe a matrix with `r` rows and `c` columns as a r x c matrix.
+    - A matrix is just a 2D array of numbers.
+
+    Let's take a look at some more examples:
+
+    ![alt text](images/data_in_tensorflow_3.png)
+
+    - Top vector is called a **row vector**, which is a vector with just a single row.
+    - Middle vector is called a **column vector**, which is a vector with just a single column.
+    - The bottom array is a 1D vector, unlike the 2D vectors above it.
+    - In TensorFlow, we use matrices to represent the data, unlike how we used to use 1D vectors.
+        - Well it turns out that TensorFlow was designed to handle very large datasets and by representing the data in matrices instead of 1D arrays, it lets TensorFlow be a bit more computationally efficient internally.
+
+    Let's go back to our data:
+
+    ![alt text](images/data_in_tensorflow_4.png)
+
+    - This is how the first row should be initiated as an array.
+
+    Now let's revisit the code for forward propagation (inference):
+
+    ![alt text](images/data_in_tensorflow_5.png)
+
+    - Notice that the activation output is a 2D matrix.
+    - A `Tensor` here is a data type that the TensorFlow team had created in order to store and carry out computations on matrices efficiently.
+    - So whenever you see `Tensor`, just think of that matrix on these few slides. Technically a `Tensor` is a little bit more general than the matrix but for the purposes of this course, think of `Tensor` as just a way of representing matrices.
+    - You can convert a `Tensor` to a NumPy array by using the `.numpy()` method. A NumPy array and `Tensor` are unfortunately two different ways of representing a matrix.
+
+    Now let's look at the second layer:
+
+    ![alt text](images/data_in_tensorflow_6.png)
+
+#### Building a Neural Network
+- Let's put everything that we've discussed about TensorFlow together and build a neural network:
+
+    ![alt text](images/building_a_neural_network_1.png)
+
+    - This is what we did before to implement forward prop(agation).
+
+    Let's take a look a TensorFlow's way of implementing forward prop:
+
+    ![alt text](images/building_a_neural_network_2.png)
+
+    - Like before, we create the layers. We then tell TensorFlow to string together those layers to form a neural network using the `Sequential` function.
+    - Notice that the expected targets array `y` is a 1D array.
+    - To train the model, we simply need to call two functions: `model.compile()` with some parameters and `model.fit(x, y)` where `x` holds our input data and `y` holds our target values.
+    - To perform inference, call `model.predict(x_new)` where `x_new` holds data on a new example that we want to perform inference on.
+
+    By convention, we usually write the first 3 lines of code like this instead of creating separate variables for each layer:
+
+    ![alt text](images/building_a_neural_network_3.png)
+
+    Let's redo this for the digit classification example:
+
+    ![alt text](images/building_a_neural_network_4.png)
+
+    - Remember that you can rewrite this to follow the convention mentioned earlier about not having to declare each layer seperately.
+
+#### Optional Lab: Simple Neural Network
+- [Simple Neural Network](https://colab.research.google.com/drive/12-AVoD9ugqDSGaAoBtqrfBsAIzqm5nsM?authuser=4)
+
 ## common symbols
 - ($ x^{(i)} $, $ y^{(i)} $)
 - $ \hat{y} $
@@ -1307,6 +1419,8 @@
 - [Regularization](https://colab.research.google.com/drive/14vJS0eRiyBsRadFCYcA2jv8JNXj9rCKb?authuser=4)
 
 - [Neurons and Layers](https://colab.research.google.com/drive/1mu6HX5uMIwO2U0nfQ_5_JbzXrfvNSPh2?authuser=4)
+
+- - [Simple Neural Network](https://colab.research.google.com/drive/12-AVoD9ugqDSGaAoBtqrfBsAIzqm5nsM?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1rGsXkWMDhlgNMToyl4wN_Ao5iswULCgh?authuser=4)
