@@ -1201,6 +1201,58 @@
 
     So that's how a neural network works. Every layer inputs a vector of numbers and applies a bunch of logistic regression units to it, and then computes another vector of numbers that then gets passed from layer to layer until you get to the final output layer's computation, which is the prediction of the neural network. Then you can either threshold at 0.5 or not to come up with the final prediction.
 
+### More Complex Neural Networks
+- Here's an example complex neural network:
+
+    ![alt text](images/more_complex_neural_networks_1.png)
+
+    - By convention, when we say that a neural network has 4 layers, that includes all the hidden layers in the output layer, but we don't count the input layer. So, this example neural network has 4 layers in the conventional way of counting layers in the network.
+
+    Let's zoom in to layer 3 to look at its computations:
+
+    ![alt text](images/more_complex_neural_networks_2.png)
+
+    - Notice that the activation functions for a layer use that layer's parameters along with the output from the last layer (a vector) as input.
+
+    Here's a generic formula for a layer's activation function:
+
+    ![alt text](images/more_complex_neural_networks_3.png)
+
+    - So far, the sigmoid function has been used as the activation function, but other functions can be used too (discussed later on).
+    - An **activation function** is simply a function that outputs these activation values.
+
+### Inference: Making Predictions (Forward Propagation)
+- Let's put what we know into an algorithm called forward propagation which will let our neural network make inferences or predictions:
+
+    ![alt text](images/forward_propagation_1.png)
+
+    - For this example, we're just trying to do a binary classification of a handwritten digit which could be `0` or `1`.
+    - For the example on the slide, we are going to use an 8 by 8 image. This image of a `1` is this grid or matrix of 8 by 8 or 64 pixel intensity values where 255 denotes a bright white pixel and 0 would denote a black pixel, and different numbers are different shades of gray in between the shades of black and white. 
+    - Given these 64 input features, we're going to use the neural network with 2 hidden layers, where the first hidden layer has 25 neurons or 25 units, the second hidden layer has 15 neurons or 15 units, and then finally the output layer outputs what's the chance of this being 1 versus 0?.
+    
+    Let's step through the sequence of computations that in your neural network will need to make to go from the input $ \vec{x} $, this eight by eight or 64 numbers, to the predicted probability $ \vec{a}^{[3]} $.
+    
+    1. The first computation is to go from $ \vec{x} $ to $ \vec{a}^{[1]} $:
+
+        ![alt text](images/forward_propagation_2.png)
+
+    2. The next step is to compute $ \vec{a}^{[2]} $:
+
+        ![alt text](images/forward_propagation_3.png)
+    
+    3. The final step is to compute $ \vec{a}^{[3]} $:
+
+        ![alt text](images/forward_propagation_4.png)
+
+        - Note that you can optionally take $ \vec{a}^{[3]} $ and threshold it at 0.5 to obtain a binary classification label.
+        - We can also use $ f(x) $ to denote the function computed by the neural network as a function of `x`.
+        - Notice how we went in the forward direction from the leftmost layer to the rightmost layer, propagating the activations of the neurons and making these computations. This is why this algorithm is called **forward propagation**. This is in contrast with back propagation (used for learning) which will be discussed later on.
+        - This type of neural network architecture where you have more hidden units initially and then the number of hidden units decreases as you get closer to the output layer is a pretty typical choice when choosing neural network architectures.
+        - With the knowledge of forward propagation, you should be able to download the parameters of a neural network that someone else had trained and posted on the Internet and be able to carry out inference on your new data using their neural network.
+
+### Optional Lab: Neurons and Layers
+- [Neurons and Layers](https://colab.research.google.com/drive/1mu6HX5uMIwO2U0nfQ_5_JbzXrfvNSPh2?authuser=4)
+
 ## common symbols
 - ($ x^{(i)} $, $ y^{(i)} $)
 - $ \hat{y} $
@@ -1253,6 +1305,8 @@
 - [Overfitting](https://colab.research.google.com/drive/1GgH49dUYW-AKrfKev-o0s5Sk25XugN5J?authuser=4)
 
 - [Regularization](https://colab.research.google.com/drive/14vJS0eRiyBsRadFCYcA2jv8JNXj9rCKb?authuser=4)
+
+- [Neurons and Layers](https://colab.research.google.com/drive/1mu6HX5uMIwO2U0nfQ_5_JbzXrfvNSPh2?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1rGsXkWMDhlgNMToyl4wN_Ao5iswULCgh?authuser=4)
