@@ -1025,6 +1025,8 @@
 - [Logistic Regression](https://colab.research.google.com/drive/1QytfJfK_GVjPXh5GlRTAC8_SegIzF5RS?authuser=4)
 
 ## Neural Networks
+
+### Neurons and the Brain
 - The original motivation for the invention of neural networks was to write software that could mimic how the human brain or how the biological brain learns and thinks.
 
 - Sometimes called **artifical neural networks**.
@@ -1070,6 +1072,75 @@
     - If you were to train a very large neural network, meaning one with a lot of these artificial neurons, then for some applications the performance will just keep on going up. This was due to two things:
         1. For a certain class of applications where you do have a lot of data, sometimes you hear the term *big data* tossed around, if you're able to train a very large neural network to take advantage of that huge amount of data you have, then you could attain performance on anything ranging from speech recognition, to image recognition, to natural language processing applications and many more that just were not possible with earlier generations of learning algorithms. This caused deep learning algorithms to take off.
         2. Faster computer processors, including the rise of GPUs or graphics processor units (hardware originally designed to generate nice-looking computer graphics), turned out to be really powerful for deep learning as well. That was also a major force in allowing deep learning algorithms to become what it is today.
+
+### Demand Prediction
+- Simply put, **demand prediction** is when you look at the product and try to prict whether or not it will be a top seller.
+
+- ![alt text](images/demand_prediction_1.png)
+    
+    - In this example, we want to see whether or not a T-shirt will be a top seller, and we have some data we can use to do that.
+    - This type of application is used by retailers today in order to plan better inventory levels as well as marketing campaigns. If you know what's likely to be a top seller, you would plan, for example, to just purchase more of that stock in advance.
+    - If we fit the data with the sigmoid function, we may get a blue line like the one shown on the graph.
+    - In order to set us up to build a neural network, `f` (output of logistic regression algorithm) wil be denoted as `a` instead. `a` stands for activation, and it's actually a term from neuroscience, and it refers to how much a neuron is sending a high output to other neurons downstream from it.
+    - It turns out that this logistic regression **unit** or this little logistic regression algorithm, can be thought of as a very simplified model of a single neuron in the brain, where what the neuron does is it takes us input the price `x`, and then it computes the formula for logistic regression., and it outputs the number `a`, which is computed by the formula, and it outputs the probability of this T-shirt being a top seller. 
+        - Another way to think of a neuron is as a tiny little computer whose only job is to input one number or a few numbers, such as a price, and then to output one number or maybe a few other numbers, which in this case is the probability of the T-shirt being a top seller.
+    - A logistic regression algorithm is much simpler than what any biological neuron in a human brain does. Which is why the artificial neural network is such a vastly oversimplified model of the human brain. Even though in practice, as you know, deep learning algorithms do work very well.
+    - Given this description of a single neuron, building a neural network now just requires taking a bunch of these neurons and wiring them together or putting them together.
+
+- Let's look at a more complex example of demand prediction:
+
+    ![alt text](images/demand_prediction_2.png)
+
+    - We'll have 4 features to predict whether or not a T-shirt is a top seller.
+    - The words in yellow (maybe gold) are the features (price, shipping cost, marketing, and material).
+    - The words in gray (maybe black) are a few factors (affordability, awareness, and perceived quality) which may affect whether or not a T-shirt becomes a top seller.
+    - Affordability is mainly a function of price and shipping cost, so we're going to use a neuron for it, which takes in those two features and predict affordability (whether or not people think it's affordable). We repeat this for the rest of the features to predict the factors (affordability, awareness, and perceived quality) mentioned. Wiring these 3 factors into another neuron can result in the probability of the shirt being a top seller outputted.
+        - The middle part (factors) is what's called a layer. A **layer** is a grouping of neurons which takes as input the same or similar features, and that in turn outputs a few numbers together. A layer can have multiple neurons or a singular neuron.
+        - The layer with the final neuron (the pink one) is the **output layer**. It's called this because the output of this final neuron is the output probability predicted by the neural network.
+        - We're going to call the outputs of the factors layer **activations**. The term activations comes from biological neurons, and it refers to the degree that the biological neuron is sending a high output value or sending many electrical impulses to other neurons to the downstream from it. The probability of being a top seller is the activation of the pink neuron.
+        - The initial inputs (price, shipping cost, marketing, and material) is called the **input layer**.
+    - This neuron network inputs 4 numbers, the next layer takes those 4 numbers to compute 3 new ones, and then the final layer uses those 3 numbers to compute 1 number.
+    - The way a neural network has been described so far is we had to go through the neurons one at a time and decide what inputs it would take from the previous layer. For example, we said affordability is a function of just price and shipping costs and awareness is a function of just marketing and so on, but if you're building a large neural network it'd be a lot of work to go through and manually decide which neurons should take which features as inputs.
+
+    Here's how a neural network is implemented in practice:
+
+    ![alt text](images/demand_prediction_3.png)
+
+    - The way a neural network is implemented in practice is each neuron in a certain layer, say the layer in the middle, will have access to every feature, to every value from the previous layer, from the input layer, which is why each neuron now has an arrow from every input.
+    - You can imagine that if you're trying to predict affordability, and it knows what's the price shipping cost marketing and material, maybe it'll learn to ignore marketing and material and just figure out, through setting the parameters appropriately, to only focus on the subset of features that are most relevant to affordability.
+
+    Now let's simplify the neural network model:
+    
+    ![alt text](images/demand_prediction_4.png)
+
+    - Let's take the input features and write them as the vector $ \vec{x} $. We're going to view the neural network as having four features that comprise this feature vector $ \vec{x} $. This feature vector is fed to the layer in the middle which then computes three activation values, which in turn become another vector $ \vec{a} $. This vector is then fed to the final output layer which outputs the final probability of the T-shirt being a top seller, `a`.
+    - That's all a neural network is. It has a few layers where each layer inputs a vector and outputs another vector of numbers.
+    - The layers in between the input layer and the output layer are called the **hidden layers**. In thi case, there's only 1 hidden layer.
+        - Your data set tells you what is x and what is y, and so you get data that tells you what are the correct inputs and the correct outputs. But your dataset doesn't tell you what are the correct values for affordability, awareness, and perceived quality. The correct values for those are *hidden*. You don't see them in the training set, which is why this layer in the middle is called a hidden layer.
+
+    Here's another way to think about neural networks:
+
+    ![alt text](images/demand_prediction_5.png)
+
+    - Covering up the input layer, we can see that this is basically just logistic regression, but this version of logistic regression can learn its own features, making it easier to make accurate predictions.
+    - Remember the example in the **Feature Engineering** section where we constructed the area feature from the frontage and depth inputs. Instead of having us manually engineer features, a neural network can learn its own features to make the learning problem easier for itself. This is what makes neural networks one of the most powerful learning algorithms today.
+
+    Let's summarize:
+    
+    ![alt text](images/demand_prediction_6.png)
+
+    - The input layer has a vector of features, four numbers in this example, which is input to the hidden layer. The hidden layer outputs three numbers (in this case). Then the output layer takes as its input the three numbers and outputs one number, which would be the final activation, or the final prediction of the neural network.
+    - Even thought the neural network was previously described as computing affordability, awareness, and perceived quality, one of the really nice properties of a neural network is when you train it from data, you don't need to go in to explicitly decide what other features, such as affordability and so on. The neural network should compute instead or figure out all by itself what are the features it wants to use in this hidden layer.
+
+    Let's look at neural networks with more than 1 hidden layer:
+
+    ![alt text](images/demand_prediction_7.png)
+
+    - When you're building your own neural network, one of the decisions you need to make is how many hidden layers do you want and how many neurons do you want each hidden layer to have.     
+        - This question of how many hidden layers and how many neurons per hidden layer is a question of the architecture of the neural network.
+    - Choosing the right number of hidden layers and number of hidden units per layer can have an impact on the performance of your learning algorithm.
+    - We will discuss how to choose a good architecture later on.
+    - Some literature refer to a neural network with multiple layers like the ones shown on the slide as a multilayer perceptron.
 
 ## common symbols
     - ($ x^{(i)} $, $ y^{(i)} $)
