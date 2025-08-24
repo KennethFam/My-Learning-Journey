@@ -1171,18 +1171,48 @@
     - The same learning algorithm is asked to detect cars. It will learn edges in the first layer. Pretty similar to the last example but then it'll learn to detect parts of cars in the second hidden layer and then more complete car shapes in the third hidden layer.
     - Just by feeding it different data, the neural network automatically learns to detect very different features so as to try to make the predictions of car detection or person recognition or whatever is the particular given task that it is trained on. 
 
+### Neural Network Layer
+- The fundamental building block of most modern neural networks is a layer of neurons.
+
+- Let's zoom into the hidden layer of the demand prediction neural network that we looked at:
+
+    ![alt text](images/neural_network_layer_1.png)
+
+    - The hidden layer inputs 4 numbers to each of the 3 neurons.
+    - Each neuron implements a logistic regression unit/function.
+    - Take note of how the layers are numbered.
+    - Notation for layer numbering example: $ \vec{a}^{[1]} $ is the output for layer 1.
+    - The first neuron has parameters $ \vec{w}_{1}^{[1]} $, $ b_{1}^{[1]} $. The subscript is simply to indicate that the parameters belong to the 1st neuron of layer 1.
+    - 0.3 is the value of $ a_{1}^{[1]} $.
+    - 0.3, 0.7, and 0.2 are the values of $ \vec{a}^{[1]} $ that are passed to the final output layer.
+
+    Now let's zoom into the computation of layer 2:
+
+    ![alt text](images/neural_network_layer_2.png)
+
+    - The output of layer 1 is the input to layer 2.
+    - Since the output layer only has 1 neuron, `a`, in this case $ a^{[2]} $, will simply be a scalar instead of a vector.
+
+    Once the neural network has computed $ a^{[2]} $, there's one final optional step that you can choose to implement or not:
+
+    ![alt text](images/neural_network_layer_3.png)
+
+    - We want a binary prediction, so you can threshold $ a^{[2]} $ at 0.5 which will then give you the final prediction of either `1` or `0` instead of just a probability.
+
+    So that's how a neural network works. Every layer inputs a vector of numbers and applies a bunch of logistic regression units to it, and then computes another vector of numbers that then gets passed from layer to layer until you get to the final output layer's computation, which is the prediction of the neural network. Then you can either threshold at 0.5 or not to come up with the final prediction.
+
 ## common symbols
-    - ($ x^{(i)} $, $ y^{(i)} $)
-    - $ \hat{y} $
-        - $ \hat{y}^{(i)} $
-        -  $ y^{(i)} $
-        - $ \hat{y}^{(i)} = f_{w, b}(x^{(i)}) $
-    - $ f_{w, b}(x) = wx + b $
-    - $ f_{w, b}(x) $
-    - $ (\hat{y}^{(i)} - y^{(i)})^{2} $
-    - $ J(w, b) = \frac{1}{2m}\sum_{i = 1}^m (\hat{y}^{(i)} - y^{(i)})^{2} $
-    - $ w = w - \alpha \frac{\partial}{\partial w} J(w,b) $
-    - $ b = b - \alpha \frac{\partial}{\partial b} J(w,b) $
+- ($ x^{(i)} $, $ y^{(i)} $)
+- $ \hat{y} $
+    - $ \hat{y}^{(i)} $
+    -  $ y^{(i)} $
+    - $ \hat{y}^{(i)} = f_{w, b}(x^{(i)}) $
+- $ f_{w, b}(x) = wx + b $
+- $ f_{w, b}(x) $
+- $ (\hat{y}^{(i)} - y^{(i)})^{2} $
+- $ J(w, b) = \frac{1}{2m}\sum_{i = 1}^m (\hat{y}^{(i)} - y^{(i)})^{2} $
+- $ w = w - \alpha \frac{\partial}{\partial w} J(w,b) $
+- $ b = b - \alpha \frac{\partial}{\partial b} J(w,b) $
 
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
