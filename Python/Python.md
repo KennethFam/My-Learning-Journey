@@ -7943,3 +7943,139 @@
         ^([0-1][0-9]|2[0-4])$
         ```
         - This would match 00-24.
+
+### Enums
+- [Information by GeeksforGeeks](https://www.geeksforgeeks.org/python/enum-in-python/)
+
+- Enumerations or Enums are a set of symbolic names bound to unique values. It can be iterated over to return its canonical members in definition order. It provides a way to create more readable and self-documenting code by using meaningful names instead of arbitrary values.
+
+- Properties of Enum
+    - Enums can be displayed as string or repr.
+    - Enums can be checked for their types using type().
+    - The `name` keyword is used to display the name of the enum member.
+
+- Advantages of Enum
+    - Ease of maintenance: Enums centralize the definition of name values which makes it easier to upgrade or extend the set of values as per our requirements.
+    - Readability and Self-Documentation: Enums provide meaningful names to values, making the code more human-readable and self-explanatory.
+    - Type safety: Enums provide some level of type safety, ensuring that only valid values can be used.
+    - Reduced risk of errors: Enums help prevent the use of incorrect or inconsistent values in your code, reducing the risk of bugs and errors.
+
+- Here's an example of declaring an enum named `Season`:
+    ```py
+    from enum import Enum
+
+    class Season(Enum):
+        SPRING = 1
+        SUMMER = 2
+        AUTUMN = 3
+        WINTER = 4
+    print(Season.SPRING)
+    print(Season.SPRING.name)
+    print(Season.SPRING.value)
+    print(type(Season.SPRING))
+    print(repr(Season.SPRING))
+    print(list(Season))
+    ```
+    Output:
+    ```
+    Season.SPRING
+    SPRING
+    1
+    <enum 'Season'>
+    <Season.SPRING: 1>
+    [<Season.SPRING: 1>, <Season.SUMMER: 2>, <Season.AUTUMN: 3>, <Season.WINTER: 4>]
+    ```
+
+#### Accessing Modes
+- Enum members can be accessed in two ways:
+    - By value - In this method, the value of enum member is passed.
+    - By name- In this method, the name of the enum member is passed.
+
+- A separate value or name can also be accessed using the `name` or `value` keyword.
+
+- Here's an example of accessing an enum:
+    ```py
+    from enum import Enum
+    class Season(Enum):
+        SPRING = 1
+        SUMMER = 2
+        AUTUMN = 3
+        WINTER = 4
+    print("The enum member associated with value 2 is : ", Season(2).name)
+    print("The enum member associated with name AUTUMN is : ", Season['AUTUMN'].value)
+    ```
+    Output:
+    ```
+    The enum member associated with value 2 is : SUMMER
+    The enum member associated with name AUTUMN is : 3
+    ```
+
+#### Enumerations are iterable.
+- The code defines an enumeration class 'Season' with four members. It iterates through the enum members and prints their values and names. The output displays each enum member's value and its fully-qualified name, providing a way to work with and display enum values.
+    ```py
+    from enum import Enum
+
+    class Season(Enum):
+        SPRING = 1
+        SUMMER = 2
+        AUTUMN = 3
+        WINTER = 4
+
+    for season in (Season):
+        print(season.value,"-",season)
+    ```
+    Output:
+    ```
+    1 - Season.SPRING
+    2 - Season.SUMMER
+    3 - Season.AUTUMN
+    4 - Season.WINTER
+    ```
+
+#### Enumerations Support Hashing
+- This code uses the `enum` module to define an enumeration class `Animal` with three members: `dog`, `cat`, and `lion`. It then creates a dictionary `di` and assigns values to it based on enum members. Finally, it checks if the dictionary matches a specific key-value pair.
+    ```py
+    import enum
+    class Animal(enum.Enum):
+        dog = 1
+        cat = 2
+        lion = 3
+    di = {}
+    di[Animal.dog] = 'bark'
+    di[Animal.lion] = 'roar'
+    if di == {Animal.dog: 'bark', Animal.lion: 'roar'}:
+        print("Enum is hashed")
+    else:
+        print("Enum is not hashed")
+    ```
+    Output:
+    ```
+    Enum is hashed
+    ```
+
+#### Comparing Enums
+- Enumerations support two types of comparisons:
+    - Identity - These are checked using keywords `is` and `is not`.
+    - Equality - Equality comparisons of `==` and `!=` types are also supported.
+
+- This code defines an enumeration class `Animal` using the enum module with three members: `dog`, `cat`, and `lion`. It then performs comparisons between enum members to check for equality and inequality.
+    ```py
+    import enum
+    class Animal(enum.Enum):
+        dog = 1
+        cat = 2
+        lion = 3
+    if Animal.dog is Animal.cat:
+        print("Dog and cat are same animals")
+    else:
+        print("Dog and cat are different animals")
+    if Animal.lion != Animal.cat:
+        print("Lions and cat are different")
+    else:
+        print("Lions and cat are same")
+    ```
+    Output:
+    ```
+    Dog and cat are different animals
+    Lions and cat are different
+    ```
