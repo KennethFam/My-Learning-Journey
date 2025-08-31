@@ -7945,7 +7945,7 @@
         - This would match 00-24.
 
 ### Enums
-- [Information by GeeksforGeeks](https://www.geeksforgeeks.org/python/enum-in-python/)
+- [`enum` in Python](https://www.geeksforgeeks.org/python/enum-in-python/)
 
 - Enumerations or Enums are a set of symbolic names bound to unique values. It can be iterated over to return its canonical members in definition order. It provides a way to create more readable and self-documenting code by using meaningful names instead of arbitrary values.
 
@@ -8079,3 +8079,107 @@
     Dog and cat are different animals
     Lions and cat are different
     ```
+
+### Abstract Classes
+- [Abstract Classes in Python](https://www.geeksforgeeks.org/python/abstract-classes-in-python/)
+
+- In Python, an **abstract class** is a class that cannot be instantiated on its own and is designed to be a blueprint for other classes. Abstract classes allow us to define methods that must be implemented by subclasses, ensuring a consistent interface while still allowing the subclasses to provide specific implementations.
+
+#### Abstract Base Classes in Python
+- An abstract base class define defines methods that must be implemented by its subclasses, ensuring that the subclasses follow a consistent structure. **ABCs (Abstract Base Classes)** allow you to define common interfaces that various subclasses can implement while enforcing a level of abstraction.
+
+- Python provides the `abc` module to define ABCs and enforce the implementation of abstract methods in subclasses. Here's an example of how this module can be used:
+    ```py
+    from abc import ABC, abstractmethod
+
+    # Define an abstract class
+    class Animal(ABC):
+        
+        @abstractmethod
+        def sound(self):
+            pass  # This is an abstract method, no implementation here.
+
+    # Concrete subclass of Animal
+    class Dog(Animal):
+        
+        def sound(self):
+            return "Bark"  # Providing the implementation of the abstract method
+
+    # Create an instance of Dog
+    dog = Dog()
+    print(dog.sound())  # Output: Bark
+    ```
+    - Abstract Base Class: `Animal` is an abstract class that inherits from `ABC` (Abstract Base Class). This class cannot be instantiated directly because it contains an abstract method `sound()`. The `@abstractmethod` decorator is used to mark `sound()` as an abstract method. This means any subclass must implement this method to be instantiated.
+    - Concrete Subclass: `Dog` is a subclass of Animal that provides an implementation for the `sound()` method. This allows the `Dog` class to be instantiated and used.
+    - Instantiation: We create an instance of `Dog` and call the `sound()` method, which returns `"Bark"`.
+
+#### Abstract Methods
+- **Abstract methods** are methods that are defined in an abstract class but do not have an implementation. They serve as a blueprint for the subclasses, ensuring that they provide their own implementation. For example:
+    ```py
+    from abc import ABC, abstractmethod
+
+    class Animal(ABC):
+        @abstractmethod
+        def make_sound(self):
+            pass  # Abstract method, no implementation here
+    ```
+    - `make_sound()` is an abstract method in the Animal class, so it doesn't have any code inside it.
+
+#### Concrete Methods
+- **Concrete methods** are methods that have full implementations in an abstract class. These methods can be inherited by subclasses and used directly without needing to be redefined. For example:
+    ```py
+    from abc import ABC, abstractmethod
+
+    class Animal(ABC):
+        @abstractmethod
+        def make_sound(self):
+            pass  # Abstract method, to be implemented by subclasses
+
+        def move(self):
+            return "Moving"  # Concrete method with implementation
+    ```
+    - The `move()` method is a concrete method in the Animal class. It is implemented and does not need to be overridden by the `Dog` class.
+
+#### Abstract Properties
+- **Abstract properties** work like abstract methods but are used for properties. These properties are declared with the `@property` decorator and marked as abstract using `@abstractmethod`. Subclasses must implement these properties. For example:
+    ```py
+    from abc import ABC, abstractmethod
+
+    class Animal(ABC):
+        # order matters here
+        # decorators work bottom up
+        @property
+        @abstractmethod
+        def species(self):
+            pass  # Abstract property, must be implemented by subclasses
+
+    class Dog(Animal):
+        @property
+        def species(self):
+            return "Canine"
+
+    # Instantiate the concrete subclass
+    dog = Dog()
+    print(dog.species)
+    ```
+    - `species` is an abstract property in the `Animal` class, and it is marked as `@abstractmethod`.
+    - The `Dog` class implements the `species` property, making it a concrete subclass that can be instantiated.
+    - Abstract properties enforce that a subclass provides the property’s implementation.
+
+#### Abstract Class Instantiation
+- Abstract classes cannot be instantiated directly. This is because they contain one or more abstract methods or properties that lack implementations. Attempting to instantiate an abstract class results in a `TypeError`. For example:
+    ```py
+    from abc import ABC, abstractmethod
+
+    class Animal(ABC):
+        @abstractmethod
+        def make_sound(self):
+            pass
+
+    # Trying to instantiate the abstract class directly will raise an error:
+    animal = Animal()  # TypeError: Can't instantiate abstract class Animal with abstract methods make_sound
+    ```
+    - The `Animal` class is abstract because it has the `make_sound()` method as an abstract method.
+    - If you try to instantiate Animal directly (e.g., `animal = Animal()`), Python raises a `TypeError` because you can't instantiate a class with unimplemented abstract methods.
+    - Only subclasses that implement all abstract methods can be instantiated.
+
