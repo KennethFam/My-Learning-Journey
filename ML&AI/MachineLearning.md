@@ -1291,7 +1291,7 @@
 
 - Now let's go back to the handwritten digit classification problem and try to implement inference:
 
-    ![alt text](image/inference_in_code_5.png)
+    ![alt text](images/inference_in_code_5.png)
 
 #### Data in TensorFlow
 - Unfortunately, there are some inconsistencies between how data is represented in NumPy and in TensorFlow. So it's good to be aware of these conventions so that you can implement correct code and hopefully get things running in your neural networks.
