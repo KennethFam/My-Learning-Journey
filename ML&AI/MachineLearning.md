@@ -1365,14 +1365,14 @@
 #### Optional Lab: Simple Neural Network
 - [Simple Neural Network](https://colab.research.google.com/drive/12-AVoD9ugqDSGaAoBtqrfBsAIzqm5nsM?authuser=4)
 
-#### Forward Prop in a Single Layer
+### Forward Prop in a Single Layer
 - Let's take a look at how to implement forward propagation in a single layer from scratch using just Python and NumPy:
 
     ![alt text](images/forward_prop_single_layer.png)
 
     - We'll use 1D arrays for this example instead of 2D matrices.
 
-#### General Implementation of Forward Propagation
+### General Implementation of Forward Propagation
 - ![alt text](images/general_implementation_of_forward_prop.png)
     - A dense layer is a single layer of a neural network. 
     - `dense` takes as input the activation from the previous layer, as well as parameters `W` and `b` for the neurons in a given layer.
@@ -1380,10 +1380,10 @@
     - `sequential` strings together dense layers sequentially.
     - Capital letters for matrices and lowercase letters for vectors/scalars.
 
-#### Optional Lab: Simple Neural Network (NumPy)
+### Optional Lab: Simple Neural Network (NumPy)
 - [Simple Neural Network (NumPy)](https://colab.research.google.com/drive/1IctkE7hoeJMrzTgQD1WBWtsVpKL7qFuf?authuser=4)
 
-#### Speculations on Artificial General Intelligence (AGI)
+### Speculations on Artificial General Intelligence (AGI)
 - ![alt text](images/AGI_1.png)
     - ANI: AI system that does one thing, a narrow task, sometimes really well and can be incredibly valuable.
     - Most of the progress we've made so far is in ANI, which is progress in AI. This has confused people and made them think that we're making a lot of progress towards AGI, which we are not.
@@ -1424,6 +1424,63 @@
     - So the question is, if the same piece of brain tissue can learn to see, or touch, or feel, or even other things, what is the algorithm it uses, and can we replicate this algorithm and implemented in a computer?
 
     Note that this discussion is mainly theory. There may not be just one learning algorithm. It is up to future scientists to find out.
+
+### How neural networks are implemented efficiently
+- ![alt text](images/nn_efficient_implementation.png)
+    - The for loop can be replaced with a couple lines of code by using matrices.
+
+#### Matrix Multiplication
+- Let's first take a look at how we take a dot product of two vectors:
+
+    ![alt text](images/matrix_mul_1.png)
+
+    - The transpose of the vector a means you take this vector and lay its elements on the side as shown under "transpose".
+
+- Let's now take a look at vector matrix multiplication:
+
+    ![alt text](images/matrix_mul_2.png)
+
+
+    So how can we take vector matrix multiplication and generalize it to matrix matrix multiplication?
+
+    ![alt text](images/matrix_mul_3.png)
+
+    - A matrix is just a set of different vectors stacked together in columns.
+    - A way to think about this that's useful for neural network implementations is if you see a matrix, think of the columns of the matrix and if you see the transpose of a matrix, think of the rows of that matrix as being grouped together as illustrated here, with `A` and $ A^{T} $ as well as `W`. 
+    - The subscripts for $ a^{T} $ indicate the row that we are using (starting from 1).
+
+#### Matrix Multiplication Rules
+- ![alt text](images/matrix_mul_rules_1.png)
+    - Think of the columns of `A` as 3 vectors.
+    - A transpose is performed by taking the first column of the matrix and laying it on the side, then the 2nd column, and so forth.
+
+    Now let's calculate `Z`:
+
+    ![alt text](images/matrix_mul_rules_2.png)
+
+    ![alt text](images/matrix_mul_rules_3.png)
+
+    One other thing to note:
+
+    ![alt text](images/matrix_mul_rules_4.png)
+
+    - To perform matrix multiplication, the number of columns for the first matrix, $ A^{T} $, must match the number of rows for the second matrix, `W`, because you can only take dot products of vectors that are the same length.
+    - The resulting vector will have the same number of rows as the first matrix and the same number of columns as the second matrix.
+
+#### Matrix Multiplication Code
+- Let's compute the earlier matrix multiplication in code:
+
+    ![alt text](images/matrix_mul_code_1.png)
+
+    - An easy ways to get the transpose of a matrix in NumPy is to use the `.T` method.
+    - `@` is an alternative way to call `matmul`.
+
+- Now let's take a look at a vectorized implementation of forward propagation:
+
+    ![alt text](images/matrix_mul_code_2.png)
+
+    - Note that the result of `A`, `[1 0 1]`, is rounded.
+    - In case you're comparing this slide with the slide a few videos back, there is just one little difference, which is by convention. The way this is implemented in TensorFlow, rather than calling this variable `AT`, we were calling it `A_in`, which is why this too is the correct implementation of the code. There is a convention in TensorFlow that individual examples are actually laid out in rows in the matrix `X` rather than in the matrix X` transpose, which is why the code implementation actually looks like this in TensorFlow. 
 
 ## common symbols
 - ($ x^{(i)} $, $ y^{(i)} $)
