@@ -1267,7 +1267,7 @@
     
     - When roasting coffee beans, you can control two parameters: duration and temperature.
 
-    - In this slightly simplified example, we've created the datasets of different temperatures and different durations, as well as labels showing whether the coffee you roasted is good-tasting coffee. Where cross here, the cross, y = 1, corresponds to good coffee, and all the circles, y = 0, correspond to bad coffee.
+    - In this slightly simplified example, we've created the datasets of different temperatures and different durations, as well as labels showing whether the coffee you roasted is good-tasting coffee. The cross, y = 1, corresponds to good coffee, and all the circles, y = 0, correspond to bad coffee.
 
     - Only the points within the triangle correspond to good coffee.
 
@@ -1365,6 +1365,24 @@
 #### Optional Lab: Simple Neural Network
 - [Simple Neural Network](https://colab.research.google.com/drive/12-AVoD9ugqDSGaAoBtqrfBsAIzqm5nsM?authuser=4)
 
+#### Forward Prop in a Single Layer
+- Let's take a look at how to implement forward propagation in a single layer from scratch using just Python and NumPy:
+
+    ![alt text](images/forward_prop_single_layer.png)
+
+    - We'll use 1D arrays for this example instead of 2D matrices.
+
+#### General Implementation of Forward Propagation
+- ![alt text](images/general_implementation_of_forward_prop.png)
+    - A dense layer is a single layer of a neural network. 
+    - `dense` takes as input the activation from the previous layer, as well as parameters `W` and `b` for the neurons in a given layer.
+    - The weights are arranged like that so that matrix math works cleanly.
+    - `sequential` strings together dense layers sequentially.
+    - Capital letters for matrices and lowercase letters for vectors/scalars.
+
+#### Optional Lab: Simple Neural Network (NumPy)
+- [Simple Neural Network (NumPy)](https://colab.research.google.com/drive/1IctkE7hoeJMrzTgQD1WBWtsVpKL7qFuf?authuser=4)
+
 ## common symbols
 - ($ x^{(i)} $, $ y^{(i)} $)
 - $ \hat{y} $
@@ -1420,7 +1438,9 @@
 
 - [Neurons and Layers](https://colab.research.google.com/drive/1mu6HX5uMIwO2U0nfQ_5_JbzXrfvNSPh2?authuser=4)
 
-- - [Simple Neural Network](https://colab.research.google.com/drive/12-AVoD9ugqDSGaAoBtqrfBsAIzqm5nsM?authuser=4)
+- [Simple Neural Network](https://colab.research.google.com/drive/12-AVoD9ugqDSGaAoBtqrfBsAIzqm5nsM?authuser=4)
+
+- [Simple Neural Network (NumPy)](https://colab.research.google.com/drive/1IctkE7hoeJMrzTgQD1WBWtsVpKL7qFuf?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1rGsXkWMDhlgNMToyl4wN_Ao5iswULCgh?authuser=4)
