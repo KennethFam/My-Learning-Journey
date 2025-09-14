@@ -1383,6 +1383,48 @@
 #### Optional Lab: Simple Neural Network (NumPy)
 - [Simple Neural Network (NumPy)](https://colab.research.google.com/drive/1IctkE7hoeJMrzTgQD1WBWtsVpKL7qFuf?authuser=4)
 
+#### Speculations on Artificial General Intelligence (AGI)
+- ![alt text](images/AGI_1.png)
+    - ANI: AI system that does one thing, a narrow task, sometimes really well and can be incredibly valuable.
+    - Most of the progress we've made so far is in ANI, which is progress in AI. This has confused people and made them think that we're making a lot of progress towards AGI, which we are not.
+
+    ![alt text](images/AGI_2.png)
+
+    ![alt text](images/AGI_3.png)
+
+    - With the rise of modern deep learning, we started to simulate neuron. With faster and faster computers and even GPUs, we can simulate even more neurons. This development came with the hope that if we could simulate a lot of neurons then we can simulate the human brain or something like a human brain and we've really intelligent systems. Sadly, it's turned out not to be quite as simple as that for two reasons (in the opinion of Andrew Ng):
+        1. Our neuron units in machine learning are very simple compared to an actual neuron.
+        2. Even to this day, we have no idea how the brain works.
+    
+    Is there any hope of, within our lifetimes, seeing breakthroughs in AGI?
+
+    ![alt text](images/AGI_4.png)
+
+    - There have been some fascinating experiments done on animals that shows or strongly suggests that the same piece of biological brain tissue can do a surprisingly wide range of tasks. This has led to the one learning algorithm hypothesis that maybe a lot of intelligence could be due to one or a small handful of learning algorithms.
+    - The part of your brain shown here is your auditory cortex, and your brain is wired to feed signals from your ears in the form of electrical impulses, depending on what sound your ear is detecting to that auditory cortex.
+    - It turns out that if you were to rewire an animal brain to cut the wire between the ear and the auditory cortex, and instead feed in images to the auditory cortex, then the auditory cortex learns to see. Auditory refers to sound, and so this piece of the brain that, in most people, learns to hear, when it is fed different data, it instead learns to see. 
+
+    Here's another example:
+
+    ![alt text](images/AGI_5.png)
+
+    - This part of your brain is your somatosensory cortex; somatosensory refers to touch processing.
+    - If you were to similarly rewire the brain to cut the connection from the touch sensors to that part of the brain and instead rewire the brain to feed in images, then the somatosensory cortex learns to see.
+    - There's been a sequence of experiments like this, showing that many different parts of the brain, just depending on what data is given, can learn to see, learn to feel, or learn to hear as if there was maybe one algorithm that just, depending on what data it is given, learns to process its inputs accordingly.
+
+    Here are some more fascinating experiments:
+
+    ![alt text](images/AGI_6.png)
+
+    - There have been systems built which take a camera may be mounted to someone's forehead and maps it to a pattern of voltages in a grid on someone's tongue. By mapping a grayscale image to a pattern of voltages on their tongue, this can help people that are not sighted, blind individuals, learn to see with their tongue.
+    - There have been fascinating experiments with human echolocation or humans sonar. So animals like dolphins and bats use sonar to see, and researchers have found that if you train humans to make clicking sounds, and listen to how that bounces off surroundings, humans can sometimes learn some degree of human echolocation.
+    - For the haptic belt, if you mount a ring of buzzes around your waist and program it using a magnetic compass, so that say the buzzers to the North most direction are always vibrating slowly, then you somehow gain a direction sense, which some animals have, but humans don't. Then it just feels like you're walking around and you just know where North is, it doesn't feel like that part of my waist is buzzing, it feels like, oh, I know where that north is. 
+    - Surgeries implant a third eye onto frog and the brain just learns with you with this input.
+    - There have been a variety of experiments like these just showing that the human brain is amazingly adaptable. Neuroscientists say it is amazingly plastic; they just mean adaptable to bewildering range of sensor inputs.
+    - So the question is, if the same piece of brain tissue can learn to see, or touch, or feel, or even other things, what is the algorithm it uses, and can we replicate this algorithm and implemented in a computer?
+
+    Note that this discussion is mainly theory. There may not be just one learning algorithm. It is up to future scientists to find out.
+
 ## common symbols
 - ($ x^{(i)} $, $ y^{(i)} $)
 - $ \hat{y} $
