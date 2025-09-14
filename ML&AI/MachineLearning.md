@@ -1367,7 +1367,7 @@
 
 ## common symbols
 - ($ x^{(i)} $, $ y^{(i)} $)
-- $\hat{y}$
+- $ \hat{y} $
     - $ \hat{y}^{(i)} $
     -  $ y^{(i)} $
     - $ \hat{y}^{(i)} = f_{w, b}(x^{(i)}) $
