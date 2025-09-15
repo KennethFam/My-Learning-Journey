@@ -1482,6 +1482,9 @@
     - Note that the result of `A`, `[1 0 1]`, is rounded.
     - In case you're comparing this slide with the slide a few videos back, there is just one little difference, which is by convention. The way this is implemented in TensorFlow, rather than calling this variable `AT`, we were calling it `A_in`, which is why this too is the correct implementation of the code. There is a convention in TensorFlow that individual examples are actually laid out in rows in the matrix `X` rather than in the matrix X` transpose, which is why the code implementation actually looks like this in TensorFlow. 
 
+### Practice Lab: Neural Networks for Handwritten Digit Recognition, Binary
+- [Neural Networks for Handwritten Digit Recognition, Binary](https://colab.research.google.com/drive/1b5kJglk0P6UKiGtdP4p54v7HMZiMIpuE?authuser=4)
+
 ## common symbols
 - ($ x^{(i)} $, $ y^{(i)} $)
 - $ \hat{y} $
@@ -1545,3 +1548,5 @@
 - [Linear Regression](https://colab.research.google.com/drive/1rGsXkWMDhlgNMToyl4wN_Ao5iswULCgh?authuser=4)
 
 - [Logistic Regression](https://colab.research.google.com/drive/1QytfJfK_GVjPXh5GlRTAC8_SegIzF5RS?authuser=4)
+
+- [Neural Networks for Handwritten Digit Recognition, Binary](https://colab.research.google.com/drive/1b5kJglk0P6UKiGtdP4p54v7HMZiMIpuE?authuser=4)
