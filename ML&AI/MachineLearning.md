@@ -119,7 +119,7 @@
 - The most widely used tool by machine learning and data science practitioners today is the Jupyter Notebook. This is the default environments that a lot of them use to code up, experiment, and try things out. This is not some made up, simplified environment. This is the exact same environments, the exact same tool, the Jupyter Notebook that developers are using in many large countries right now.
 
 ### Optional Lab: Python and Jupyter Notebooks
-- - [Python and Jupyter Notebooks](https://colab.research.google.com/drive/1Htu0vzGqOZEzYUtb_nX8X2OR-Gi3C79t?authuser=4)
+- [Python and Jupyter Notebooks](https://colab.research.google.com/drive/1cGZyfoWUMjn4f61B-njulkBWUdyEV-AN?authuser=4)
 
 ## Supervised Learning
 
@@ -173,7 +173,7 @@
     So, that's linear regression. In order for you to make this work, one of the most important things you have to do is construct a cost function. The idea of a cost function is one of the most universal and important ideas in machine learning and is used in both linear regression and in training many of the most advanced AI models in the world. 
 
 #### Optional Lab: Model Representation
-- [Model Representation](https://colab.research.google.com/drive/1QQjYvNZ5aQQSH6FOYa9VuT8vJO8R1cTW?authuser=4)
+- [Model Representation](https://colab.research.google.com/drive/1TSL3bQ1-YsvCqqmBvfjtByZgOR6shxmg?authuser=4)
 
 #### Cost Function
 - ![alt text](images/w_and_b.png)
@@ -300,7 +300,7 @@
     - You can see the vertical distances between the data points and the predicted values on the straight line. The sum of squared errors for these data points is pretty close to the minimum possible sum of squared errors among all possible straight line fits.
 
 ##### Optional Lab: Cost Function
-- [Cost Function](https://colab.research.google.com/drive/1VI0qs3C2wHiX67b3nQPznL-bdxBigpru?authuser=4)
+- [Cost Function](https://colab.research.google.com/drive/1hkgf1yn5GPexFAKpJS4AFDZpDk5DA8o8?authuser=4)
 
 #### Gradient Descent
 - We saw that we can minimize the cost function by picking the minimum point on the graph, but this is not practical. There is an efficient algorithm that can find parameters `w` and `b` that give you the best fit line that minimizes the cost function `J`: gradient descent. It's a very important algorithm that's used to train some of the most complex models in AI, not just regression models.
@@ -447,7 +447,7 @@
     - There are other versions of gradient descent that looks at only a subset of the training data at each update step.
 
 ##### Optional Lab: Gradient Descent for Linear Regression
-- [Gradient Descent for Linear Regression](https://colab.research.google.com/drive/1d7kiBqHDFMq9XwHRm3Mf71EosW4hHxOw?authuser=4)
+- [Gradient Descent for Linear Regression](https://colab.research.google.com/drive/1I-TCaw59ZmU2HVhA7hbfN2AoRaCehlxQ?authuser=4)
 
 #### Multiple Features
 - ![alt text](images/one_feature.png)
@@ -524,7 +524,7 @@
         - Maybe the speed difference won't be huge if you have 16 features, but if you have thousands of features and perhaps very large training sets, this type of vectorized implementation will make a huge difference in the running time of your learning algorithm. It could be the difference between codes finishing in one or two minutes, versus taking many hours to do the same thing.
 
 ##### Optional Lab: Python, NumPy and Vectorization
-- [Python, NumPy and Vectorization](https://colab.research.google.com/drive/1G4HOM4G60YQWv5cZVL9naw_V3xAgOwB9?authuser=4)
+- [Python, NumPy and Vectorization](https://colab.research.google.com/drive/1CG9VWRVDnovYoSqYbIaoQ4QwRPNUuG8T?authuser=4)
 
 ##### Gradient Descent for Multiple Linear Regression with Vectorization
 - Let's review multiple linear regression and its simplified vector notation:
@@ -548,7 +548,7 @@
         - gradient descent is the recommended method for finding parameters `w`, `b`
 
 ##### Optional Lab: Multiple Variable Linear Regression
-- [Multiple Variable Linear Regression](https://colab.research.google.com/drive/1vp26959r7TZFMqr1GSz3hYELf0C1t_3A?authuser=4)
+- [Multiple Variable Linear Regression](https://colab.research.google.com/drive/1vMy08j5jBjzOntnWHB0unvdoHu7CE-on?authuser=4)
 
 #### Feature Scaling
 - Enables gradient descent to run faster.
@@ -664,7 +664,7 @@
     - "In fact, what I actually do is try a range of values like this. After trying 0.001, I'll then increase the learning rate threefold to 0.003. After that, I'll try 0.01, which is again about three times as large as 0.003. threefold to 0.003. After that, I'll try 0.01, which is again about three times as large as 0.003. So these are roughly trying out gradient descents with each value of Alpha being roughly three times bigger than the previous value. So, what I'll do is try a range of values until I found the value of that's too small and then also make sure I've found a value that's too large. I'll slowly try to pick the largest possible learning rate, or just something slightly smaller than the largest reasonable value that I found. When I do that, it usually gives me a good learning rate for my model." - Andrew Ng
 
 #### Optional Lab: Feature scaling and Learning Rate (Multi-variable)
-- [Feature scaling and Learning Rate (Multi-variable)](https://colab.research.google.com/drive/1BOviDzz5KKutNudV4o98HSwogU42lKUi?authuser=4)
+- [Feature scaling and Learning Rate (Multi-variable)](https://colab.research.google.com/drive/1Am_I8axDyqV0nUexZ3sERnI-Og2VSdKO?authuser=4)
 
 #### Feature Engineering
 - The choice of features can have a huge impact on your learning algorithm's performance. In fact, for many practical applications, choosing or entering the right features is a critical step to making the algorithm work well.
@@ -711,13 +711,13 @@
 - We will discuss how to decide which features to use later on.
 
 #### Optional Lab: Feature Engineering and Polynomial Regression
-- [Feature Engineering and Polynomial Regression](https://colab.research.google.com/drive/1EaTB8a2-39QwkY-9n5D8LMomhps9g56g?authuser=4)
+- [Feature Engineering and Polynomial Regression](https://colab.research.google.com/drive/1J8ofYy5RYJuvaTxER6bjYWKO26IVr47t?authuser=4)
 
 #### Optional Lab: Linear Regression using Scikit-Learn
-- [Linear Regression using Scikit-Learn](https://colab.research.google.com/drive/1FAJZ4kab5US13-CT50M4qZuNqq4PFOhz?authuser=4)
+- [Linear Regression using Scikit-Learn](https://colab.research.google.com/drive/1RStSzMIjUEB8ZHerPnxt0oz_vBovpqwm?authuser=4)
 
 #### Practice Lab: Linear Regression
-- [Linear Regression](https://colab.research.google.com/drive/1rGsXkWMDhlgNMToyl4wN_Ao5iswULCgh?authuser=4)
+- [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
 
 ### Classification
 - Classification is where your output variable `y` can take on only one of a small handfull of possible values instead of any number in an infinite range of numbers like regression.
@@ -747,7 +747,7 @@
     - Logistic regression outputs a value between 0 and 1. Note that logistic regression is used for classification, specially binary classfication problems with binary output label `y` as either `0` or `1`.
 
 #### Optional Lab: Classification
-- [Classification](https://colab.research.google.com/drive/1N-1XmRO_24tH75sCHS2b97ZrgXVKTfBg?authuser=4)
+- [Classification](https://colab.research.google.com/drive/1WceZ_v0Fx7wPrEei7Ju98ISrf7WI9ByV?authuser=4)
 
 #### Logistic Regression
 - Probably the single most widely used classification algorithm in the world.
@@ -784,7 +784,7 @@
         - $ P(y = 0) $ or probability that y = 0
 
 ##### Optional Lab: Logistic Regression
-- [Logistic Regression](https://colab.research.google.com/drive/1YaCILZUeQg4xSR7hfaON7lLlVXZDRFCv?authuser=4)
+- [Logistic Regression](https://colab.research.google.com/drive/1OHbfCUhCxrgH1XMC5pNgakfOHrsesoon?authuser=4)
 
 ##### Decision Boundary
 - ![alt text](images/decision_boundary_1.png)
@@ -816,7 +816,7 @@
     - If we do not include higher order polynomials, the decision boundary will always be linear.
 
 ###### Optional Lab: Logistic Regression, Decision Boundary
-- [Logistic Regression, Decision Boundary](https://colab.research.google.com/drive/1eIY6fIr6jHILn-G_UApSa72z2Xgr7vLr?authuser=4)
+- [Logistic Regression, Decision Boundary](https://colab.research.google.com/drive/1r9siSIRokpJ-EEXlAXyVePiTLmrnho7c?authuser=4)
 
 ##### Cost Function for Logistic Regression
 - The squared error cost function is not an ideal cost function for logistic regression.
@@ -856,7 +856,7 @@
     ![alt text](images/logistic_regression_cost_function_5.png)
 
 ###### Optional Lab: Logistic Regression, Logistic Loss
-- [Logistic Regression, Logistic Loss](https://colab.research.google.com/drive/18vsO8h3wpN6kBZ64v-svVaReW7LE4bo4?authuser=4)
+- [Logistic Regression, Logistic Loss](https://colab.research.google.com/drive/19-VhAzFqWCb1NFirt0fBuXL63aaoBaag?authuser=4)
 
 ##### Simplified Cost Function
 - Now let's look at the simplified version of the cost function, which will simplify the implementation of gradient descent for fitting the parameters of a logistic regression model:
@@ -874,7 +874,7 @@
     - You might be wondering, why do we choose this particular function when there could be tons of other costs functions we could have chosen? Well, this particular cost function is derived from statistics using a statistical principle called maximum likelihood estimation, which is an idea from statistics on how to efficiently find parameters for different models. This cost function has the nice property that it is convex. But don't worry about learning the details of maximum likelihood. It's just a deeper rationale and justification behind this particular cost function. 
 
 ###### Optional Lab: Cost Function for Logistic Regression
-- [Cost Function for Logistic Regression](https://colab.research.google.com/drive/1mH5XEv2OPEgTbC68H_oK9WIg5MUnayR4?authuser=4)
+- [Cost Function for Logistic Regression](https://colab.research.google.com/drive/1nAgkAAFmZvFia_W-CdmxJex4qGUAEKZa?authuser=4)
 
 ##### Gradient Descent Implementation for Logistic Regression
 - ![alt text](images/logistic_regression_gradient_descent_1.png)
@@ -894,10 +894,10 @@
     - Notice that these equations look just like the ones for gradient descent. The difference is how $ f_{\vec{w}, b}(\vec{x}^{(i)}) $ is implemented.
 
 ###### Optional Lab: Gradient Descent for Logistic Regression
-- [Gradient Descent for Logistic Regression](https://colab.research.google.com/drive/1TvkN5SDS4omTfzhS_eGy32_5B_HACWtP?authuser=4)
+- [Gradient Descent for Logistic Regression](https://colab.research.google.com/drive/1W2u2SyAZ9c4Aj_VKcMht3tLLy1uAMG8G?authuser=4)
 
 ##### Optional Lab: Logistic Regression using Scikit-Learn
-- [Logistic Regression using Scikit-Learn](https://colab.research.google.com/drive/1eyM5Cb3FwdHlJXGvCGhUxxdrS-nICh1Q?authuser=4)
+- [Logistic Regression using Scikit-Learn](https://colab.research.google.com/drive/1PNnz7L7-Btgg6bY526S_KvgZKO0MzZmb?authuser=4)
 
 ### The Problem of Overfitting
 - Regression example:
@@ -947,7 +947,7 @@
     ![alt text](images/addressing_overfitting_4.png)
 
 #### Optional Lab: Overfitting
-- [Overfitting](https://colab.research.google.com/drive/1GgH49dUYW-AKrfKev-o0s5Sk25XugN5J?authuser=4)
+- [Overfitting](https://colab.research.google.com/drive/12jnLdsRc_ZOBVcpWwqM2KOKw4GVkEp2Z?authuser=4)
 
 #### Regularization
 
@@ -1019,10 +1019,10 @@
     - Note that this is identical to regularized linear regression. The only difference is the definition of `f`.
 
 ##### Optional Lab: Regularization
-- [Regularization](https://colab.research.google.com/drive/14vJS0eRiyBsRadFCYcA2jv8JNXj9rCKb?authuser=4)
+- [Regularization](https://colab.research.google.com/drive/1Y5tbpPOFqjGCfzIvv2SCKjGE835QrEfy?authuser=4)
 
 ### Practice Lab: Logistic Regression
-- [Logistic Regression](https://colab.research.google.com/drive/1QytfJfK_GVjPXh5GlRTAC8_SegIzF5RS?authuser=4)
+- [Logistic Regression](https://colab.research.google.com/drive/1VRkENCB5PU_l0c-hAKhu9e5AzvNlMZTh?authuser=4)
 
 ## Neural Networks
 
@@ -1251,7 +1251,7 @@
         - With the knowledge of forward propagation, you should be able to download the parameters of a neural network that someone else had trained and posted on the Internet and be able to carry out inference on your new data using their neural network.
 
 ### Optional Lab: Neurons and Layers
-- [Neurons and Layers](https://colab.research.google.com/drive/1mu6HX5uMIwO2U0nfQ_5_JbzXrfvNSPh2?authuser=4)
+- [Neurons and Layers](https://colab.research.google.com/drive/1WjNmNAI9oap_tZQ4S_Pj4_CMo0CvR__L?authuser=4)
 
 ### TensorFlow Implementation
 - **TensorFlow** is one of the leading frameworks to implementing deep learning algorithms.
@@ -1362,8 +1362,8 @@
 
     - Remember that you can rewrite this to follow the convention mentioned earlier about not having to declare each layer seperately.
 
-#### Optional Lab: Simple Neural Network
-- [Simple Neural Network](https://colab.research.google.com/drive/12-AVoD9ugqDSGaAoBtqrfBsAIzqm5nsM?authuser=4)
+#### Optional Lab: Simple Neural Network in Tensorflow
+- [Simple Neural Network in Tensorflow](https://colab.research.google.com/drive/1T33d1UEOA3QAdM0G38xRUpeVtZu4YN_W?authuser=4)
 
 ### Forward Prop in a Single Layer
 - Let's take a look at how to implement forward propagation in a single layer from scratch using just Python and NumPy:
@@ -1380,8 +1380,8 @@
     - `sequential` strings together dense layers sequentially.
     - Capital letters for matrices and lowercase letters for vectors/scalars.
 
-### Optional Lab: Simple Neural Network (NumPy)
-- [Simple Neural Network (NumPy)](https://colab.research.google.com/drive/1IctkE7hoeJMrzTgQD1WBWtsVpKL7qFuf?authuser=4)
+### Optional Lab: Simple Neural Network in NumPy
+- [Simple Neural Network in NumPy](https://colab.research.google.com/drive/1IctkE7hoeJMrzTgQD1WBWtsVpKL7qFuf?authuser=4)
 
 ### Speculations on Artificial General Intelligence (AGI)
 - ![alt text](images/AGI_1.png)
@@ -1502,51 +1502,51 @@
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
 ### Optional
-- [Python and Jupyter Notebooks](https://colab.research.google.com/drive/1Htu0vzGqOZEzYUtb_nX8X2OR-Gi3C79t?authuser=4)
+- [Python and Jupyter Notebooks](https://colab.research.google.com/drive/1cGZyfoWUMjn4f61B-njulkBWUdyEV-AN?authuser=4)
 
-- [Model Representation](https://colab.research.google.com/drive/1QQjYvNZ5aQQSH6FOYa9VuT8vJO8R1cTW?authuser=4)
+- [Model Representation](https://colab.research.google.com/drive/1TSL3bQ1-YsvCqqmBvfjtByZgOR6shxmg?authuser=4)
 
-- [Cost Function](https://colab.research.google.com/drive/1VI0qs3C2wHiX67b3nQPznL-bdxBigpru?authuser=4)
+- [Cost Function](https://colab.research.google.com/drive/1hkgf1yn5GPexFAKpJS4AFDZpDk5DA8o8?authuser=4)
 
-- [Gradient Descent for Linear Regression](https://colab.research.google.com/drive/1d7kiBqHDFMq9XwHRm3Mf71EosW4hHxOw?authuser=4)
+- [Gradient Descent for Linear Regression](https://colab.research.google.com/drive/1I-TCaw59ZmU2HVhA7hbfN2AoRaCehlxQ?authuser=4)
 
-- [Python, NumPy and Vectorization](https://colab.research.google.com/drive/1G4HOM4G60YQWv5cZVL9naw_V3xAgOwB9?authuser=4)
+- [Python, NumPy and Vectorization](https://colab.research.google.com/drive/1CG9VWRVDnovYoSqYbIaoQ4QwRPNUuG8T?authuser=4)
 
-- [Multiple Variable Linear Regression](https://colab.research.google.com/drive/1vp26959r7TZFMqr1GSz3hYELf0C1t_3A?authuser=4)
+- [Multiple Variable Linear Regression](https://colab.research.google.com/drive/1vMy08j5jBjzOntnWHB0unvdoHu7CE-on?authuser=4)
 
-- [Feature scaling and Learning Rate (Multi-variable)](https://colab.research.google.com/drive/1BOviDzz5KKutNudV4o98HSwogU42lKUi?authuser=4)
+- [Feature scaling and Learning Rate (Multi-variable)](https://colab.research.google.com/drive/1Am_I8axDyqV0nUexZ3sERnI-Og2VSdKO?authuser=4)
 
-- [Feature Engineering and Polynomial Regression](https://colab.research.google.com/drive/1EaTB8a2-39QwkY-9n5D8LMomhps9g56g?authuser=4)
+- [Feature Engineering and Polynomial Regression](https://colab.research.google.com/drive/1J8ofYy5RYJuvaTxER6bjYWKO26IVr47t?authuser=4)
 
-- [Linear Regression using Scikit-Learn](https://colab.research.google.com/drive/1FAJZ4kab5US13-CT50M4qZuNqq4PFOhz?authuser=4)
+- [Linear Regression using Scikit-Learn](https://colab.research.google.com/drive/1RStSzMIjUEB8ZHerPnxt0oz_vBovpqwm?authuser=4)
 
-- [Classification](https://colab.research.google.com/drive/1N-1XmRO_24tH75sCHS2b97ZrgXVKTfBg?authuser=4)
+- [Classification](https://colab.research.google.com/drive/1WceZ_v0Fx7wPrEei7Ju98ISrf7WI9ByV?authuser=4)
 
-- [Logistic Regression](https://colab.research.google.com/drive/1YaCILZUeQg4xSR7hfaON7lLlVXZDRFCv?authuser=4)
+- [Logistic Regression](https://colab.research.google.com/drive/1OHbfCUhCxrgH1XMC5pNgakfOHrsesoon?authuser=4)
 
-- [Logistic Regression, Decision Boundary](https://colab.research.google.com/drive/1eIY6fIr6jHILn-G_UApSa72z2Xgr7vLr?authuser=4)
+- [Logistic Regression, Decision Boundary](https://colab.research.google.com/drive/1r9siSIRokpJ-EEXlAXyVePiTLmrnho7c?authuser=4)
 
-- [Logistic Regression, Logistic Loss](https://colab.research.google.com/drive/18vsO8h3wpN6kBZ64v-svVaReW7LE4bo4?authuser=4)
+- [Logistic Regression, Logistic Loss](https://colab.research.google.com/drive/19-VhAzFqWCb1NFirt0fBuXL63aaoBaag?authuser=4)
 
-- [Cost Function for Logistic Regression](https://colab.research.google.com/drive/1mH5XEv2OPEgTbC68H_oK9WIg5MUnayR4?authuser=4)
+- [Cost Function for Logistic Regression](https://colab.research.google.com/drive/1nAgkAAFmZvFia_W-CdmxJex4qGUAEKZa?authuser=4)
 
-- [Gradient Descent for Logistic Regression](https://colab.research.google.com/drive/1TvkN5SDS4omTfzhS_eGy32_5B_HACWtP?authuser=4)
+- [Gradient Descent for Logistic Regression](https://colab.research.google.com/drive/1W2u2SyAZ9c4Aj_VKcMht3tLLy1uAMG8G?authuser=4)
 
-- [Logistic Regression using Scikit-Learn](https://colab.research.google.com/drive/1eyM5Cb3FwdHlJXGvCGhUxxdrS-nICh1Q?authuser=4)
+- [Logistic Regression using Scikit-Learn](https://colab.research.google.com/drive/1PNnz7L7-Btgg6bY526S_KvgZKO0MzZmb?authuser=4)
 
-- [Overfitting](https://colab.research.google.com/drive/1GgH49dUYW-AKrfKev-o0s5Sk25XugN5J?authuser=4)
+- [Overfitting](https://colab.research.google.com/drive/12jnLdsRc_ZOBVcpWwqM2KOKw4GVkEp2Z?authuser=4)
 
-- [Regularization](https://colab.research.google.com/drive/14vJS0eRiyBsRadFCYcA2jv8JNXj9rCKb?authuser=4)
+- [Regularization](https://colab.research.google.com/drive/1Y5tbpPOFqjGCfzIvv2SCKjGE835QrEfy?authuser=4)
 
-- [Neurons and Layers](https://colab.research.google.com/drive/1mu6HX5uMIwO2U0nfQ_5_JbzXrfvNSPh2?authuser=4)
+- [Neurons and Layers](https://colab.research.google.com/drive/1WjNmNAI9oap_tZQ4S_Pj4_CMo0CvR__L?authuser=4)
 
-- [Simple Neural Network](https://colab.research.google.com/drive/12-AVoD9ugqDSGaAoBtqrfBsAIzqm5nsM?authuser=4)
+- [Simple Neural Network in Tensorflow](https://colab.research.google.com/drive/1T33d1UEOA3QAdM0G38xRUpeVtZu4YN_W?authuser=4)
 
-- [Simple Neural Network (NumPy)](https://colab.research.google.com/drive/1IctkE7hoeJMrzTgQD1WBWtsVpKL7qFuf?authuser=4)
+- [Simple Neural Network in NumPy](https://colab.research.google.com/drive/1IctkE7hoeJMrzTgQD1WBWtsVpKL7qFuf?authuser=4)
 
 ### Practice
-- [Linear Regression](https://colab.research.google.com/drive/1rGsXkWMDhlgNMToyl4wN_Ao5iswULCgh?authuser=4)
+- [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
 
-- [Logistic Regression](https://colab.research.google.com/drive/1QytfJfK_GVjPXh5GlRTAC8_SegIzF5RS?authuser=4)
+- [Logistic Regression](https://colab.research.google.com/drive/1VRkENCB5PU_l0c-hAKhu9e5AzvNlMZTh?authuser=4)
 
 - [Neural Networks for Handwritten Digit Recognition, Binary](https://colab.research.google.com/drive/1b5kJglk0P6UKiGtdP4p54v7HMZiMIpuE?authuser=4)
