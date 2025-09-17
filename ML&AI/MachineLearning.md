@@ -1253,7 +1253,7 @@
 ### Optional Lab: Neurons and Layers
 - [Neurons and Layers](https://colab.research.google.com/drive/1WjNmNAI9oap_tZQ4S_Pj4_CMo0CvR__L?authuser=4)
 
-### TensorFlow Implementation
+### TensorFlow Implementation of Forwarding
 - **TensorFlow** is one of the leading frameworks to implementing deep learning algorithms.
 
 #### Inference in Code
@@ -1484,6 +1484,54 @@
 
 ### Practice Lab: Neural Networks for Handwritten Digit Recognition, Binary
 - [Neural Networks for Handwritten Digit Recognition, Binary](https://colab.research.google.com/drive/1b5kJglk0P6UKiGtdP4p54v7HMZiMIpuE?authuser=4)
+
+### Tensorflow Implementation of Training
+- ![alt text](images/tensorflow_train.png)
+    - Same specifications as before.
+    - Key step in asking Tensorflow to compile the model is to specify the loss function, e.g. binary cross entropy
+    - After specifying the loss function, call `fit` to train the model on the dataset `X`, `Y`. Here, we specify 100 epochs or iterations for training.
+    - In summary, to train the model:
+        1. specify the model
+        2. compile the model using a specific loss function
+        3. train the model
+
+#### Training Details
+- Let's start by reviewing how we trained a logistic regression model:
+
+    ![alt text](images/training_details_1.png)
+
+    - Step 1 is specifying how to compute the output, $ f_{\vec{w}, b}(\vec{x}) $ , given input $ \vec{x} $ and parameters $ \vec{w} $ and `b`.
+
+    Now let's look at the steps for a neural network in greater detail starting with step 1, creating the model:
+
+    ![alt text](images/training_details_2.png)
+
+    - This code snippet specifies the entire architecture of the neural network and therefore tells TensorFlow everything it needs in order to compute the output $ \vec{a}^{[3]} $ or $ f(\vec{x}) $ as a function of the input `x` and the parameters $ \vec{w}^{l} $ and \vec{b}^{l}.
+
+    Let's look at step 2, specifying the loss function which defines the cost function:
+
+    ![alt text](images/training_details_3.png)
+
+    - The most common loss function is the one we used for logistic regression, which is also known as binary cross entropy.
+        - The function is called the cross entropy loss function in statistics. 
+        - Binary simply emphasizes that we are doing binary classification.
+    - Keras was originally a library developed completely separate from Tensorflow but was eventually merged into Tensorflow.
+    - For regression, we can use mean squared error loss instead.
+    The cost function is a function of all the parameters in the neural network. So, if you are optimizing the function with respect to W and B, you'd be optimizing it with respect to all of the parameters in the neural network.
+        - Notice how the output is written as $ f_{W, B}(\vec{x}) $
+    
+    Let's look at step 3, minizing the cost function:
+
+    ![alt text](images/training_details_4.png)
+
+    - TensorFlow, along with many other libraries, uses backpropagation to compute the drivatives for gradient descent. Backpropagation is performed within the `fit` method.
+    -  One pattern that Andrew Ng has seen across multiple ideas is as the technology evolves, libraries become more mature, and most engineers will use libraries rather than implement code from scratch. 
+
+    Most commercial implementations use TensorFlow or PyTorch:
+
+    ![alt text](images/training_details_5.png)
+
+- A basic neural network is also called a multi-layer perceptron.
 
 ## common symbols
 - ($ x^{(i)} $, $ y^{(i)} $)
