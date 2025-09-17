@@ -1533,6 +1533,71 @@
 
 - A basic neural network is also called a multi-layer perceptron.
 
+### Activation Functions
+
+#### Alternatives to the Sigmoid Activation
+- Recall the demand prediction example where we were trying to predict whether a product will be a top seller:
+
+    ![alt text](images/sigmoid_alternatives_1.png)
+
+    - Awareness may have different levels, not just binary (aware or not aware). So, we can swap in a different activation function.
+    - Note the new activation function on the right where `g` is 0 when `z` < 0 and `g` is `z` when $ z \ge 0 $: $ g(z) = max(0, z) $. This function is called ReLU (Rectified Linear Unit).
+
+    Here are the most commonly used activation functions:
+
+    ![alt text](images/sigmoid_alternatives_2.png)
+
+    - Sometimes if you use the linear activation function, people will say we're not using any activation function because if `a` is $ g(z) $ where $ g(z) = z $, then `a` is just equal to $ \vec{w}_{2}^{[1]} \cdot \vec{x} + b_{2}^{[1]} $. And so it's as if there was no g in there at all.
+    - We will cover the softmax activation function later on.
+
+#### Choosing Activation Functions
+- ![alt text](images/choosing_activations_1.png)
+    - You can choose different activation functions for different neurons in your neural network, and when considering the activation function for the output layer, it turns out that there'll often be one fairly natural choice, depending on what is the target or label `y`. 
+    - When y is 0 or 1 (binary classification problem), then the sigmoid activation function will almost always be the natural choice.
+    - If you're solving a regression problem with -/+ values, the linear activation function will probably be the best choice.
+    - If `y` can only take on positive values, the ReLU activation function will probably be the best choice.
+
+    How about the hidden layers of a neural network:
+
+    ![alt text](images/choosing_activations_2.png)
+
+    - It turns out that the ReLU activation function is by far the most common choice in how neural networks are trained by many practitioners today.
+        - In the early development of neural networks, the sigmoid function was used in many places, but the field has evolved to use ReLU more often and sigmoids hardly ever (other than when you need a binary output for the output layer for a binary classification problem).
+        - Why?
+            1. ReLU is faster to compute.
+            2. The ReLU function kind of goes flat only in one part of the graph, whereas the sigmoid function goes flat in two places (left and right). Gradient descent is slow for functions that are flat in a lot of places. Although gradient descent optimizes the cost function, having an activation function that is flat in a lot of places results in the cost function being flat in many places as well. So, using ReLU can cause your neural network to learn faster.
+    
+    To summarize:
+
+    ![alt text](images/choosing_activations_3.png)
+
+    - Note that there are many more activation functions out there. Feel free to try and find some online.
+
+#### Why Do We Need Activation Functions?
+- Recall the demand prediction example:
+
+    ![alt text](images/why_do_we_need_activations_1.png)
+
+    - What would happen if we were to use a linear activation function for all of the nodes in this neural network? Well, the big neural network will become no different than just linear regression. So, this would defeat the entire purpose of using a neural network because it would then just not be able to fit anything more complex than the linear regression model.
+
+    Let's look at a simpler example:
+
+    ![alt text](images/why_do_we_need_activations_2.png)
+
+    - Notice how the equations just simplify down to a linear regression model.
+    - A linear function of a linear function is itself a linear function. This is why having multiple layers of linear activation functions in a neural network doesn't let the neural network compute any more complex features or learn anything more complex than just a linear function.
+
+    Let's look at a general case:
+
+    ![alt text](images/why_do_we_need_activations_3.png)
+
+    - If we used the linear activation function for all the layers, it'd result in linear regression.
+    - If we used the linear activation function for all the layers but the output layer and made the output layer the sigmoid function, it'd be no different from logistic regression.
+    - ReLU is the recommended activation function for the hidden layers.
+
+#### Optional Lab: ReLU activation
+- [ReLU activation](https://colab.research.google.com/drive/17Jc2EzK-f7eEncTi_-HGoNzjQQJW8jfI?authuser=4)
+
 ## common symbols
 - ($ x^{(i)} $, $ y^{(i)} $)
 - $ \hat{y} $
@@ -1591,6 +1656,8 @@
 - [Simple Neural Network in Tensorflow](https://colab.research.google.com/drive/1T33d1UEOA3QAdM0G38xRUpeVtZu4YN_W?authuser=4)
 
 - [Simple Neural Network in NumPy](https://colab.research.google.com/drive/1IctkE7hoeJMrzTgQD1WBWtsVpKL7qFuf?authuser=4)
+
+- [ReLU activation](https://colab.research.google.com/drive/17Jc2EzK-f7eEncTi_-HGoNzjQQJW8jfI?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
