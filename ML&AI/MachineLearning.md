@@ -1744,18 +1744,107 @@
     - This example uses a 1D input instead of a 2D input.
     - EKG in some places is just a list of numbers that correspond to the height at different points in time. So you may have say 100 numbers corresponding to the height of this curve at 100 different points of time. The learning task given this time series, given this EKG signal, is to classify say whether this patient has a heart disease or some diagnosable heart condition. This example is what a convolutional neural network might do.
 
-## common symbols
-- ($ x^{(i)} $, $ y^{(i)} $)
-- $ \hat{y} $
-    - $ \hat{y}^{(i)} $
-    -  $ y^{(i)} $
-    - $ \hat{y}^{(i)} = f_{w, b}(x^{(i)}) $
-- $ f_{w, b}(x) = wx + b $
-- $ f_{w, b}(x) $
-- $ (\hat{y}^{(i)} - y^{(i)})^{2} $
-- $ J(w, b) = \frac{1}{2m}\sum_{i = 1}^m (\hat{y}^{(i)} - y^{(i)})^{2} $
-- $ w = w - \alpha \frac{\partial}{\partial w} J(w,b) $
-- $ b = b - \alpha \frac{\partial}{\partial b} J(w,b) $
+### Back Propagation
+- Back propagation is a key algorithm in neural network training.
+
+#### What is a derivative?
+- ![alt text](images/derivative_1.png)
+    - Here, we're using a simplified cost function: $ J(w) = w^{2} $.
+    - If we increase `w` by a small amount, $ \epsilon $, then $ J(w) $ goes up by roughly $ 6 * \epsilon $. In calculus, this is the same as saying $ \frac{\partial}{\partial w} J(w) = 6 $. The smaller $ \epsilon $ is, the more accurate this becomes.\
+    - Note that $ \uparrow $ simply represents an increase.
+
+    This leads us to an informal definition of a derivative:
+
+    ![alt text](images/derivative_2.png)
+
+    Let's look at more derivative examples:
+
+    ![alt text](images/derivative_3.png)
+
+    - Notice that the derivative of $ J(w) $ depends on $ w $.
+
+    ![alt text](images/derivative_4.png)
+
+    Let's take a look at how we can compute these derivatives in Python using the `sympy` library:
+
+    ![alt text](images/derivative_5.png)
+
+    ![alt text](images/derivative_6.png)
+
+    - The `subs` method subs in a value for $ w $ and computes the derivate.
+
+    Now, let's try some more equations.
+
+    $ J(w) = w^{3} $:
+
+    ![alt text](images/derivative_7.png)
+
+    $ J(w) = w $:
+
+    ![alt text](images/derivative_8.png)
+
+    $ J(w) = \frac{1}{w} $:
+
+    ![alt text](images/derivative_9.png)
+
+    Going back to the original slide:
+
+    ![alt text](images/derivative_10.png)
+
+- Let's look at derivative notation:
+
+    ![alt text](images/derivative_11.png)
+
+#### Computation Graph
+- The computation graph is a key idea in deep learning, and it is also how programming frameworks like TensorFlow, automatically compute derivatives of your neural networks.
+
+- Let's see how a computation graph works from a small neural network example:
+
+    ![alt text](images/computation_graph_1.png)
+
+    - Notice that we only have one training example: $ x = -2 $.
+    - $ J $ can be computed step by step using a computation graph. A graph here is a computer science graph, which is a set of nodes connected by arrows/edges.
+    - The computational graph shows forward propagation and goes a bit further by computing the cost function $ J $.
+
+    Let's look at how we can find the derivative of $ J $ w.r.t. $ w $ and $ b $:
+
+    ![alt text](images/computation_graph_2.png)
+
+    - Computing the derivatives is a right to left operation, which is why it's called **back propagation**.
+    - The first step of back prop asks if $ d $ changes a little bit, how much will $ J $ change?
+    - Since $ a $ causing $ d $ to increase by the same amount and $ J $ changes 2x of what $ d $ changes by, then that means that $ \frac{\partial J}{\partial a} = 2 $. Notice that this computation uses the chain rule in calculus.
+    - Notice that we only computed the partial derivatives for the variables on the edges.
+
+    Let's double check the math:
+
+    ![alt text](images/computation_graph_3.png)
+
+    - Looking at the math here, it looks like we computed $ \frac{\partial J}{\partial w} $ correctly.
+
+    So, why do we use back propagation?
+
+    ![alt text](images/computation_graph_4.png)
+
+    - Back prop is an efficient way to compute derivatives.
+    - Notice that to get $ \frac{\partial J}{\partial w} $ and $ \frac{\partial J}{\partial b} $, it was useful to know the other partial derivatives in fron of it.
+
+##### Larger Neural Network Example
+- ![alt text](images/larger_back_prop_ex_1.png)
+    - Again, we'll be using a single training example.
+
+    Let's check our math by looking at what we calculated for $ \frac{\partial J}{\partial w^{[1]}} $ shown on the last slide:
+
+    ![alt text](images/larger_back_prop_ex_2.png)
+
+    - Again, we use back prop due to efficiency. To check our work, we did a forward calculation by bumping up $ w^{[1]} $ and seeing how it affects the others. If we used this to find the partial derivatives, it'd be an $ N * P $ operation instead of $ N + P $ for back prop.
+
+- Many years ago, before the rise of frameworks like tensorflow and Pytorch, researchers used to have to manually use calculus to compute the derivatives of the neural networks that they wanted to train. In modern program frameworks, you can specify forward prop and have it take care of backprop for you. Many years ago, researchers used to write down the neural network by hand, manually use calculus to compute the derivatives, and then implement a bunch of equations, that they had laboriously derived on paper, to implement backprop. Thanks to the computation graph and these techniques for automatically carrying out derivative calculations, sometimes called **autodiff**, for **automatic differentiation**, this process of researchers manually using calculus to take derivatives is no longer really done. 
+
+#### Optional Lab: Derivatives
+- [Derivatives](https://colab.research.google.com/drive/1ft-BlXzRGBB1AhHt0jY_9AD9lS07B4H9?authuser=4)
+
+#### Optional Lab: Back Propagation
+- [Back Propagation](https://colab.research.google.com/drive/1ARKCvBWTs13siLtvR3Oda3XBBXfxQu6Z?authuser=4)
 
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
@@ -1808,6 +1897,10 @@
 - [Softmax Function](https://colab.research.google.com/drive/1CGMBWojAg9_9MnmDuj2EEzj_JOy5UC-W?authuser=4)
 
 - [Multiclass Classification](https://colab.research.google.com/drive/1YXjbVummnZByC-NzVPspMOXzQ5khSzj-?authuser=4)
+
+- [Derivatives](https://colab.research.google.com/drive/1ft-BlXzRGBB1AhHt0jY_9AD9lS07B4H9?authuser=4)
+
+- [Back Propagation](https://colab.research.google.com/drive/1ARKCvBWTs13siLtvR3Oda3XBBXfxQu6Z?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
