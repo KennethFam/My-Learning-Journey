@@ -1703,6 +1703,47 @@
 
     ![alt text](images/multilabel_classification_2.png)
 
+### Advanced Optimization
+- There are now some other optimization algorithms for minimizing the cost function, that are even better than gradient descent. Recall gradient descent:
+
+    ![alt text](images/advanced_optimization_1.png)
+
+    - There's an algorithm called "Adam", where if it sees that the learning rate is too small, and we are just taking tiny little steps in a similar direction over and over, we should just make the learning rate $ \alpha $ bigger. It'll also decrease the learning rate if the steps in gradient descent are too big.
+    
+    What is Adam?
+
+    ![alt text](images/advanced_optimization_2.png)
+
+    - Adam uses a different learning rate for every parameter of your model.
+
+    Let's look at the intuition behind the Adam algorithm:
+
+    ![alt text](images/advanced_optimization_3.png)
+
+    Here's how you can implement Adam in TensorFlow:
+
+    ![alt text](images/advanced_optimization_4.png)
+
+    - Notice the extra argument in `compile` which is required to use Adam.
+    - In practice, try some large and small default values (default value here is 0.001) to see what gives you better performance.
+
+### Additional Layer Types
+- So far, we've been using dense layer types. There are other layer types that we can use, but let's first recap the dense layer:
+
+    ![alt text](images/layer_types_1.png)
+
+    Let's look at what a convolutional layer is:
+
+    ![alt text](images/layer_types_2.png)
+
+    Now, let's look at what a convolutional neural network is:
+
+    ![alt text](images/layer_types_3.png)
+
+    - A neural network with a lot of convolutional layers is called a convolutional neural network.
+    - This example uses a 1D input instead of a 2D input.
+    - EKG in some places is just a list of numbers that correspond to the height at different points in time. So you may have say 100 numbers corresponding to the height of this curve at 100 different points of time. The learning task given this time series, given this EKG signal, is to classify say whether this patient has a heart disease or some diagnosable heart condition. This example is what a convolutional neural network might do.
+
 ## common symbols
 - ($ x^{(i)} $, $ y^{(i)} $)
 - $ \hat{y} $
