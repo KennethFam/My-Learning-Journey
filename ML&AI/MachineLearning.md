@@ -1482,7 +1482,7 @@
     - Note that the result of `A`, `[1 0 1]`, is rounded.
     - In case you're comparing this slide with the slide a few videos back, there is just one little difference, which is by convention. The way this is implemented in TensorFlow, rather than calling this variable `AT`, we were calling it `A_in`, which is why this too is the correct implementation of the code. There is a convention in TensorFlow that individual examples are actually laid out in rows in the matrix `X` rather than in the matrix X` transpose, which is why the code implementation actually looks like this in TensorFlow. 
 
-### Practice Lab: Neural Networks for Handwritten Digit Recognition, Binary
+### Optional Lab: Neural Networks for Handwritten Digit Recognition, Binary
 - [Neural Networks for Handwritten Digit Recognition, Binary](https://colab.research.google.com/drive/1b5kJglk0P6UKiGtdP4p54v7HMZiMIpuE?authuser=4)
 
 ### Tensorflow Implementation of Training
@@ -1598,6 +1598,111 @@
 #### Optional Lab: ReLU activation
 - [ReLU activation](https://colab.research.google.com/drive/17Jc2EzK-f7eEncTi_-HGoNzjQQJW8jfI?authuser=4)
 
+### Multiclass Classification
+
+#### Multiclass
+- Multiclass classification refers to classification problems where you can have more than just two possible output labels so not just 0 or 1. For example, a zipcode is comprised of 10 possible digits:
+
+    ![alt text](images/multiclass_1.png)
+
+    - Note that `y` is discrete and not just any number.
+
+    Let's compare binary classification with multiclass classification:
+
+    ![alt text](images/multiclass_2.png)
+
+    - On the left is binary classification and on the right is multiclass classification.
+
+#### Softmax
+- The **softmax regression** algorithm is a generalization of logistic regression, which is a binary classification algorithm to the multiclass classification contexts.
+
+- ![alt text](images/softmax_1.png)
+    - Think of logistic regression as actually computing two numbers, $ a_{1} $ and $ a_{2} $.
+    - The softmax example has 4 possible outputs with 4 `z`s. Notice how $ a_{n} $ is calculated. 
+    - In general, softmax can have many possible outputs.
+    - `j` is the output that we are getting the probability of, while `k` is just the variable used in the summation.
+    - If you apply softmax to a binary classfication problem, it ends up basically computing the same thing as logistic regression. The parameters end up being a little bit different, but it ends up reducing to logistic regression model. That's why the softmax regression model is the generalization of logistic regression. 
+
+- Let's take a look at the cost function of softmax:
+
+    ![alt text](images/softmax_2.png)
+
+    - Notice that the loss is larger the farther away that $ a_{j} $ is from 1.
+    - You only compute the log for $ a_{j} $ where $ y = j $ is the expected output.
+
+#### Neural Network with Softmax output
+- Let's see what happens like when we put softmax regression model into the output layer of a neural network. Originally we had:
+
+    ![alt text](images/softmax_output_1.png)
+
+    If you now want to do handwritten digit classification with 10 classes, all the digits from zero to nine, then we're going to change this Neural Network to have 10 output units like so:
+
+    ![alt text](images/softmax_output_2.png)
+
+    - This new output layer will be a softmax output layer.
+    - The softmax layer gives you estimates of the chance of `y` being any of these 10 possible output labels.
+    - Unlike logistic regression, which is a function of 1 `z` value at a time, softmax is a function of all the values of `z` simultaneously.
+
+    Let's take a look at how to implement this neural network in TensorFlow:
+
+    ![alt text](images/softmax_output_3.png)
+
+    - The cost function discussed for softmax earlier is called the Sparse Categorical Cross Entropy function. Categorical refers to `y` being classified into categories, while sparse refers to `y` taking on only one of the possible values (in this case, `y` can only be a number from 1 to 10).
+    - The code here works, but there's a better version which will be shown later. Don't use this version.
+
+##### Improved implementation of softmax
+- To see what can go wrong with the previous implementation, let's look at two different ways of computing the same quantity in a computer:
+
+    ![alt text](images/improved_softmax_1.png)
+
+    Due to the way computers store floating point numbers, there may be round off errors depending on how you calculate a number:
+
+    ![alt text](images/improved_softmax_2.png)
+
+    So, although the way we've been computing the cost function for softmax is correct, there's a different way of formulating it that reduces these numerical round-off errors, leading to more accurate computations within TensorFlow. Let's first take a look at logistic regression's loss function:
+
+    ![alt text](images/improved_softmax_3.png)
+
+    - If we expand `a`, TensorFlow can rearrange terms in this expression and come up with a more numerically accurate way to compute this loss function.
+    - `from_logits=True` sets the output layer to just use a linear activation function and puts both the activation function, $ \frac{1}{1 + e^{-z}} $, and the cross entropy loss into the specification of the loss function (the more accurate one). Basically, your output is linear, and TensorFlow takes this linear output, `z`, and does the appropriate actions with it (e.g. $ \frac{1}{1 + e^{-z}} $ for binary cross entropy). This causes TensorFlow to have little less numerical round off error.
+        - Linear basically just means we're just computing `z` in the output layer.
+        - logit is the value `z`.
+    - In the case of logistic regression, either of these implementations work okay. The numerical round off errors can get worse when using the original loss with softmax.
+    - We trade a bit of code readability for accuracy.
+
+    Now, let's do the same with softmax:
+
+    ![alt text](images/improved_softmax_4.png)
+
+    - Just to give you some intuition for why TensorFlow might want to do rearrange terms, it turns out if one of the `z`'s really small then `e` to the power of a negative small number becomes very, very small or if one of the `z`'s is a very large number, then `e` to the `z` can become a very large number. By rearranging terms, TensorFlow can avoid some of these very small or very large numbers and therefore come up with a more accurate computation for the loss function.
+
+    There is one more catch:
+
+    ![alt text](images/improved_softmax_5.png)
+
+    ![alt text](images/improved_softmax_6.png)
+
+    - Since we changed the output layer's activation function to linear, our model now outputs `z` instead of a probability. So we need to perform an extra step if we use the more accurate version for both logistic regression and softmax regression; we have to map the output to the correct function for our model (e.g. sigmoid, softmax, etc.).
+
+#### Optional Lab: Softmax Function
+- [Softmax Function](https://colab.research.google.com/drive/1CGMBWojAg9_9MnmDuj2EEzj_JOy5UC-W?authuser=4)
+
+#### Optional Lab: Multi-class Classification
+- [Multiclass Classification](https://colab.research.google.com/drive/1YXjbVummnZByC-NzVPspMOXzQ5khSzj-?authuser=4)
+
+#### Classification with Multiple Outputs
+- An image can have multiple labels. For example:
+
+    ![alt text](images/multilabel_classification_1.png)
+
+    - So, how do we build a neural network for this?
+        - We could build a separate neural networks for each class.
+        - We could build one neural network to detect all of the classes.
+    
+    Let's take a look at the two possible implementations:
+
+    ![alt text](images/multilabel_classification_2.png)
+
 ## common symbols
 - ($ x^{(i)} $, $ y^{(i)} $)
 - $ \hat{y} $
@@ -1658,6 +1763,10 @@
 - [Simple Neural Network in NumPy](https://colab.research.google.com/drive/1IctkE7hoeJMrzTgQD1WBWtsVpKL7qFuf?authuser=4)
 
 - [ReLU activation](https://colab.research.google.com/drive/17Jc2EzK-f7eEncTi_-HGoNzjQQJW8jfI?authuser=4)
+
+- [Softmax Function](https://colab.research.google.com/drive/1CGMBWojAg9_9MnmDuj2EEzj_JOy5UC-W?authuser=4)
+
+- [Multiclass Classification](https://colab.research.google.com/drive/1YXjbVummnZByC-NzVPspMOXzQ5khSzj-?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
