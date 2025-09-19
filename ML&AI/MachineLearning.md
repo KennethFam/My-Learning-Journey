@@ -1846,6 +1846,9 @@
 #### Optional Lab: Back Propagation
 - [Back Propagation](https://colab.research.google.com/drive/1ARKCvBWTs13siLtvR3Oda3XBBXfxQu6Z?authuser=4)
 
+### Practice Lab: Neural Networks for Multiclass Classification
+- [Neural Networks for Multiclass Classification](https://colab.research.google.com/drive/1Up8Hxsjx37k_txMp7TKpmBgg7MWyJqed?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -1908,3 +1911,5 @@
 - [Logistic Regression](https://colab.research.google.com/drive/1VRkENCB5PU_l0c-hAKhu9e5AzvNlMZTh?authuser=4)
 
 - [Neural Networks for Handwritten Digit Recognition, Binary](https://colab.research.google.com/drive/1b5kJglk0P6UKiGtdP4p54v7HMZiMIpuE?authuser=4)
+
+- [Neural Networks for Multiclass Classification](https://colab.research.google.com/drive/1Up8Hxsjx37k_txMp7TKpmBgg7MWyJqed?authuser=4)
