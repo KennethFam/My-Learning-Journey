@@ -1849,6 +1849,109 @@
 ### Practice Lab: Neural Networks for Multiclass Classification
 - [Neural Networks for Multiclass Classification](https://colab.research.google.com/drive/1Up8Hxsjx37k_txMp7TKpmBgg7MWyJqed?authuser=4)
 
+## Advice for Applying Machine Learning
+
+### Deciding What to Try Next
+- ![alt text](images/what_to_try_1.png)
+    - Sometimes, the path you take to resolve the issue may help or it may not help.
+
+    So, what can we do?
+
+    ![alt text](images/what_to_try_2.png)
+
+    - Running a diagnostic can tell you what you need to do and save a lot of time.
+
+### Evaluating a Model
+- ![alt text](images/evaluating_model_1.png)
+    - We don't like the model because, even though it fits the data well, we think it will not generalize outside data very well (wiggly line).
+    - It's easy to plot 2D, but how would we plot a model with 4 features (4D)?
+    - We need a more systematic way to evaluate how well a model is doing.
+
+    Let's look at a small training set:
+
+    ![alt text](images/evaluating_model_2.png)
+
+    - We can split up the data into a **training set** and **test set**. Let's say we use 70% for the training set and 30% for the test set.
+        - You can try other splits like 80/20.
+    - Note the new subscript notation to differentiate between the training and test sets.
+
+    This is what it looks like to train the model and evaluate it:
+
+    ![alt text](images/evaluating_model_3.png)
+
+    - We start by minizing over the cost function. Then, we compute the cost function over the test examples.
+        - Note that we do not include the regularization term in the test error calculation.
+    - A quantity that's often also useful to calculate the training error (measure of how well your learning algorithm on the training set), which also does not include the regularization term unlike the cost function which you were minizing to fit the parameters.
+
+    Let's go back to the earlier model:
+
+    ![alt text](images/evaluating_model_4.png)
+
+    - Seeing that the test error is high indicates that, even though it does great on the training set, is actually not so good at generalizing to new examples to new data points that were not in the training set.
+
+    Now, let's see how we can apply this procedure to classification:
+
+    ![alt text](images/evaluating_model_5.png)
+
+    - Let's say we were classifying digits which are `0` or `1`.
+
+    While what was described will work okay for figuring out if your learning algorithm is doing well, there's actually one other definition of $ J_{test} $ and $ J_{train} $ that is maybe even more commonly used for classification problems:
+
+    ![alt text](images/evaluating_model_6.png)
+
+    - We can simply take a fraction of what's been misclassified.
+
+- It turns out that with one further refinement to the idea above, you'll be able to have an algorithm help you to automatically make that type of decision well.
+
+### Model Selection and Training/Cross Validation/Test Sets
+- Let's make one further refinement to the idea discussed in the previous section, which allow you to use the technique, to automatically choose a good model for your machine learning algorithm.
+
+    ![alt text](images/model_selection_1.png)
+
+    - The training error is likely lower than the real error (i.e. the error we get from unseen data).
+
+    Let's see how this might affect how we might use a test set to choose a model for a given machine learning application:
+    
+    ![alt text](images/model_selection_2.png)
+
+    - One thing we could try, which is not the best way, is look at all the different dimensions and see which $ J_{test} $ gives the lowest value.
+        - In this case, let's say we found that the 5th order polynomial resulted in the lowest test error.
+    - If you want to estimate how well this model performs, one thing you could do, but this turns out to be a slightly flawed procedure, is to report the test set error
+    - On the previous slide, we saw that if you were to fit $ \vec{w} $, $ b $ to the training data, then the training data would be an overly optimistic estimate of generalization error. It turns out too, that if you want to choose the parameter $ d $ using the test set, then $ J_{test} $ is now an overly optimistic; it's lower than actual estimate of the generalization error.
+
+    If you want to automatically choose a model, such as decide what degree polynomial to use, here's how you modify the training and testing procedure in order to carry out model selection, whereby model selection, I mean choosing amongst different models, such as these 10 different models that you might contemplate using for your machine learning application:
+
+    ![alt text](image/model_selection_3.png)
+
+    - Instead of just 2 sets, we'll now split the data into 3 sets: training set, cross validation set, and test set.
+    - Note that the percentages shown here are just an example of how you maybe split the data set.
+    - The name **cross validation**, also known as **validation** or **development** (**dev** for short), **set** refers to this being an extra dataset that we're going to use to check or cross check the validity or really the accuracy of different models.
+
+    Here's how we can compute the error for each set:
+
+    ![alt text](images/model_selection_4.png)
+
+    - Again, note the absence of the regularization term, which was included in the training objective.
+
+    Now, let's see how we can use the validation set to select a model:
+
+    ![alt text](images/model_selection_5.png)
+
+    - We can use the validation set to select the lowest error then use the test set to estimate the generalization error.
+    - You've not fit any parameters, either $ \vec{w} $, $ b $, or $ d $ to the test set. That's why $ J_{test} $ will be fair estimate of the generalization error of this model.
+    - For this example, let's say the 4th model has the lowest cross validation error.
+
+    This model selection procedure also works for choosing among other types of models:
+
+    ![alt text](images/model_selection_6.png)
+
+    - Here, we're using the same method to choos a neural network architecture.
+    - For this example, let's say the 2nd neural network has the lowest cross validation error.
+    - It's considered best practice in machine learning, if you have to make decisions about your model such as fitting parameters or choosing the model architecture (neural network architecture or degree of polynomial if you're fitting a linear regression model), to make all those decisions only using your training set and your cross-validation set and to not look at the test set at all while you're still making decisions regarding your learning algorithm. It's only after you've come up with one model as your final model to then evaluate it on the test set, and because you haven't made any decisions using the test set, that ensures that your test set is a fair and not overly optimistic estimate of how well your model will generalize to new data.
+
+### Optional Lab: Model Evaluation and Selection
+- [Model Evaluation and Selection](https://colab.research.google.com/drive/1Byy8bMnA4q5apP3lr_WSVS9gYK7gDvXw?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -1904,6 +2007,8 @@
 - [Derivatives](https://colab.research.google.com/drive/1ft-BlXzRGBB1AhHt0jY_9AD9lS07B4H9?authuser=4)
 
 - [Back Propagation](https://colab.research.google.com/drive/1ARKCvBWTs13siLtvR3Oda3XBBXfxQu6Z?authuser=4)
+
+- [Model Evaluation and Selection](https://colab.research.google.com/drive/1Byy8bMnA4q5apP3lr_WSVS9gYK7gDvXw?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
