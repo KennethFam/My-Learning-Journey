@@ -1952,6 +1952,151 @@
 ### Optional Lab: Model Evaluation and Selection
 - [Model Evaluation and Selection](https://colab.research.google.com/drive/1Byy8bMnA4q5apP3lr_WSVS9gYK7gDvXw?authuser=4)
 
+### Bias and Variance
+
+#### Diagnosing Bias and Variance
+- The typical workflow of developing a machine learning system is that you have an idea, you train the model, and you almost always find that it doesn't work as well as you wish yet. The key to the process of building machine learning system is how to decide what to do next in order to improve its performance. Across many different applications, looking at the bias and variance of a learning algorithm gives you very good guidance on what to try next:
+
+    ![alt text](images/bias_var_1.png)
+
+    - It is hard to plot the model when we have more than 1 feature. Instead of trying to look at plots like this, a more systematic way to diagnose or to find out if your algorithm has high bias or high variance will be to look at the performance of your algorithm on the training set and on the cross validation set. 
+
+    Let's see how $ J_{train} $ and $ J_{cv} $ vary as a fucntion of the degree of the polynomial you're fitting:
+
+    ![alt text](images/bias_var_2.png)
+
+    - Let's assume that we're not using regularization here.
+    - As the degree of polynomial increases, $ J_{train} $ will typically go down.
+
+    Well, how can we tell if our algorithm has a bias or variance problem?
+
+    ![alt text](images/bias_var_3.png)
+
+    - `>>` refers to "much greater than" in math.
+    - It's possible to have high bias and high variance.
+        - Not seen much in linear regression, especially for linear models applied to 1D.
+        - Can happen in neural networks.
+        - An example of this is shown in the graph with the two shades of blue.
+    - Most applications will primarily have a high bias or high variance problem, but there are cases where you can have both.
+
+#### Regularization and Bias/Variance
+- Let's take a look at how regularization, specifically the choice of the regularization parameter $ \lambda $ affects the bias and variance and therefore the overall performance of the algorithm:
+
+    ![alt text](images/reg_bias_var_1.png)
+
+    - If lambda is really large, the learning algorithm will be highly motivated to keep the parameters $ \vec{w} $ very small.
+
+    Let's see how we can choose the regularization paramter $ \lambda $ using the cross validation set:
+
+    ![alt text](images/reg_bias_var_2.png)
+
+    - Similar to choosing which model architecture to use, we can try different values of $ \lambda $ and pick the one with the lowest cross validation error. In this example, let's say the 5th value has the lowest error.
+
+    To further hone intuition about what this algorithm is doing, let's take a look at how training error and cross validation error vary as a function of the parameter $ \lambda $:
+
+    ![alt text](images/reg_bias_var_3.png)
+
+#### Establishing a Baseline Level of Performance
+- Let's look at an example of an application of speech recognition:
+
+    ![alt text](images/establishing_baseline_1.png)
+
+    - A lot of users doing web search on a mobile phone will use speech recognition rather than type on the tiny keyboards on our phones because speaking to a phone is often faster than typing. Typical audio that a web search engine would get would be like this: "What is today's weather?" or "Coffee shops near me." It's the job of the speech recognition algorithms to output the transcripts whether it's today's weather or coffee shops near me. Now, if you were to train a speech recognition system and measure the training error, and the training error means what's the percentage of audio clips in your training set that the algorithm does not transcribe correctly in its entirety.
+    - Although the training and cross validation errors seem high, it is also useful in this instance to measure the human level of performance. In other words, how well can even humans transcribe speech accurately from the same audio clips? Let's say it's 10.6%. It's high due to there being a lot of audio clicks that are like this: "I'm going to navigate to [inaudible]." There's a lot of noisy audio where really no one can accurately transcribe what was said because of the noise in the audio. If even a human makes 10.6 percent error, then it seems difficult to expect a learning algorithm to do much better.
+    - In order to judge if the training error is high, it turns out to be more useful to see if the training error is much higher than a human level of performance, and in this example, it does just 0.2% worse than humans. In contrast, there's a higher difference in the cross validation error. So, this algorithm has more of a variance problem than a bias problem.
+
+    It turns out that, when judging if the training error is high, it is often useful to establish a baseline level of performance:
+
+    ![alt text](images/establishing_baseline_2.png)
+
+    - The baseline level of performance is the level of error you can reasonably hope your learning algorithm to eventually get to.
+
+    Once you get the baseline performance:
+
+    ![alt text](images/establishing_baseline_3.png)
+
+    - Compare it with the training error and cross validation error to determine if you have a variance and/or bias problem.
+    - The gap between baseline and:
+        - training: indicates whether or not there's a bias problem
+        - cross validation: indicates whether or not there's a variance problem
+
+#### Learning Curves
+- Learning curves are a way to help understand how your learning algorithm is doing as a function of the amount of experience it has (the number of training examples it has). 
+
+    ![alt text](images/learning_curves_1.png)
+
+    - Notice that the training error increases along with the training set size. The illustrations on the right show that it gets harder and harder to fit more training examples perfectly.
+    - The cross validation error will be typically higher than the training error because you fit the parameters to the training set. You expect to do at least a little bit better or when m is small, maybe even a lot better on the training set than on the cross validation set. 
+
+    Let's look at a learning curve with high bias:
+
+    ![alt text](images/learning_curves_2.png)
+
+    - Human level performance is usually a value lower than the training and cross validation errors.
+    - Notice that the cross validation error and the training error flattens out. As you get more and more training examples when you're fitting the simple linear function, your model doesn't actually change that much more. It's fitting a straight line and even as you get more and more and more examples, there's just not that much more to change, which is why the average training error flattens out after a while. Similarly, your cross-validation error will come down and also fattened out after a while. Beyond a certain point, even as you get more and more and more examples, not much is going to change about the straight line you're fitting. It's just too simple a model to be fitting into this much data.
+    - If a learning algorithm has high bias, getting more training data will not, by itself, help that much. 
+
+    Let's look at a learning curve with high variance:
+
+    ![alt text](images/learning_curves_3.png)
+
+    - Notice the huge gap between the training error and cross validation error.
+    - Sometimes, the training error can be lower than the human level performance.
+    
+    Increasing the training set size will help a lot:
+
+    ![alt text](images/learning_curves_4.png)
+
+#### Deciding What to Try Next Revisited
+- Let's revisit an earlier example and see what each of the different options fixes:
+
+    ![alt text](images/what_to_do_revisited_1.png)
+
+    - In summary:
+        - high variance: simplify model or increase $ \lambda $
+        - high bias: make model more complex or increase $ \lambda $
+    - In case you're wondering if you should fix high bias by reducing the training set size, that doesn't actually help. If you reduce the training set size, you will fit the training set better, but that tends to worsen your cross-validation error and the performance of your learning algorithm, so don't randomly throw away training examples just to try to fix a high bias problem.
+    - Bias and variance is one of those concepts that takes a short time to learn, but takes a lifetime to master.
+
+#### Bias/Variance and Neural Networks
+- One of the reasons that neural networks have been so successful is because your networks, together with the idea of big data or hopefully having large data sets, has given us new ways to address both high bias and high variance.
+
+    ![alt text](images/nn_bias_var_1.png)
+
+    - This is an earlier example, where we had to find a tradeoff point between bias and variance.
+
+    It turns out that neural networks offer us a way out of this dilemma of having to tradeoff bias and variance with some caveats.
+
+    ![alt text](images/nn_bias_var_2.png)
+    
+    - Large neural networks, when trained on small term moderate sized datasets, are low bias machines. Basically, if you make your neural network large enough, you can almost always fit your training set well so long as your training set is not enormous.
+    - This is a recipe, which isn't always applicable but can be very powerful if it is, to try to reduce bias or reduce variance as needed without needing to really trade off between the two of them.
+    - Limitations:
+        - Training a bigger neural network does reduce bias but gets computationally expensive. That's why the rise of neural networks has been really assisted by the rise of very fast computers, including especially GPUs or graphics processing units. A GPU is hardware traditionally used to speed up computer graphics, but it turns out to have been very useful for speeding up neural networks as well, but even with hardware accelerators, beyond a certain point, the neural networks are so large that it takes so long to train; it becomes infeasible.
+        - Sometimes you can only get so much data, and beyond a certain point it's hard to get much more data.
+    - One thing that was implicit in this slide that may not have been obvious is that as you're developing a learning algorithm, sometimes you find that you have high bias, in which case you do things like increase your neural network. But then, after you increase your neural network, you may find that you have high variance, in which case you might do other things like collect more data. During the hours or days or weeks that you're developing a machine learning algorithm, at different points, you may have high bias or high variance. And it can change, but it's dependant on whether your algorithm has high bias or high variance at that time, then that can help give guidance for what you should be trying next. 
+
+    Will a large neural network create a high variance problem?
+
+    ![alt text](images/nn_bias_var_3.png)
+
+    - It almost never hurts to go to a larger neural network so long as you regularize appropriately with one caveat, which is that when you train the larger neural network, it does become more computational e expensive. So the main way it hurts, it will slow down your training and your inference process
+
+    Here's how to regularize a neural network:
+
+    ![alt text](images/nn_bias_var_4.png)
+
+    - Similar to before, we do not regularize `b` in practice.
+    - For TensorFlow, you can choose different values of $ \lambda $ for different layers, or you can choose the same weights for each layer for simplicity. 
+
+    Key takeaways:
+
+    1. It hardly ever hurts to have a larger neural network so long as you regularize appropriately with one caveat being that having a larger neural network can slow down your algorithm. So maybe that's the one way it hurts, but it shouldn't hurt your algorithm's performance for the most part and in fact it could even help it significantly. 
+    2. So long as your training set isn't too large, then a neural network, especially a large neural network, is often a low bias machine. It just fits very complicated functions very well Andrew Ng, when training neural networks, is often fighting variance rather than bias problems, at least if the neural network is large enough.
+
+#### Optional Lab: Diagnosing Bias and Variance
+- [Diagnosing Bias and Variance](https://colab.research.google.com/drive/1-yWHhQoECtmdsyI4wWIfCqoEvq4y0yVy?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -2009,6 +2154,8 @@
 - [Back Propagation](https://colab.research.google.com/drive/1ARKCvBWTs13siLtvR3Oda3XBBXfxQu6Z?authuser=4)
 
 - [Model Evaluation and Selection](https://colab.research.google.com/drive/1Byy8bMnA4q5apP3lr_WSVS9gYK7gDvXw?authuser=4)
+
+- [Diagnosing Bias and Variance](https://colab.research.google.com/drive/1-yWHhQoECtmdsyI4wWIfCqoEvq4y0yVy?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
