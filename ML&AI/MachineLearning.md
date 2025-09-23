@@ -2097,6 +2097,203 @@
 #### Optional Lab: Diagnosing Bias and Variance
 - [Diagnosing Bias and Variance](https://colab.research.google.com/drive/1-yWHhQoECtmdsyI4wWIfCqoEvq4y0yVy?authuser=4)
 
+### Machine Learning Development Process
+
+#### Iterative Loop of ML development
+- This is what developing a machine learning model will often feel like:
+
+    ![alt text](images/iterative_loop_of_ml_1.png)
+
+    - You may go through this loop multiple times until you get to the performance that you want.
+
+    Let's look at an example of building an email spam classifier:
+
+    ![alt text](images/iterative_loop_of_ml_2.png)
+
+    - Left email is spam, and right email is not spam.
+
+    How do you build a classifier to recognize spam versus non-spam emails?
+
+    ![alt text](images/iterative_loop_of_ml_3.png)
+
+    - This application is an example of text application because you're taking a text document, that is an email, and trying to classify it as either spam or non-spam.
+    - One way to construct the features of the email would be to say, take the top 10,000 words in the English language or in some other dictionary and use them to define features $ x_{1} $ through $ x_{10,000} $.
+    - The `1`s and `0`s in the input vector indicate whether or not the word appears in the email. You could also try using a number to represent the number of times a word appears.
+    - Given these features, you can then train a classification algorithm such as a logistic regression model or a neural network to predict `y` given these features $ \vec{x} $.
+
+    After you train your model, if it doesn't work as well as you wish, you'll most likely have multiple ideas for improving the learning algorithm's performance.:
+
+    ![alt text](images/iterative_loop_of_ml_4.png)
+
+    - "Honeypot" example would be creating email addresses and deliberately making them targets of spam email.
+    - An email's routing can help us identify where spam email is coming from.
+    - Given all of these and possibly even more ideas, how can you decide which of these ideas are more promising to work on? Choosing the more promising path forward can speed up your project easily 10x compared to if you were to somehow choose some of the less promising directions.
+
+    ![alt text](images/iterative_loop_of_ml_5.png)
+
+    - Doing the iterative loop of machinery and development, you may have many ideas for how to modify the model or the data, and you will be coming up with different diagnostics that could give you a lot of guidance on what choices for the model, data, or other parts of the architecture that could be most promising to try. 
+
+#### Error Analysis
+- In terms of the most important ways to help you run diagnostics to choose what to try next to improve your learning algorithm performance, bias and variance is probably the most important idea, and error analysis would probably be second on the list. Let's take a look at what this means:
+
+    ![alt text](images/error_analysis_1.png)
+
+    - The error analysis process just refers to manually looking through the misclassified examples and trying to gain insights into where the algorithm is going wrong. Specifically, what Andrew Ng will often do is find a set of examples that the algorithm has misclassified from the cross validation set and try to group them into common teams, common properties, or common traits.
+        - For example, if you notice that quite a lot of the misclassified spam emails are pharmaceutical sales, trying to sell medicines or drugs, then Andrew Ng will actually go through these examples and count up by hand how many emails that are misclassified are pharmaceutical spam. Let's say there are 21 emails that are pharmaceutical spam. We do this for the rest of the common traits as well. If you end up with these counts, then that tells you that pharmaceutical spam and emails trying to steal passwords, or phishing emails, seem to be huge problems whereas deliberate misspellings, while it is a problem, is a smaller one.
+    - A couple notes on this process:
+        - These categories can be overlapping, or in other words, they're not mutually exclusive. For example, there can be a pharmaceutical spam email that also has unusual routing or a password that has deliberate misspellings and is also trying to carry out the phishing attack. So, one email can be counted in multiple categories.
+    - If you have a larger cross validation set, say we had 5,000 cross validation examples, and if the algorithm misclassified say 1,000 of them, then you may not have the time depending on the team size and how much time you have to work on this project. You may not have the time to manually look at all 1,000 examples that the algorithm misclassifies. In that case, Ng will often sample randomly a subset of usually around a 100, maybe a couple 100 examples because that's the amount that you can look through in a reasonable amount of time. Hopefully looking through maybe around 100 examples will give you enough statistics about what are the most common types of errors and therefore where maybe most fruitful to focus your attention. 
+    - After this analysis, if you find that a lot of errors are pharmaceutical spam emails then this might give you some ideas or inspiration for things to do next. For example, you may decide to collect more data but not more data of everything, but just try to find more data of pharmaceutical spam emails so that the learning algorithm can do a better job recognizing these pharmaceutical spam. Or you may decide to come up with some new features that are related to say specific names of drugs or specific names of pharmaceutical products of the spammers are trying to sell in order to help your learning algorithm become better at recognizing this type of pharma spam. Then again, this might inspire you to make specific changes to the algorithm relating to detecting phishing emails. For example, you might look at the URLs in the email and write special code to come up with extra features to see if it's linking to suspicious URLs, or again, you might decide to get more data of phishing emails specifically in order to help your learning algorithm do a better job of recognizing them. 
+    - The point of this error analysis is by manually examining a set of examples that your algorithm is misclassifying or mislabeling, often this will create inspiration for what might be useful to try next, and sometimes it can also tell you that certain types of errors are sufficiently rare, that they aren't worth as much of your time to try to fix.
+
+    Now, let's return to the list we created earlier and see what we could do to improve the model:
+
+    ![alt text](images/error_analysis_2.png)
+
+    - Bias/Variance analysis will tell you whether collection more data will help. It seems like the 3rd option (2nd from the bottom) could help a lot. The option above that may help but only a bit. The bottom option would not help nearly as much.
+
+    Let's take a look at the iterative loop of ML development again:
+
+    ![alt text](images/error_analysis_3.png)
+
+    - As we saw, both the bias and variance diagnostic as well as carrying out this form of error analysis are really helpful for screening or for deciding which changes to the model are more promising to try on next.
+    - One limitation of error analysis is that it's much easier to do for problems that humans are good at. You can look at the email and say you think is a spam email, why did the algorithm get it wrong? Error analysis can be a bit harder for tasks that even humans aren't good at. For example, if you're trying to predict what ads someone will click on on the website. Well, most can't predict what someone will click on. Error analysis there actually tends to be more difficult. But when you apply error analysis to problems that you can, it can be extremely helpful for focusing attention on the more promising things to try. That in turn can easily save you months of otherwise fruitless work.
+
+#### Adding Data
+- Note that not every technique that's going to be mentioned will be applicable for every single application.
+
+- Let's take a look at some tips for how to add data for your application:
+
+    ![alt text](images/adding_data_1.png)
+
+    - There's nothing wrong with getting more data on everything, but getting more data that targets where your error analysis has indicated can boost your algorithm's performance by quite a lot even if it's just a little bit of data (this is more efficient too). 
+
+    Let's take a closer look at **data augmentation**:
+
+    ![alt text](images/adding_data_2.png)
+
+    - Gray lines represent change in contrast.
+    - The double-sided red arrow indicates a mirror image.
+
+    Here's a more advanced example:
+
+    ![alt text](images/adding_data_3.png)
+
+    - You can also take the letter `A` and place a grid on top of it. By introducing random warpings of this grid, you can take the letter `A` and introduce warpings of the letter `A` to create a much richer library of examples of the letter `A`. This process of distorting these examples then has turned one image of one example into training examples that you can feed to the learning algorithm to help it learn more robustly what is the letter `A`.
+
+    This idea of data augmentation also works for speech recognition:
+
+    ![alt text](images/adding_data_4.png)
+
+    
+    One tip for data augmentation is that the changes or the distortions you make to the data should be representative of the types of noise or distortions in the test set:
+
+    ![alt text](images/adding_data_5.png)
+
+    - If the data augmentation examples aren't representative of the test set, then they won't be that helpful. One way to think about data augmentation is how can you modify, warp, distort, or make more noise in your data, but in a way so that what you get is still quite similar to what you have in your test set because that's what the learning algorithm will ultimately end up doing well on.
+
+    Let's take a look at another technique called **data synthesis**:
+
+    ![alt text](images/adding_data_6.png)
+
+    - You make up brand new examples from scratch, not by modifying an existing example, but by creating brand new examples.
+
+    Take the example of Photo OCR (Photo Optical Character Recognition):
+
+    ![alt text](images/adding_data_7.png)
+
+    - Photo OCR refers to the problem of looking at an image like this and automatically having a computer read the text that appears in this image. 
+    - How can you train an OCR algorithm to read text from an image like this?
+
+    Well, when you look closely at what the letters in this image looks like, they actually look like this:
+
+    ![alt text](images/adding_data_8.png)
+    
+    - One key step with the photo OCR task is to be able to look at the little image like the ones shown here, and recognize the letter at the middle.
+    
+    So one way to create artificial data for this task is if you go to your computer's text editor. You find that it has a lot of different fonts. What you can do is take these fonts and basically type of random text in your text editor and take screenshots using different colors, different contrasts, and very different fonts. By doing this, you get synthetic data like the data on the right:
+
+    ![alt text](images/adding_data_9.png)
+
+    - The images on the right are synthetically generated using fonts on the computer, and it actually looks pretty realistic. With synthetic data generation like this, you can generate a very large number of images or examples for your photo OCR task. It can be a lot of work to write the code to generate realistic looking synthetic data for a given application, but when you spend the time to do so, it can sometimes help you generate a very large amount of data for your application and give you a huge boost to your algorithm's performance.
+    - Synthetic data generation has been used most probably for computer vision tasks and less for other applications. Not that much for audio tasks as well.
+
+- All the techniques you've seen in this section are related to finding ways to engineer the data used by your system. Why is that?
+
+    ![alt text](images/adding_data_10.png)
+
+    - In the way that machine learning has developed over the last several decades, many decades. Most machine learning researchers' attention was on the conventional model centric approach. A machine learning system or an AI system includes both code to implement your algorithm or your model, as well as the data that you train the algorithm or model. Over the last few decades, most researchers doing machine learning research would download the data set and hold the data fixed while they focus on improving the code or the algorithm or the model. Thanks to that paradigm of machine learning research, Ng finds that, today, the algorithms we have access to such as linear regression, logistic regression, neural networks, and also decision trees are algorithms that already very good and will work well for many applications. So, sometimes it can be more fruitful to spend more of your time taking a data centric approach in which you focus on engineering the data used by your algorithm. This can be anything from collecting more data just on pharmaceutical spam, if that's what error analysis told you to do, to using data augmentation to generate more images or more audio, or using data synthesis to just create more training examples. Sometimes that focus on the data can be an efficient way to help your learning algorithm improve its performance.  
+
+#### Transfer Learning: Using Data from a Different Task
+- For an application where you don't have that much data, **transfer learning** is a wonderful technique that lets you use data from a different task to help on your application. Ng uses this technique very frequently. Let's take a look at how it works:
+
+    ![alt text](images/transfer_learning_1.png)
+
+    - Let's say you want to recognize the handwritten digits from zero through nine but you don't have that much labeled data of these handwritten digits. You can find a very large datasets of one million images of pictures of cats, dogs, cars, people, and so on; a thousand classes. You can train this model and then make a copy of it, but you would change the output layer to your 9 digits. Notice that the output layer's parameters aren't copied over because the layer has changed. So, you need to train the output layer's new parameters from scratch. In transfer learning, what you can do is use the parameters from the first four layers, really all the layers except the final output layer as a starting point for the parameters, and then run an optimization algorithm such as gradient descent or the Adam optimization algorithm with the parameters initialized using the values from this neural network up on top. 
+    - There are two options for training this neural network's paramters:
+        1. Only train the output parameters and don't touch the other parameters.
+            - Might work better for smaller training sets.
+        2. Train every parameter. Remember that the starting parameters of the layers other than the output layers are copied from the other neural network.
+            - Might work better for larger training sets.
+    - This algorithm is called transfer learning because the intuition is, by learning to recognize cats, dogs, cows, people, and so on, it will hopefully, have learned some plausible sets of parameters for the earlier layers for processing image inputs. Then by transferring these parameters to the new neural network, the new neural network starts off with the parameters in a much better place so that we have just a little bit of further learning, hopefully, it can end up at a pretty good model. 
+    - Transfer learning is done in two steps:
+        1. supervised pre-training: training on a large dataset and then tuning the parameters further on a smaller dataset
+        2. fine tuning: take the parameters that you had initialized or gotten from supervised pre-training and then run gradient descent further to fine tune the weights to suit the specific application
+    - One nice thing about transfer learning as well is maybe you don't need to be the one to carry out supervised pre-training. Someone else may have already trained a model and have it posted on the internet, freely licensed for anyone to download and use. 
+
+    Why does transfer learning work?
+
+    ![alt text](images/transfer_learning_2.png)
+
+    - Let's say you are training a neural network to detect different objects from images. These are the possible things that your layer could be trained on. That's why, by training a neural network to detect things as diverse as cats, dogs, cars and people, you're helping it to learn to detect these pretty generic features of images: finding edges, corners, curves, basic shapes. This is useful for many other computer vision tasks, such as recognizing handwritten digits. 
+    - One restriction of pre-training is that the image type `x` has to be the same for the pre-training and fine-tuning steps. If the final task you want to solve is a computer vision task, then the pre-training step also has been a neural network trained on the same type of input, namely an image of the desired dimensions. Conversely, if your goal is to build a speech recognition system to process audio, then a neural network pre-trained on images probably won't do much good on audio. Instead, you want a neural network pre-trained on audio data that you then fine tune on your own audio dataset. The same is true for other types of applications. You can pre-train a neural network on text data and, if your application has the same feature input `x` of text data, then you can fine tune that neural network on your own data. 
+
+    To summarize, these are the two steps for transfer learning:
+
+    ![alt text](images/transfer_learning_3.png)
+
+    - Ng has found that, if you can get a neural network pre-trained on large dataset (say a million images), sometimes you can use a much smaller dataset (maybe a thousand images, maybe even smaller) to fine tune the neural network on your own data and get pretty good results.
+    - Ng sometimes trained neural networks on as few as 50 images that worked quite well using this technique when it has already been pre-trained on a much larger dataset. This technique isn't panacea. You can't get every application to work just on 50 images, but it does help a lot when the dataset you have for your application isn't that large.
+
+#### Full Cycle of a Machine Learning Project
+- Let's use speech recognition as an example to illustrate the full cycle of a machine learning project:
+
+    ![alt text](images/ml_full_cycle_1.png)
+
+    1. Scope the project; decide what is the project and what you want to work on. In this case, speech recognition for voice search.
+    2. Collect data. Decide what data you need to train your machine learning system and go and do the work to get it. In this case, we need to get the audio and transcripts or the labels for your dataset.
+    3. Train the model. Here, you would train a speech recognition system, carry out error analysis, and iteratively improve your model. It is not uncommon that, after you've started training the model, an error analysis or a bias-variance analysis tells you that you might want to go back to collect more data. Maybe collect more data of everything or just collect more data of a specific type where your error analysis tells to improve the performance of your learning algorithm.
+    4. Once you go through the loop of collecting data and training the model (several times), you may conclude that the model is good enough to deploy in a project environment. What that means is you make it available for users to use. When you deploy a system, you have to also make sure that you continue to monitor the performance of the system and to maintain the system in case the performance gets worse (bring the performance back up).
+        - Sometimes, after deployment, you realize that is not working as well as you hoped, and you go back to train the model to improve it again or even go back and get more data. In fact, if users give you permission to use data from your production deployment, sometimes that data from your working speech system can give you access to even more data with which to keep on improving the performance of your system.
+
+    Let's take a deeper look at that deploying in production looks like:
+
+    ![alt text](images/ml_full_cycle_2.png)
+
+    - A common way to deploy a model would be to take your machine learning model and implement it in a server, which Ng is going to call an inference server, whose job it is to call your machine learning model, your trained model, in order to make predictions. Then, you may have something like a mobile app which makes an API call to pass data to your server, which returns the prediction of the model using that data.
+    - Some software engineering may be needed to write all of the code that does these things. Depending on whether your application needs to serve just a few handful of users or millions of users, the amount of software engineering needed can be quite different.
+    - System monitoring refers to monitoring the model to see if it has become outdated and retrain it if necessary.
+    - **MLOps** refers the practice of how to systematically build and deploy and maintain machine learning systems to do all of these things to make sure that your machine learning model is reliable, scales well, has good laws, is monitored, and then you have the opportunity to make updates to the model as appropriate to keep it running well.
+
+#### Fairness, Bias, and Ethics
+- If you're building a machine learning system that affects people, you should give some thought to make sure that your system is reasonably fair and reasonably free from bias, and that you're taking an ethical approach to your application. Let's take a look at some issues related to fairness, bias, and ethics:
+
+    ![alt text](images/fairness_bias_ethics_1.png)
+    
+    - These are some of the biases that machine learning algorithms have encountered.
+
+    There have also been adverse use cases:
+
+    ![alt text](images/fairness_bias_ethics_2.png)
+
+    - This shows a deepfake video (or image in this case) of Barack Obama released by BuzzFeed with full disclosure. Not disclosing that the video is a deepfake would be an adverse use case.
+
+    ![alt text](images/fairness_bias_ethics_3.png)
+
+    Here are some guidelines for making your work ethical:
+
+    ![alt text](images/fairness_bias_ethics_4.png)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
