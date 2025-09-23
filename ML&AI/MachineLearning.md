@@ -2294,7 +2294,54 @@
 
     ![alt text](images/fairness_bias_ethics_4.png)
 
-#### Skewed Datasets
+### Skewed Datasets
+
+#### Error Metrics for Skewed Datasets
+- If you're working on a machine learning application where the ratio of positive to negative examples is very skewed, very far from 50-50, then it turns out that the usual error metrics like accuracy don't work that well.  
+
+    Let's start with an example, where, say, you're training a binary classifier to detect a rare disease in patients based on lab tests or based on other data from the patients:
+
+    ![alt text](images/error_skewed_1.png)
+
+    - Though the accuracy is good, if `y` is a rare disease, then this accuracy may not be as impressive as it sounds. If you were to have a program that printed `y=0` all the time, then you'd get a 99.5% accuracy, since the disease is rare. The dumb algorithm beats your learning algorithm in accuracy.
+    - You cannot tell if getting 1% error is a good or bad result.
+    - If you have an algorithm that achieve 0.5% error and a different one that achieves 1% error and a different one that achieves 1.2% error, it's difficult to know which of these is the best algorithm because the one with the lowest error may not particularly be useful at prediction and always predicts `y=0` and never ever diagnose any patient as having the rare disease. Quite possibly, an algorithm that has 1% error that can at least diagnosis some patients as having the disease could be more useful than just printing `y=0` all the time.
+
+    Let's see what error metric we can use other than classification error:
+
+    ![alt text](images/error_skewed_2.png)
+
+    - A common pair of error metrics are precision and recall.
+    - To evaluate a learning algorithm's performance with one rare class, it's useful to construct what's called a confusion matrix, which is a two-by-two matrix or a two-by-two table.
+    - These two metrics will help you find out whether or not your algorithm is just predicting one value (e.g. `0`) all the time. 
+        - Note that if a model predicts 0 all the time, precision actually becomes undefined or $ \frac{0}{0} $. In this case, we can just say that precision is equal to 0.
+    - Computing both precision and recall makes it easier to spot if an algorithm is both reasonably accurate. For example, when it says a patient has a disease, there's a good chance the patient has a disease, such as 0.75 chance. It also makes sure that it's helping to diagnose a reasonable fraction of all the patients that have the disease, such as here it's finding 60 percent of them. When you have a rare class, looking at precision and recall and making sure that both numbers are decently high, that hopefully helps reassure you that your learning algorithm is actually useful. 
+    - The term recall was motivated by this observation that if you have a group of patients or population of patients, then recall measures, of all the patients that have the disease, how many would you have accurately diagnosed as having it.
+
+#### Trading Off Precision and Recall
+- In the ideal case, we like for our learning algorithms to have high precision and high recall. High precision would mean that, if it diagnoses patients with the rare disease, probably the patient does have it, and it's an accurate diagnosis. High recall means that if there's a patient with that rare disease, probably the algorithm will correctly identify that they do have that disease. In practice, there's often a trade-off between precision and recall. Let's take a look at that trade-off and see how you can pick a good point along that trade-off:
+
+    ![alt text](images/precision_recall_tradeoffs_1.png)
+
+    - We may set a higher threshold (e.g. 0.7 or 0.9) for logistic regression in the case of this rare disease since treatment costs a lot.
+        - In this case, precision will increase, but recall will decrease.
+    - We may decrease the threshold (e.g. 0.3) since treatment is cheap but important (e.g. the disease is worse left untreated).
+        - In this case, prescision will decrease, but recall will increase.
+    - By choosing the threshold, we can make trade offs between precision and recall.
+    - For most learning algorithms, there's a tradeoff between precisiona and recall.
+    - Plotting precision and recall for different values of the threshold allows you to pick a point that you want. 
+    - Notice that picking the threshold is not something you can do with cross validation because it's up to you to specify the best points. For many applications, manually picking the threshold to trade-off precision and recall will be what you end up doing. 
+
+    It turns out that, if you want to automatically trade-off precision and recall rather than have to do so yourself, there is another metric called the **F1 score** that is sometimes used to automatically combine precision/recall to help you pick the best value or the best trade-off between the two:
+    
+    ![alt text](images/precision_recall_tradeoffs_2.png)
+
+    - One challenge with precision recall is you're now evaluating your algorithms using two different metrics. So, if you've trained three different algorithms and the precision-recall numbers look like the table above, it is not that obvious how to pick which algorithm to use. If there was an algorithm that's better on precision and better on recall, then you probably want to go with that one, but in this example, Algorithm 2 has the highest precision, Algorithm 3 has the highest recall, and Algorithm 1 trades off the two in-between. So no one algorithm is obviously the best choice. In order to help you decide which algorithm to pick, it may be useful to find a way to combine precision and recall into a single score, so you can just look at which algorithm has the highest score and maybe go with that one.
+        - One way is to take the average, but this is not a good way and is not recommended. One value (precision or recall) could have a huge value that throws off the average (i.e. one value could be large but the other is small).
+        - The most common way to combine precision/recall is to comput the $ F_{1} $ score which gives more emphasis on whichever of the values is lower because it turns out, if an algorithm has very low precision or very low recall, it is not that useful. 
+    - $ F_{1} score = \frac{1}{\frac{1}{2}(\frac{1}{P} + \frac{1}{R})} = 2 \frac{PR}{P + R}$.
+        - By inversing the numbers and taking their average, we put more emphasis on the smaller number. 
+        - This is also called the **harmonic mean**. It's just a way of taking an average that emphasizes the smaller values more.
 
 ### Practice Lab: Advice for Applying Machine Learning
 - [Advice for Applying Machine Learning](https://colab.research.google.com/drive/1d5f9ZGa5F6euTpg9oA2_5pr-19E3QeNo?authuser=4)
