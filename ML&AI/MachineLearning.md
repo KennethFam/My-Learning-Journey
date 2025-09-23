@@ -2294,6 +2294,11 @@
 
     ![alt text](images/fairness_bias_ethics_4.png)
 
+#### Skewed Datasets
+
+### Practice Lab: Advice for Applying Machine Learning
+- [Advice for Applying Machine Learning](https://colab.research.google.com/drive/1d5f9ZGa5F6euTpg9oA2_5pr-19E3QeNo?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -2362,3 +2367,5 @@
 - [Neural Networks for Handwritten Digit Recognition, Binary](https://colab.research.google.com/drive/1b5kJglk0P6UKiGtdP4p54v7HMZiMIpuE?authuser=4)
 
 - [Neural Networks for Multiclass Classification](https://colab.research.google.com/drive/1Up8Hxsjx37k_txMp7TKpmBgg7MWyJqed?authuser=4)
+
+- [Advice for Applying Machine Learning](https://colab.research.google.com/drive/1d5f9ZGa5F6euTpg9oA2_5pr-19E3QeNo?authuser=4)
