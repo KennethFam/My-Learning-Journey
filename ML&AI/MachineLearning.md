@@ -2346,6 +2346,102 @@
 ### Practice Lab: Advice for Applying Machine Learning
 - [Advice for Applying Machine Learning](https://colab.research.google.com/drive/1d5f9ZGa5F6euTpg9oA2_5pr-19E3QeNo?authuser=4)
 
+## Decision Trees
+
+### Decision Tree Model
+ - To learn about decision trees, let's look at a cat classification example:
+    
+    ![alt text](images/decision_tree_model_1.png)
+
+    - You are running a cat adoption center and, given a few features, you want to train a classifier to quickly tell you if an animal is a cat or not. 
+    - This dataset has 5 cats and 5 dogs.
+    - In this example, the features X take on categorical values, or in other words, the features take on just a few discrete values.
+    - Notice that this is a binary classification task. Also, $ x_{1}, x_{2}, and x_{3} $ each only take on two possible values. We will explore features that can take on more than 2 values as well as continuous value features later later.
+
+    So, what is a decision tree?
+
+    ![alt text](images/decision_tree_model_2.png)
+
+    - Here's an example of a model that you might get after training a decision tree learning algorithm on the data set that you just saw. The model that is output by the learning algorithm looks like a tree, and a picture like this is what computer scientists call a tree. 
+    - How this works is that, given some input features, we go down the tree, taking the path which matches our input features.
+    - Voabulary:
+        - Every one of the ovals and rectangles represent a **node** of the tree.
+        - The topmost node is the **root node**.
+        - All of the oval nodes are called **decision nodes**. They're called decision nodes because they look at a particular feature, and then based on the value of the feature, cause you to decide whether to go left or right down the tree.
+        - The rectangular boxes are called **leaf nodes**, and they make a prediction.
+    - Think of a tree in computer science as an indoor hanging plant.
+
+    Here are some more exmaples of decision trees:
+
+    ![alt text](images/decision_tree_model_3.png)
+
+    - Among these different decision trees, some will do better and some will do worse on the training sets or on the cross-validation and test sets. 
+    - The job of the decision tree learning algorithm is, out of all possible decision trees, to try to pick one that hopefully does well on the training set, and then also ideally generalizes well to new data such as your cross-validation and test sets as well. 
+
+### Learning Process
+- The process of building a decision tree given a training set has a few steps:
+
+    ![alt text](images/learning_process_1.png)
+
+    - Let's say we're using the same dataset of cats and dogs from earlier.
+    - The first step of decision tree learning is deciding what feature to use at the root node via an algorithm that will be discussed later.
+        
+    Let's say that we decided to pick, as the feature of the root node, the ear shape feature. What that means is we will decide to look at all of our training examples and split them according to the value of the ear shape feature:
+
+    ![alt text](images/learning_process_2.png)
+
+    - The second step is focusing just on the left part or sometimes called the left branch of the decision tree to decide what nodes to put over there.
+
+    Let's say we decided to use the face shape feature for the first left node:
+
+    ![alt text](images/learning_process_3.png)
+
+    ![alt text](images/learning_process_4.png)
+
+    ![alt text](images/learning_process_5.png)
+
+    - After splitting up the examples again, we notice that one side contains all cats and the other contains a non-cat. We can now make leaf nodes for these two sides.
+
+    Now, we repeat the same process on the right side:
+
+    ![alt text](images/learning_process_6.png)
+
+    Let's say we chose to use whiskers as the first right node:
+
+    ![alt text](images/learning_process_7.png)
+
+    ![alt text](images/learning_process_8.png)
+
+    - After splitting the examples based on the presence on whiskeys, notice that they have once again been grouped up by classes, so we can now create the leaf nodes.
+
+    Through this process, there were a couple of key decisions that we had to make at various steps during the algorithm. Let's talk through what those key decisions were:
+    
+    ![alt text](images/learning_process_9.png)
+
+    - We'll see later that decision trees will choose what feature to split on in order to try to maximize purity (e.g. you want to get to subsets which are as close as possible to all cats or all dogs).
+        - For example, if we had a "Cat DNA" feature, we could have perfectly split the examples into cats and non-cats.
+    - If you can get to a highly pure subset of examples, then you can either predict cat or predict not cat and get it mostly right. 
+
+    Let's take a look at the 2nd key decision:
+
+    ![alt text](images/learning_process_10.png)
+
+    - These are some critieria that you can use to decide to stop splitting.
+    - The **depth** of a node is defined as the number of hops that it takes to get from the root node to that particular node.
+    - One reason you might want to limit the depth of the decision tree is to make sure for the tree doesn't get too big and unwieldy. Second, by keeping the tree small, it makes it less prone to overfitting.
+
+    Depth Example:
+
+    ![alt text](images/learning_process_11.png)
+    
+    Number of Examples Below Threshold Example:
+
+    ![alt text](images/learning_process_12.png)
+
+    ![alt text](images/learning_process_13.png)
+
+- If it feels like a somewhat complicated, messy algorithm to you, it does to Ng too. Over the years, researches have added on more and more different refinements to the algorithm. It feels like the algorithm has a lot of different pieces, but these different pieces do fit together into a very effective learning algorithm, and what you'll learn from this section on decision trees is the key, most important ideas for how to make it work well.
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
