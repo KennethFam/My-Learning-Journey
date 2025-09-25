@@ -2712,6 +2712,9 @@
 #### Optional Lab: Tree Ensembles
 - [Tree Ensembles](https://colab.research.google.com/drive/1dJe7HOWH8A5Sypm6voi8FnHIYDd9u3tP?authuser=4)
 
+### Practice Lab: Decision Trees
+- [Decision Trees](https://colab.research.google.com/drive/1KmFSAsvpgTcRLp2RzqEZPauz2wGappP3?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -2786,3 +2789,5 @@
 - [Neural Networks for Multiclass Classification](https://colab.research.google.com/drive/1Up8Hxsjx37k_txMp7TKpmBgg7MWyJqed?authuser=4)
 
 - [Advice for Applying Machine Learning](https://colab.research.google.com/drive/1d5f9ZGa5F6euTpg9oA2_5pr-19E3QeNo?authuser=4)
+
+- [Decision Trees](https://colab.research.google.com/drive/1KmFSAsvpgTcRLp2RzqEZPauz2wGappP3?authuser=4)
