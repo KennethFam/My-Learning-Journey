@@ -2442,6 +2442,175 @@
 
 - If it feels like a somewhat complicated, messy algorithm to you, it does to Ng too. Over the years, researches have added on more and more different refinements to the algorithm. It feels like the algorithm has a lot of different pieces, but these different pieces do fit together into a very effective learning algorithm, and what you'll learn from this section on decision trees is the key, most important ideas for how to make it work well.
 
+### Decision Tree Learning
+
+#### Measuring Purity
+- Let's take a look at the definition of **entropy**, which is a measure of the impurity of a set of data:
+
+    ![alt text](images/measuring_purity_1.png)
+
+    - $ H $ is how we denote the entropy function. The value that the function outputs represents impurity.
+    - Note that the curve is highest when your set of examples is 50-50 (e.g. 50% cats and 50% non-cats). It is lowest at 0 (e.g. all non-cats) and 1 (e.g. all cats).
+    - The impurity decreases as your examples become less mixed (e.g. all of them are the same class).
+
+    Now, let's look at the actual equation for the entropy function $ H(p_{1}) $:
+
+    ![alt text](images/measuring_purity_2.png)
+    
+    - When computing entropy, we take log to base `2` rather than to base `e`.
+        - This is to make the peak `1`. If we used `e`, it will vertically scale the peak so that it's no longer `1` (take a look at the red arrow under the peak).
+    - If $ p_{1} $ or $ p_{2} $ is equal to zero, we'd have $ 0log_{2}0 $ which is negative infinity, but by convention (for the purposes of computing entropy), we will say that it's simply $ 0 $. That will correctly compute the entropy of $ 0 $ or of $ 1 $ to be equal to $ 0 $. 
+    - If you're thinking that this definition of entropy looks a little bit like the definition of the logistic loss that we learned about before, there is actually a mathematical rationale for why these two formulas look so similar which is out of the scope of this course.
+    - There are other functions that look like the entropy function (goes from 0 to 1 to 0). For example, if you look in open source packages, you may also hear about something called the Gini criteria, which is another function that looks a lot like the entropy function, and that will work just as well for building decision trees. For simplicity, we'll be focusing on using the entopy criteria.
+
+#### Choosing a Split: Information Gain
+- When building a decision tree, the way we'll decide what feature to split on at a node will be based on what choice of feature reduces entropy, reduces impurity, or maximizes purity (all 3 are the same thing) the most. The reduction of entropy is called information gain. Let's take a look at how to compute information gain and therefore choose what features to use to split on at each node in a decision tree:
+
+    ![alt text](images/information_gain_1.png)
+
+    - Let's use the example of deciding what feature to use at the root node of the decision tree we were building just now for recognizing cats versus not cats. 
+    - It turns out that rather than looking at these entropy numbers and comparing them, it would be more useful to take a weighted average of both brances for each tree and adding those two weighted averages together to get a single number. If there's a node with a lot of examples in it with high entropy that seems worse than if there was a node with just a few examples in it with high entropy. Entopy, as a measure of impurity, is worse if you have a very large and impure dataset compared to just a few examples and a branch of the tree that is very impure.
+        - In the way that decision trees are built, we're actually going to make one more change to these formulas to stick to the convention in decision tree building, but it won't actually change the outcome. Rather than computing this weighted average entropy, we're going to compute the reduction in entropy compared to if we hadn't split at all. Basically, we subtract the value we just calculated from the old entropy. The result is what's called the **information gain** (measures the reduction in entropy that you get in your tree resulting from making a split). We want the information gain because it is a stopping criteria (i.e. we may stop splitting if the information gain is too small). After getting the values for the information gain, we pick the split that resulted in the biggest reduction in entropy.
+
+    Let's look at a more formal definition of information gain:
+
+    ![alt text](images/information_gain_2.png)
+
+    - $ w $ is simply a new notation that we're using to represent the fraction of examples that went to a certain branch.
+    - With this definition of entropy, you can calculate the information gain associated with choosing any particular feature to split on in the node. Then, out of all the possible futures you could choose to split on, you can then pick the one that gives you the highest information gain. That will result in, hopefully, increasing the purity of your subsets of data that you get on the left and right sub-branches of your decision tree, and that will result in choosing a feature to split on that increases the purity of your subsets of data in both the left and right sub-branches of your decision tree. 
+
+#### Putting It Together
+- The information gain criteria lets you decide how to choose one feature to split a one-node. Let's take that and use that in multiple places through a decision tree in order to figure out how to build a large decision tree with multiple nodes. Here is the overall process of building a decision tree:
+
+    ![alt text](images/putting_it_together_dt_1.png)
+
+    Let's take a look at how this process looks visually:
+
+    ![alt text](images/putting_it_together_dt_2.png)
+
+    ![alt text](images/putting_it_together_dt_3.png)
+    
+    ![alt text](images/putting_it_together_dt_4.png)
+
+    - We're focusing on the left subtree first.
+
+    ![alt text](images/putting_it_together_dt_5.png)
+
+    - Let's say our stopping criteria is everything in a node belonging to the same class. Check if the node meets the stopping criteria. It has not, so we find the next feature to split on.
+
+    ![alt text](images/putting_it_together_dt_6.png)
+
+    ![alt text](images/putting_it_together_dt_7.png)
+
+    ![alt text](images/putting_it_together_dt_8.png)
+
+    - Stopping criteria has been met for the left subtree of "Face shape".
+
+    ![alt text](images/putting_it_together_dt_9.png)
+
+    ![alt text](images/putting_it_together_dt_10.png)
+
+    - Stopping criteria has been met for the right subtree of "Face shape".
+
+    ![alt text](images/putting_it_together_dt_11.png)
+
+    - Now, we can start on the right subtree.
+
+    ![alt text](images/putting_it_together_dt_12.png)
+
+    ![alt text](images/putting_it_together_dt_13.png)
+
+    ![alt text](images/putting_it_together_dt_14.png)
+
+    ![alt text](images/putting_it_together_dt_15.png)
+
+    We're done! This is the resulting decision tree:
+
+    ![alt text](images/putting_it_together_dt_16.png)
+
+    ![alt text](images/putting_it_together_dt_17.png)
+
+    - Notice that there's interesting aspects of what we've done, which is after we decided what to split on at the root node, the way we built the left subtree was by building a decision tree on a subset of five examples. The way we built the right subtree was by, again, building a decision tree on a subset of five examples. In computer science, this is an example of a recursive algorithm. All that means is the way you build a decision tree at the root is by building other smaller decision trees in the left and the right sub-branches. 
+    - **Recursion** in computer science refers to writing code that calls itself. The way this comes up in building a decision tree is you build the overall decision tree by building smaller sub-decision trees and then putting them all together. That's why, if you look at software implementations of decision trees, you'll sometimes see references to a recursive algorithm.
+
+- By the way, you may be wondering how to choose the maximum depth parameter. There are many different possible choices, but some of the open-source libraries will have good default choices that you can use. One intuition is, the larger the maximum depth, the bigger the decision tree you're willing to build. This is a bit like fitting a higher degree polynomial or training a larger neural network. It lets the decision tree learn a more complex model, but it also increases the risk of overfitting if it's fitting a very complex function to your data. In theory, you could use cross-validation to pick parameters like the maximum depth, where you try out different values of the maximum depth and pick what works best on the cross-validation set. Although in practice, the open-source libraries have even somewhat better ways to choose this parameter for you.
+
+#### Using One-Hot Encoding of Categorical Features
+- In the example we've seen so far, each of the features could take on only one of two possible values. Let's take a look at how you can use one-hot encoding to address features that can take on more than 2 values:
+
+    ![alt text](images/one_hot_dt_1.png)
+
+    - Notice that "Ear shape" can take on 3 values now. This means that, if we split on this feature, we'll end up building 3 sub-branches.
+
+    Let's see what this would look like if we used one-hot encoding:
+
+    ![alt text](images/one_hot_dt_2.png)
+
+    - Rather than using an "Ear shape" feature that can take on any of three possible values, we're instead going to create three new features
+    - Instead of one feature taking on three possible values, we've now constructed three new features, each of which can take on only one of two possible values, either 0 or 1. 
+
+    Let's look at the official definition of one-hot encoding:
+
+    ![alt text](images/one_hot_dt_3.png)
+
+    Now, let's go back and look at the data:
+
+    ![alt text](images/one_hot_dt_4.png)
+
+    - Notice that only 1 of the k features will take on the value of `1`, hence the name of this method. This feature is the one "hot" feature.
+    - By adding these new features, the decision tree learning algorithm that we've seen previously will apply to this data with no further modifications.
+
+    The idea of using one-hot encode to encode features also works for training neural networks:
+
+    ![alt text](images/one_hot_dt_5.png)
+
+    - Let's say we replace all the features with 2 possible values with `0`s and `1`s. Now, this list of 5 features can can also be fed to a new network or to logistic regression to try to train a cat classifier.
+    - One-hot encoding is a technique that works not just for decision tree learning but also lets you encode categorical features using `1`s and `0`s, so that it can be fed as inputs to a neural network as well, which expects numbers as inputs. 
+
+#### Continuous Valued Features
+- Let's look at how you can modify decision tree to work with features that aren't just discrete values but continuous values, that is features that can be any number:
+
+    ![alt text](images/continuous_values_dt_1.png)
+
+    - Let's start with an example. The cat adoption center data set has been modified to add one more feature which is the weight of the animal in pounds. On Average, between cats and dogs, cats are a little bit lighter than dogs, although there are some cats are heavier than some dogs, so the weight of an animal is a useful feature for deciding if it is a cat or not.
+    - The decision tree learning algorithm will proceed similarly as before except, rather than constraint splitting just on ear shape, face shape, and whiskers, you have to consider splitting on ear shape, face shape, whisker or weight, and if splitting on the weight feature gives better information gain than the other options, then you will split on the weight feature.
+
+    Let's see how we can decide on how to split on the weight feature:
+
+    ![alt text](images/continuous_values_dt_2.png)
+
+    - The way we would split on the weight feature would be based on whether or not the weight is less than or equal to some value. The learning algorithm will have to choose this number. What we should do when considering splitting on the weight feature is to consider many different values of this threshold and then to pick the one that is the best; the one that results in the best information gain. 
+    - In the more general case, we'll actually try not just three values, but multiple values along the x-axis. One convention would be to sort all of the examples according to the weight, or according to the value of this feature, and take all the values that are mid points between the sorted list of training examples as the values for consideration for the threshold. This way, if you have 10 training examples, you will test 9 different possible values for this threshold and then try to pick the one that gives you the highest information gain. 
+        - Let's say your sorted values are 2, 3, 5, 6, 7, 9, 11, 13, 15, and 18. To get the midpoints, you'd do (2+3)/2, (3+5)/2, (5+6)/2, (6+7)/2, ... That's why there are 9 midpoint values.
+        - To summarize, to get the decision tree to work on continuous value features at every node, when considering splits, you would just consider different values to split on, carry out the usual information gain calculation, and decide to split on that continuous value feature if it gives the highest possible information gain.
+
+#### Regression Trees
+- Let's generalize decision trees to be regression algorithms so that we can predict a number:
+    
+    ![alt text](images/regression_trees_1.png)
+
+    - We'll be reusing data from earlier and making the discrete features $ \vec{x} $ and weight as the output $ y $
+
+    Let's look at what a regression tree will look like:
+
+    ![alt text](images/regression_trees_2.png)
+
+    - Note that there's nothing wrong with a decision tree that chooses to split on the same feature in both the left and right side branches. It's perfectly fine if the splitting algorithm chooses to do that.
+    - The leaf nodes' values will be the average weight of the training examples that are at that leaf node.
+
+    Let's say we're building a decision tree from scratch using the same data. How do you choose which feature to split on? 
+
+    ![alt text](images/regression_trees_3.png)
+
+    - When building a regression tree, we will try to reduce the variance instead of entropy.
+        - Variance informally computes how widely a set of numbers varies.
+        - $ Sample Variance = \sum^{n}_{i = 1} \frac{(x_{i} - \mu)^{2}}{n - 1} = \frac{1}{n - 1} \sum^{n}_{i = 1} (x_{i} - \mu)^{2} $
+    - Note that we're doing the same calculations as we did for entropy but with variance instead.
+    - Other than this change in calculation, we build the decision the same way as shown before.
+
+#### Optional Lab: Decision Trees
+- [Decision Trees](https://colab.research.google.com/drive/1F19PELdKJ6XXDnmqI7AcbODEw0v8sD42?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -2501,6 +2670,8 @@
 - [Model Evaluation and Selection](https://colab.research.google.com/drive/1Byy8bMnA4q5apP3lr_WSVS9gYK7gDvXw?authuser=4)
 
 - [Diagnosing Bias and Variance](https://colab.research.google.com/drive/1-yWHhQoECtmdsyI4wWIfCqoEvq4y0yVy?authuser=4)
+
+- [Decision Trees](https://colab.research.google.com/drive/1F19PELdKJ6XXDnmqI7AcbODEw0v8sD42?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
