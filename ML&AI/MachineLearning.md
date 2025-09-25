@@ -2611,6 +2611,107 @@
 #### Optional Lab: Decision Trees
 - [Decision Trees](https://colab.research.google.com/drive/1F19PELdKJ6XXDnmqI7AcbODEw0v8sD42?authuser=4)
 
+### Tree Ensembles
+
+#### Using Multiple Decision Trees
+- One of the weaknesses of using a single decision tree is that that decision tree can be highly sensitive to small changes in the data. One solution to make the algorithm less sensitive or more robust is to build not one decision tree, but to build a lot of decision trees. We call that a **tree ensemble**. Let's take a look:
+
+    ![alt text](images/multiple_dt_1.png)
+
+    - The left tree is a decision tree from earlier.
+    - The right tree is what happens when we switch out one of the ten examples and change it to a different cat so that instead of having pointy ears, round face, and whiskers absent, this new cat has floppy ears, round face, and whiskers present. By just changing a single training example, the highest information gain feature to split on becomes the whiskers feature instead of the ear shape feature. As a result of that, the subsets of data you get in the left and right sub-trees become totally different, and as you continue to run the decision tree learning algorithm recursively, you build out totally different sub trees on the left and right. The fact that changing just one training example causes the algorithm to come up with a different split at the root and therefore a totally different tree, that makes this algorithm just not that robust. 
+    
+    The solution is to train not one decision tree but a whole bunch of different decision trees:
+
+    ![alt text](images/multiple_dt_2.png)
+
+    - This is what we call a **tree ensemble**; a collection of multiple trees.
+    - If you had this ensemble three trees, each one of these is maybe a plausible way to classify cat versus not cat. If you had a new test example that you wanted to classify, then what you would do is run all three of these trees on your new example and get them to vote on what is the final prediction.
+
+#### Sampling With Replacement
+- In order to build a tree ensemble, we're going to need a technique called sampling with replacement. Let's take a look at what that means: 
+
+    ![alt text](images/sampling_with_replacement_1.png)
+
+    - For this example, we're going to use these 4 different colored tokens.
+    - Put all 4 tokens into a bag, shake the bag, take out 1 token (that's one sample), put it back (hence "replacement"), and repeat this process until you obtain 4 samples (same amount as the total number of tokens or training examples).
+        - The replacement part is important, since it makes sure we don't just pull the same 4 tokens every time.
+    
+    Let's see how sampling with replacement applies to building an ensemble of trees:
+
+    ![alt text](images/sampling_with_replacement_2.png)
+
+    - Here, we have 10 samples, and we pick out 10 random samples with replacement to make a new random training set that's the exact same size as the original.
+    - The process of sampling with replacement lets you construct a new training set that's a little bit similar to, but also pretty different, from your original training set. It turns out that this would be the key building block for building an ensemble of trees.
+
+#### Random Forest Algorithm
+- The random forest algorithm, which is one powerful tree ensamble algorithm, works much better tan using a single decision. Let's see how it works:
+
+    ![alt text](images/random_forest_1.png)
+
+    - For `B`, people recommend 64 to 100 (trees).
+        - It turns out that setting capital `B` to be larger never hurts performance, but beyond a certain point, you end up with diminishing returns, and it doesn't actually get that much better when `B` is much larger than say 100 or so. Never use, say, 1000 trees; that just slows down the computation significantly without meaningfully increasing the performance of the overall algorithm.
+        - Typical choice of `B` is around 100.
+    - This specific instance creation of tree ensemble is sometimes also called a **bagged decision tree**, hence the use of the letters `b` and `B`. That refers to putting your training examples in that virtual bag. 
+    - There's one modification to this algorithm that will actually make it work much better, and that changes this algorithm, the bagged decision tree, into the random forest algorithm. The key idea is that, even with this sampling with replacement procedure, sometimes you end up with always using the same split at the root node and very similar splits near the root node.
+        - It's not uncommon that, for many or even all `B` training sets, you end up with the same choice of feature at the root node and at a few of the nodes near the root node. 
+    
+    Let's see how we can modify the bagged decision tree and turn it into the random forest algorithm:
+
+    ![alt text](images/random_forest_2.png)
+
+    - We want the set of trees to become more different from each other, so that when they vote, you end up with a more accurate prediction.
+    - In other words, you would pick `k` features as the allowed features and then out of those `k` features, choose the one with the highest information gain as the choice of feature to use to split.
+        - When `n` is large, say `n` is dozens, tens, even hundreds, a typical choice for `k` is $ \sqrt{n} $. 
+    - This technique tends to be used for larger problems with a larger number of features.
+    - With this change, we end up with the **random forest algorithm**.
+    - One way to think about why this is more robust to than a single decision tree is the sampling with replacement procedure causes the algorithm to explore a lot of small changes to the data already, and it's training different decision trees and is averaging over all of those changes to the data that the sampling with replacement procedure causes. This means that any little change to the training set makes it less likely to have a huge impact on the overall output of the random forest algorithm because it's already explored and is averaging over a lot of small changes to the training set. 
+
+#### XGBoost
+- Over the years, machine learning researchers have come up with a lot of different ways to build decision trees and decision tree ensembles. Today, by far, the most commonly used way or implementation of decision tree ensembles or decision trees is an algorithm called **XGBoost**. It runs quickly, the open source implementations are easily used, and has also been used very successfully to win many machine learning competitions as well as in many commercial applications. Let's take a look at how XGBoost works:
+
+    ![alt text](images/random_forest_3.png)
+
+    - There's a modification to the bag decision tree algorithm that we saw earlier that can make it work much better.
+    - Every time through this loop, other than the first time, that is the second time, third time, and so on, when sampling, instead of picking from all `m` examples of equal probability with $ \frac{1}{m} $ probability, let's make it more likely that we'll pick misclassified examples that the previously trained trees do poorly on. 
+        - In training and education, there's an idea called **deliberate practice**. For example, if you're learning to play the piano, and you're trying to master a piece on the piano, rather than practicing the entire, say, five minute piece over and over, which is quite time consuming, if you instead play the piece and then focus your attention on just the parts of the piece that you aren't yet playing that well and practice those smaller parts over and over, then that turns out to be a more efficient way for you to learn to play the piano well. So, this idea of boosting is similar. We're going to look at the decision trees we've trained so far and look at what we're still not yet doing well on. Then, when building the next decision tree, we're going to focus more attention on the examples that we're not yet doing well on. So rather than looking at all the training examples, we focus more attention on the subset of examples it's not yet doing well on and get the new decision tree, the next decision tree in the ensemble, to try to do well on them. This is the idea behind boosting, and it turns out to help the learning algorithm learn to do better more quickly.
+        - Note the red arrows on the misclassified examples. Those are the examples that will be more likely to get picked.
+    - The mathematical details of exactly how much to increase the probability of picking one example versus another example are quite complex, but you don't have to worry about them in order to use boosted tree implementations.
+
+    The most widely used implementation of boosting is XGBoost (eXtreme Gradient Boosting):
+
+    ![alt text](images/random_forest_4.png)
+
+    - Rather than doing sampling with replacement, XGBoost actually assigns different weights to different training examples. So, it doesn't actually need to generate a lot of randomly chosen training sets. This makes it even a little bit more efficient than using a sampling with replacement procedure.
+    - The intuition for boosting that we've previously discussed is still correct in terms of how XGBoost is choosing examples to focus on.
+
+    The details of XGBoost are quite complex to implement, which is why many practitioners will use the open source libraries that implement XGBoost: 
+
+    ![alt text](images/random_forest_5.png)
+
+    - This is all we need to do in order to use XGBoost.
+
+#### When to Use Decision Trees
+- Both decision trees, including tree ensembles as well as neural networks are very powerful, very effective learning algorithms. When should you pick one or the other? Let's look at some of the pros and cons of each:
+
+    ![alt text](images/when_to_use_dt_1.png)
+
+    - Think of a tabular dataset as a dataset that looks like a giant spreadsheet. What that means is, if your dataset looks like a giant spreadsheet, then decision trees would be worth considering. For example, in the housing price prediction application, we had a dataset with features corresponding to the size of the house, the number of bedrooms, the number of floors, and the age at home. That type of data can be stored in a spreadsheet with either categorical or continuous valued features and both for classification or for regression task, where you're trying to predict a discrete category or predict a number respectively. All of these problems are ones that decision trees can do well on.
+    - Fast as in fast to train. Decision trees will allow you to go through the loop more quickly.
+
+    ![alt text](images/when_to_use_dt_2.png)
+
+    - The interpretability of decision trees is sometimes a bit overstated because when you build an ensemble of 100 trees and, if each of those trees has hundreds of nodes, then looking at that ensemble to figure out what it's doing does become difficult and may need some separate visualization techniques. 
+    - One slight downside of a tree ensemble is that it is a bit more expensive than a single decision tree. If you had a very constrained computational budget, you might use a single decision tree but, other than that setting, Ng would almost always use a tree ensemble and use XGBoost in particular.
+    - Neural networks also do well on mixed data that includes both structured and unstructured components.
+    - Neural networks, decision trees, and tree ensembles are competitive on structured data.
+    - A large neural network can take a long time to train.
+    - For many applications, where we have only a small dataset, being able to use transfer learning and carry out pre-training on a much larger dataset is critical to getting competitive performance.
+    - The reason for neural networks being easier to string together relates to the fact that, even when you string together multiple neural networks, you can train them all together using gradient descent, whereas for decision trees, you can only train one decision tree at a time.
+
+#### Optional Lab: Tree Ensembles
+- [Tree Ensembles](https://colab.research.google.com/drive/1dJe7HOWH8A5Sypm6voi8FnHIYDd9u3tP?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -2672,6 +2773,8 @@
 - [Diagnosing Bias and Variance](https://colab.research.google.com/drive/1-yWHhQoECtmdsyI4wWIfCqoEvq4y0yVy?authuser=4)
 
 - [Decision Trees](https://colab.research.google.com/drive/1F19PELdKJ6XXDnmqI7AcbODEw0v8sD42?authuser=4)
+
+- [Tree Ensembles](https://colab.research.google.com/drive/1dJe7HOWH8A5Sypm6voi8FnHIYDd9u3tP?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
