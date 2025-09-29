@@ -2715,6 +2715,155 @@
 ### Practice Lab: Decision Trees
 - [Decision Trees](https://colab.research.google.com/drive/1KmFSAsvpgTcRLp2RzqEZPauz2wGappP3?authuser=4)
 
+## Unsupervised Learning
+
+### Clustering
+
+#### What is Clustering?
+- A clustering algorithm looks at a number of data points and automatically finds data points that are related or similar to each other. Let's see the different between clustering, an unsupervised learning algorithm, and binary classification, a supervised learning algorithm:
+    
+    ![alt text](images/clustering_1.png)
+
+    - For supervised learning, we get the input `x` and output `y`. The learning algorithm then uses the data to learn the decision boundary (red line).
+
+    ![alt text](images/clustering_2.png)
+
+    - In contrast, we only get the input `x` for unsupervised learning, so the algorithm doesn't know the correct label `y` to predict. Instead, we're going to ask the algorithm to find something interesting about the data, that is to find some interesting structure about this data.
+    - For clustering, the algorithm will at the dataset and see if it can be grouped into clusters, which are groups of points that are similar to each other.
+
+    Here are some applications of clustering:
+
+    ![alt text](images/clustering_3.png)
+
+    - Person circles in blue does not fit into any of the other 3 categories.
+
+#### K-Means Intuition
+- Let's take a look at what the K-means clustering algorithm does, starting with an example:
+
+    ![alt text](images/k_means_intuit_1.png)
+
+    ![alt text](images/k_means_intuit_2.png)
+
+    ![alt text](images/k_means_intuit_3.png)
+
+    ![alt text](images/k_means_intuit_4.png)
+
+    ![alt text](images/k_means_intuit_5.png)
+
+    ![alt text](images/k_means_intuit_6.png)
+
+    ![alt text](images/k_means_intuit_7.png)
+
+    ![alt text](images/k_means_intuit_8.png)
+
+    ![alt text](images/k_means_intuit_9.png)
+
+    - Here are 30 unlabel training examples.
+    - We're asking the algorithm to find 2 clusters. What it will do is randomly pick two points, shown here as a red cross and the blue cross, at where might be the centers of two different clusters. This is just a random initial guess and they're not particularly good guesses.
+    - K-means will repeatedly do two different things; the first is assign points to cluster centroids and the second is move cluster centroids.
+        1. The first of the two steps is it will go through each of these points and look at whether it is closer to the red cross or to the blue cross. The very first thing that K-means does is it will take a random guess at where are the centers of the clusters, and the centers of the clusters are called **cluster centroids**. After it's made an initial guess at where the cluster centroid is, it will go through all of these examples, x(1) through x(30), the 30 data points. For each of them, it will check if it is closer to the red cluster centroid, shown by the red cross, or if it's closer to the blue cluster centroid, shown by the blue cross, and it will assign each of these points to whichever of the cluster centroids it is closer to. This is illustrated by the dots being painted red or blue.
+        2. The second of the two steps that K-means does is it'll look at all of the red points, take an average of them, and it will move the red cross to whatever is the average location of the red dots. We will also do the same for the blue points. Afer this, we repeat step 1.
+        - It turns out that if you were to keep on repeating these two steps, that is look at each point and assign it to the nearest cluster centroid and then also move each cluster centroid to the mean of all the points with the same color, you'll find that there are no more changes to the colors of the points or to the loations of the clusters' centroids. This means that the K-means clustering algorithm has converged. 
+
+#### K-Means Algorithm
+- Here's the K-means algorithm:
+
+    ![alt text](images/k_means_alg_1.png)
+
+    ![alt text](images/k_means_alg_2.png)
+
+    - $ \mu_{i} $ is a vector which has the same dimensions as your training examples.
+    - $ n = 2 $ here is just stating the dimension of the training data.
+    - $ k = 2 $ here is the number of centroids.
+    - $ m $ = # of training examples
+    - $ || x^{(i)} - \mu_{k} || $ = distance between two points or L2 Norm
+        - We're trying to find the value of `k` that minimizes this (closest centroid). After getting the minimum value, we set $ c^{(i)} = k $.
+        - It's a bit more convient to minimize the squared distance: $ || x^{(i)} - \mu_{k} ||^{2} $.
+        - Note that this can be calculated in NumPy. Let's say `X` holds our inputs and `centroids` holds the centroids, then you can calculate the L2-Norm using `np.linalg.norm(X[i] - centroids[j])`. This will return a scalar. If you just did `(X[i] - centroids[j])**2`, this would return an array which you have not summed up yet. If you don't want to use NumPy, you would have to use `sum((X[i] - centroids[j])**2)`
+    - Note that the for the second step, we're computing the average of all the values on each axis for each point of that centroid. Then, we'll use the average to move that centroid.
+    - If a cluster has 0 points, you can eliminate that cluster or randomly initialize that cluster centorid if you really need `k` clusters. It's more common to eliminate the cluster.
+        - ![alt text](images/k_means_alg_3.png)
+    
+    K-means is also frequently applied to data sets where the clusters are not that well separated:
+
+    ![alt text](images/k_means_alg_4.png)
+
+#### Optimization Objective
+- Just like supervised learning algorithms, it turns out that the K-means algorithm is also optimizing a specific cost function. Although the optimization algorithm that it uses to optimize that is not gradient descent, it is actually the algorithm that you saw in the last section. Let's take a look:
+
+    ![alt text](images/k_means_optimization_obj_1.png)
+
+    ![alt text](images/k_means_optimization_obj_2.png)
+
+    - What the K means algorithm is doing is trying to find assignments of points of cluster centroids as well as find locations of clusters centroid that minimizes the squared distance.
+
+    Let's now take a deeper look at the algorithm and why it's trying to minimize the distortion:
+
+    ![alt text](images/k_means_optimization_obj_3.png)
+
+    - To minimize the distortion, assign $ x^{(i)} $ to the closest cluster centroid.
+    - It turns out that choosing $ \mu_{k} $ to be average and the mean of the points assigned is the choice of these terms $ \mu $ that will minimize the expression $ || x^{(i)} - \mu_{k} ||^{2} $. 
+
+    Let's look a simplified example:
+
+    ![alt text](images/k_means_optimization_obj_4.png)
+
+    - As we can see, the original centroid had an average distance of 41. By taking the average of the two points and place the centroid there, we end up with an average distance of 25 instead.
+    - So the fact that the K-means algorithm is optimizing a cost function J means that it is guaranteed to converge. That is, on every single iteration, the distortion cost function should go down or stay the same. If it ever fails to go down or stay the same, in the worst case, if it ever goes up, that means there's a bug in the code. It should never go up because every single step of K-means is setting the value $ c^{(i)} $ and $ \mu_{k} $ to try to reduce the cost function. Also, if the cost function ever stops going down, that also gives you one way to test if K means has converged. Once there's a single iteration where it stays the same, that usually means K-means has converged, and you should just stop running the algorithm even further. In some rare cases you will run K-means for a long time, and the cost function or the distortion is just going down very, very slowly, and that's a bit like gradient descent where maybe running even longer might help a bit. But if the rate at which the cost function is going down has become very, very slow, you might also just say that it is good enough and it's close enough to convergence, so let's not spend even more compute cycles running the algorithm for even longer.
+
+#### Initializing K-Means
+- Let's take a look at how we initiate the initial centroids for the K-means algorithm as well as how you can take multiple attempts at the initial guesses of $ \mu_{1} $ through $ \mu_{k} $ that will result in finding a better set of clusters:
+
+    ![alt text](images/initializing_k_means_1.png)
+
+    - Here is an overview of the algorithm.
+
+    ![alt text](images/initializing_k_means_2.png)
+
+    - The number of clusters `K` should be less than the number of training examples `m`. It doesn't really make sense to have K greater than m because then there won't even be enough training examples to have at least one training example per cluster centroids.
+    - This method is the much more commonly used way of initializing the clusters' centroids.
+        - Earlier, we simply picked random points to illustrate an example.
+    
+    Let's look at a dataset and the possible outcomes of K-means based on how we initiate the initial centroids:
+
+    ![alt text](images/initializing_k_means_3.png)
+
+    - With a less fortunate choice of random initialization, the algorithm may get stuck at a local minimum.
+    - One other thing you could do with the K-means algorithm is to run it multiple times and then to try to find the best local optima. It turns out that if you were to run K-means three times say and end up with these three distinct clusterings, then one way to choose between these three solutions is to compute the cost function $ J $ for all three of these solutions, all three of these choices of clusters found by K-means, and then to pick one of these three according to which one of them gives you the lowest value for the cost function $ J $.
+    - Here, $ J_{1} $ has the lowest value since the distances from the centroids to their points are smaller compared to the rest of the results.
+
+    Let's look at what the algorithm for this would look like:
+
+    ![alt text](images/initializing_k_means_4.png)
+
+    - Here, let's say we want to use 100 random initialization for K-means. 50-1000 times is also common. The tradeoff here is the increase in computational cost and diminishing returns as you do more and more iterations.
+    - It turns out that running K-means multiple times will often give you a much better set of clusters, with a much lower distortion function than if you were to run K-means only a single time.
+
+#### Choosing the Number of Clusters
+- ![alt text](images/number_of_clusters_1.png)
+    - For a lot of clustering problems, the right value of `K` is truly ambiguous. Because clustering is an unsupervised learning algorithm, you're not given the "right" answers in the form of specific labels to try to replicate. There are lots of applications where the data itself does not give a clear indicator for how many clusters there are in it.
+    - There could be 2, 4, etc. clusters for this dataset.
+
+    If you look at the academic literature on K-means, there are a few techniques to try to automatically choose the number of clusters to use for a certain application:
+
+    ![alt text](images/number_of_clusters_2.png)
+
+    - This is called the Elbow method (left graph). What it does is it would run K-means with a variety of values of `K` and plot the cost function or the distortion function $ J $ as a function of the number of clusters. What you find is that when you have very few clusters, say one cluster, the distortion function or the cost function $ J $ will be high, and as you increase the number of clusters, it will go down. We simply find when the decrease of $ J $ slows down, which is usually called the **elbow**, and pick that number of clusters.
+    - The graphs shown in this slide are just examples. The actual shape will depend on your data.
+    - Ng does not use this method.
+    - The right graph shows what most cost functions will look like as you increase the number of clusters; it decreases smoothly, so there's no clear "elbow".
+    - You should not choose the `K` that minimizes $ J $ because having more clusters will almost always reduce the cost function $ J $.
+
+    So, how do you choose a value for `K` in practice?
+
+    ![alt text](images/number_of_clusters_3.png)
+
+    - The number of clusters you want depends on your downstream purpose (what you're using the clusters for).
+    - Here, there's a trade-off between how well the t-shirts will fit, depending on whether you have three sizes or five sizes, but there will be extra costs as well associated with manufacturing and shipping five types of t-shirts instead of three different types of t-shirts. What Ng would do in this case is run K-means with $ K = 3 $ and $ K = 5 $, and then look at these two solutions to see, based on the trade-off between fits of t-shirts, will more sizes result in better fit versus the extra cost of making more t-shirts, whereas making fewer t-shirts is simpler and less expensive to try, to decide what makes sense for the t-shirt business. 
+
+#### Practice Lab: K-Means
+- [K-Means](https://colab.research.google.com/drive/1MHgQwQZF3C6v5BQm9D3R-KnEgeaSLGdQ?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -2791,3 +2940,5 @@
 - [Advice for Applying Machine Learning](https://colab.research.google.com/drive/1d5f9ZGa5F6euTpg9oA2_5pr-19E3QeNo?authuser=4)
 
 - [Decision Trees](https://colab.research.google.com/drive/1KmFSAsvpgTcRLp2RzqEZPauz2wGappP3?authuser=4)
+
+- [K-Means](https://colab.research.google.com/drive/1MHgQwQZF3C6v5BQm9D3R-KnEgeaSLGdQ?authuser=4)
