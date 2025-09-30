@@ -2342,6 +2342,18 @@
     - $ F_{1} score = \frac{1}{\frac{1}{2}(\frac{1}{P} + \frac{1}{R})} = 2 \frac{PR}{P + R}$.
         - By inversing the numbers and taking their average, we put more emphasis on the smaller number. 
         - This is also called the **harmonic mean**. It's just a way of taking an average that emphasizes the smaller values more.
+    - Here's how you can calculate the $ F_{1} score $ in Python:
+        ```py
+        import numpy as np
+
+        # let's say we already had predictions and the actual y values loaded
+        tp = np.sum((predictions == 1) & (y_val == 1)) # true positives
+        fp = np.sum((predictions == 1) & (y_val == 0)) # false positives
+        fn = np.sum((predictions == 0) & (y_val == 1)) # false negatives
+        prec = tp / (tp + fp)                          # precision
+        rec = tp / (tp + fn)                           # recall
+        F1 = (2 * prec * rec) / (prec + rec)           # F1 score
+        ```
 
 ### Practice Lab: Advice for Applying Machine Learning
 - [Advice for Applying Machine Learning](https://colab.research.google.com/drive/1d5f9ZGa5F6euTpg9oA2_5pr-19E3QeNo?authuser=4)
@@ -2913,6 +2925,16 @@
         - The formulas here are, in statistics, called the maximum likelihood for $ \mu $ and $ \sigma $. Some classes will tell you to use $ \frac{1}{m - 1} $ instead of $ \frac{1}{m} $, but this makes very little difference in practice. Ng uses $ \frac{1}{m} $. There's some other properties of $ \frac{1}{m - 1} $ that statisticians prefer.
     - The blue curve is an estimate of what the actual normal distribution may look like.
     - Here, we use an `x` with one feature, but there's usually more than one feature for practical use cases. 
+    - Here's how you can calculate the mean and variance in Python:
+        ```py
+        import numpy as np
+        
+        # let's say m holds the number of training examples
+        # and X holds the training examples
+        # we use axis = 0 to apply the operations column-wise
+        mu = 1/m * np.sum(X, axis = 0)
+        var = 1/m * np.sum((X - mu) ** 2, axis = 0)
+        ```
 
 #### Anomaly Detection Algorithm
 - Let's build the anomaly detection algorithm:
@@ -3059,6 +3081,100 @@
 
 #### Practice Lab: Anomaly Detection
 - [Anomaly Detection](https://colab.research.google.com/drive/1TrJygdpAFOMLJAtj7xzJ7pHS6v0qVJUu?authuser=4)
+
+## Recommender Systems
+
+### Collaborative Filtering
+
+#### Making Recommendations
+- Let's use the example of predicting movie ratings:
+
+    ![alt text](images/making_recommendations_1.png)
+
+    - So say you run a large movie streaming website, and your users have rated movies using zero to five stars.
+    - A `?` denotes that the user has not yet watched the movie.
+    - In a typical recommender system, you have some number of users as well as some number of items that you want to recommend to the users.
+    -  Notice that not every user rates every movie, and it's important for the system to know which users have rated which movies. That's why we have $ r(i, j) $.
+    - So, with this framework for recommended systems, one possible way to approach the problem is to look at the movies that users have not rated and try to predict how users would rate those movies. Then, we can try to recommend to users things that they are more likely to rate as five stars.
+
+#### Using Per-Item Features 
+- Let's take a look at how we can develop a recommender system if we had features of each item, or features of each movie:
+
+    ![alt text](images/using_per_item_features_1.png)
+
+    - Notice that we now have features of the movies.
+    - `n` represents the number of features we have for each movie.
+    - The linear regression at the bottom is for Alice, where we gave more weight to the romance feature since she likes romance. We predict that she will rate the 3rd movie 4.95 stars.
+        - Note that this is just an example.
+        - This is a lot like linear regression, except that we're fitting a different linear regression model for each of the 4 users in the dataset.
+    
+    Let's look at the notation we will be using:
+    
+    ![alt text](images/using_per_item_features_2.png)
+
+    - What we want is to learn the parameters $ w^{(j)} $ and $ b^{(j)} $ given the data that we have (e.g. ratings a user has given a set of movies).
+    - So the algorithm we're going to use is very similar to linear regression. The cost function for learning the parameters $ w^{(j)} $ and $ b^{(j)} $ for a given user `j` is shown above. We're only going to focus on one user for now. 
+        - $ y^{(i, j)} $ here is the actual rating that the user gave. So, we're basically just taking the difference between the predicted rating and the actual rating.
+        - Notice that we're only summing over values of `i` where $ r(i, j) = 1 $ (i.e. we're only summing over movies the user has rated).
+        - For recommender systems, it turns out that it's convenient to remove the division by $ m^{(j)} $ term. $ m^{(j)} $ is just a constant in this expression, so even if you take it out, you should end up with the same value of $ w^{(j)} $ and $ b^{(j)} $. $ m^{(j)} $ basically just scales the result, so it should not affect the minimum when performing gradient descent.
+    
+    Let's look at the cost function once again:
+
+    ![alt text](images/using_per_item_features_3.png)
+
+    - If we use gradient descent or any other optimization algorithm to minimize this as a function of $ w^{(1)} $, $ b^{(1)} $ all the way through $ w^{(n_{u})} $, $ b^{(n_{u})} $, then you have a pretty good set of parameters for predicting movie ratings for all the users.
+
+#### Collaborative Filtering Algorithm
+- What if the items (e.g. movies) did not have features? Let's take a look at how you can learn or come up with those features from the data:
+
+    ![alt text](images/collaborative_filtering_alg_1.png)
+
+    - Let's say we already learned the parameters shown at the bottom. We'll worry later about how we might have come up with these parameters.
+    - To simply this example, all of the values for `b` are 0, so we'll just ignore `b`.
+    - Look at the expected results at the bottom right for the 1st movie. What choice for $ x^{(1)} $ would cause those values to be right.
+        - What we have is that, if you have the parameters for all four users here, and if you have four ratings in this example that you want to try to match, you can take a reasonable guess at what list of feature vector $ x^{(1)} $ for movie one would make good predictions for these four ratings up on top. 
+        - Similarly, if you have these parameter vectors, you can come up with a feature vector for the rest of the movies to try to make the algorithm's predictions on these additional movies close to what was actually the ratings given by the users.
+        - By the way, notice that this works only because we have parameters for four users. That's what allows us to try to guess appropriate features, $ x^{(1)} $. This is why in a typical linear regression application, if you had just a single user, you don't actually have enough information to figure out what would be the features, $ x_{1} $ and $ x_{2} $, which is why in the linear regression contexts that you saw in the supervised learning section, you can't come up with features $ x_{1} $ and $ x_{2} $ from scratch. But in collaborative filtering, because you have ratings from multiple users of the same item with the same movie, it possible to try to guess what are possible values for these features.
+    
+    Let's come up with a cost function for actually learning the values of $ x_{1} $ and $ x_{2} $.
+
+    ![alt text](images/collaborative_filtering_alg_2.png)
+
+    - Notice that we're learning $ x^{(i)} $ here and not $ w^{(j)} $ or $ b^{(j)} $.
+
+    Now, let's discuss where the parameters $ w^{(j)} $ and $ b^{(j)} $ come from:
+
+    ![alt text](images/collaborative_filtering_alg_3.png)
+
+    - Notice that both the cost functions (for parameters and features) at the top simply sum over user, movie pairs where the user rated the movie.
+    - We put the two cost functions together, which results in the one at the bottom.
+
+    How can we minimize this new cost function?
+
+    ![alt text](images/collaborative_filtering_alg_4.png)
+
+    So, the algorithm we just derived is called **collaborative filtering**, and the name collaborative filtering refers to the sense that, because multiple users have rated the same movie collaboratively giving you a sense of what this movie maybe like, that allows you to guess what are appropriate features for that movie. This in turn allows you to predict how other users that haven't yet rated that same movie may decide to rate it in the future. This collaborative filtering is this gathering of data from multiple users - this collaboration between users - to help you predict ratings for even other users in the future.
+
+#### Binary Labels: Favs, Likes and Clicks
+- Many important applications of recommender systems or collective filtering algorithms involve binary labels where, instead of a user giving you a one to five star or zero to five star rating, they just somehow give you a sense that they like this item or they did not like this item. Let's take a look at how to generalize the algorithm you've seen to this setting. The process we'll use to generalize the algorithm will be very much reminiscent to how we have gone from linear regression to logistic regression, from predicting numbers to predicting a binary labels back in the supervised learning section. Let's take a look:
+
+    ![alt text](images/collaborative_filtering_binary_1.png)
+
+    - Here's an example of a collaborative filtering data set with binary labels.
+    - A `1` denotes a like or engagement with a particular movie, while a `0` means the opposite. A `?` simply means that the user has not seen the movie.
+    - So, the question is how can we take the collaborative filtering algorithm that you saw earlier and get it to work on this dataset.
+
+    There are many ways of defining `1`, `0`, and `?`. Let's take a look at some examples:
+
+    ![alt text](images/collaborative_filtering_binary_2.png)
+
+    So, given these binary labels, let's look at how we can generalize our collaborative filtering algorithm, which is a lot like linear regression, to predict these binary outputs. 
+
+    ![alt text](images/collaborative_filtering_binary_3.png)
+
+    We'll also have to modify the cost function:
+
+    ![alt text](images/collaborative_filtering_binary_4.png)
 
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
