@@ -2864,6 +2864,202 @@
 #### Practice Lab: K-Means
 - [K-Means](https://colab.research.google.com/drive/1MHgQwQZF3C6v5BQm9D3R-KnEgeaSLGdQ?authuser=4)
 
+### Anomaly Detection
+
+#### Finding Unusual Events
+- Anomaly detection algorithms look at an unlabeled dataset of normal events and thereby learns to detect or to raise a red flag if there is an unusual or an anomalous event. Let's look at an example:
+
+    ![alt text](images/unusual_events_1.png)
+
+    - It turns out that aircraft engine manufacturers don't make that many bad engines, so the easier type of data to collect would be, if you have manufactured `m` aircraft engines, to collect the features $ x_{1} $ and $ x_{2} $ about how these `m` engines behave and probably most of them are just fine and normal engines rather than ones with a defect or flaw in them. The anomaly detection problem is, after the learning algorithm has seen these `m` examples of how aircraft engines typically behave in terms of how much heat is generated and how much they vibrate, if a brand new aircraft engine were to roll off the assembly line and it had a new feature vector given by $ x_{test} $, we'd like to know does this engine look similar to ones that have been manufactured before. So is this probably okay, or is there something really weird about this engine which might cause this performance to be suspect, meaning that maybe we should inspect it even more carefully before we let it get shipped out and be installed in an airplane, and then hopefully nothing will go wrong with it.
+    - The blue point fits in with the data, while the purple one does not.
+
+    How can you have an algorithm find anomalies like the purple point?
+
+    ![alt text](images/unusual_events_2.png)
+
+    - The most common way to carry out anomaly detection is through a technique called **density estimation**.
+        - What that means is, when you're given your training sets of these `m` examples, the first thing you do is build a model for the probability of `x`. In other words, the learning algorithm will try to figure out what are the values of the features $ x_{1} $ and $ x_{2} $ that have high probability and what are the values that are less likely or have a lower chance or lower probability of being seen in the data set. 
+        - When we have new data, $ x_{test} $, we plug it into the model which gives us a probability. We'll also have a small number $ \epsilon $. If the probability is less than $ \epsilon $, then we can say that it's an anomaly and vice versa.
+    
+    Here are some use cases for anomaly detection:
+
+    ![alt text](images/unusual_events_3.png)
+
+    - Text in blue are example features. 
+    - Features can also be ratios.
+
+#### Gaussian (Normal) Distribution
+- In order to apply anomaly detection, we're going to need to use the Gaussian Distribution, which is also called the Normal Distribution or bell-shaped distribution. Let's take a look at what this is:
+
+    ![alt text](images/norm_dist_1.png)
+
+    - The middle of the curve is given by $ \mu $, and the standard deviation $ \sigma $ is given by the width of the curve.
+    - The curve shows $ p(x) $ or the probability of x. 
+        - One way to interpret $ p(x) $ is imagine if you were to get, say, 100 numbers drawn from this probability distribution, and you were to plot a histogram of these 100 numbers drawn from this distribution, you might get a histogram that looks like the one on the right. It looks vaguely bell-shaped. What the curve on the left indicates is not if you have just 100 examples or 1,000 or a million or a billion, but if you had a practically infinite number of examples, and you were to draw a histogram of this practically infinite number of examples with very fine histogram bins. You would end up with essentially this bell-shaped curve here on the left.
+    
+    Now let's look at a few examples of how changing $ \mu $ and $ \sigma $ will affect the Gaussian Distribution:
+
+    ![alt text](images/norm_dist_2.png)
+
+    - Probabilities always sum up to `1`, so the area under the curve will always sum up to `1`.
+
+    When you're applying this to anomaly detection, here's what you have to do:
+
+    ![alt text](images/norm_dist_3.png)
+
+    - You're given a dataset of `m` examples.
+    - Calculate $ \mu $ and $ \sigma $. 
+        - The formulas here are, in statistics, called the maximum likelihood for $ \mu $ and $ \sigma $. Some classes will tell you to use $ \frac{1}{m - 1} $ instead of $ \frac{1}{m} $, but this makes very little difference in practice. Ng uses $ \frac{1}{m} $. There's some other properties of $ \frac{1}{m - 1} $ that statisticians prefer.
+    - The blue curve is an estimate of what the actual normal distribution may look like.
+    - Here, we use an `x` with one feature, but there's usually more than one feature for practical use cases. 
+
+#### Anomaly Detection Algorithm
+- Let's build the anomaly detection algorithm:
+
+    ![alt text](images/anomaly_alg_1.png)
+
+    - The graph at the top right is the one we used for the airplane engine example from earlier.
+    - The formula for $ p(\vec{x}) $ assumes the features in $ \vec{x} $ are statistically independent, but it'll work fine if they are not. 
+    - We'll calculate $ \mu $ and $ \sigma^{2} $ for each feature.
+    - The math at the bottom right is an example of why we multiply probabilities. It's to get the chances of multiple things happening at once. This uses the airplane engine example and gets the probably that an engine will run really hot and vibrates a lot.
+
+    Let's see how we can put it all together:
+
+    ![alt text](images/anomaly_alg_2.png)
+
+    - One intuition behind what this algorithm is doing is that it will tend to flag an example as anomalous if 1 or more of the features are either very large or very small relative to what it has seen in the training set. 
+        - For example, if a probability was really small and you multiply other probabilities with it, then the product would be small.
+        - What anomaly detection is doing in this algorithm is building a systematic way of quantifying whether or not a new example $ \vec{x} $ has any features that are unusually large or unusually small.
+    
+    Now let's take a look at what this means on an example:
+
+    ![alt text](images/anomaly_alg_3.png)
+
+    - If you were to multiply $ p(x_{1}) and p(x_{2}) $, you'd end up with the 3D surface plot shown at the bottom left, where the height corresponds to $ p(x) $.
+    - The blue dot on the 2D graph may correspond to something like the dark blue dot at the bottom left of the 3D surface plot.
+
+#### Developing and Evaluating an Anomaly Detection System
+- Let's look at some practical tips for developing an anomaly detection system:
+
+    ![alt text](images/dev_eval_anomaly_1.png)
+
+    - If you have a way to evaluate an algorithm that just outputs a number (real-number evaluation), you'll be able to more easily make decisions on how to improve your algorithm.
+    - In practice, if a few anomalous examples slipped into your training set, it should still do okay.
+    - To evaluate your algorithm, come up with a way for you to have a real number evaluation, it turns out to be very useful if you have a small number of anomalous examples so that you can create a cross validation set, and similar, have a test set. Again, the algorithm will work okay, in practice, if some examples are mislabeled.
+
+    Let's revisit the airplane engine example:
+
+    ![alt text](images/dev_eval_anomaly_2.png)
+
+    - Usually, the number of examples for $ y = 1 $ will be much smaller than $ y = 0 $. It will not be a typical to apply this type of algorithm with anywhere from, say, 2-50 known anomalies. 
+    - You could use the cross validation set to tune $ \epsilon $ by seeing how many of the anomalous engines the algorithm correctly flags. After that, you can also try tuning features $ x_{j} $ (add or subtract each of $ x_{j} $).
+    - You could use the test set to evaluate your algorithm.
+    - This is primarily an unsupervised learning algorithm because the training set has no labels `y` (or they all have labels that we're assuming to be $ y = 0 $).
+    - It turns out if you're building a practical anomaly detection system, having a small number of anomalies to use to evaluate the algorithm that your cross validation and test sets is very helpful for tuning the algorithm.
+    - When the number of known anomalies is so small, an alternative method is just to use a cross validation set and no test set.
+        - The downside of this alternative here is that after you've tuned your algorithm, you don't have a fair way to tell how well this will actually do on future examples because you don't have the test set, but this might be the best alternative you have if your dataset is small.
+        - This method has a higher risk of overfitting. There's a higher risk that you will have overfit some of your decisions around $ \epsilon $, choice of features, and so on to the cross-validation set, and so its performance on real data in the future may not be as good as you were expecting. 
+    
+    Let's take a closer look at how to actually evaluate the algorithm on your cross-validation sets or on the test set:
+
+    ![alt text](images/dev_eval_anomaly_3.png)
+
+    - We compute `y` based on $ p(x) $ and checks if it matches the label `y` in the cross-validation or test sets.
+    - For many anomaly detection applications, the dataset is skewed (number of anomalies in a dataset is much smaller). Previously, we had 2000 positive examples and 10 positive examples in our cross-validation set. So, consider applying the $ F_{1} $-score evaluation metric.
+    - The takeaway here is to use the cross-validation set to just look at how many anomalies it is finding and also how many non-anomalies are incorrectly flagging as an anomaly, and use that to try to choose a good choice for the parameter $ \epsilon $.
+
+#### Anomaly Detection vs. Supervised Learning
+- When you have a few positive examples with $ y = 1 $ and a large number of negative examples say $ y = 0 $? When should you use anomaly detection and when should you use supervised learning? The decision is actually quite subtle in some applications. Here are some thoughts and suggestions for how to pick between these two types of algorithms:
+
+    ![alt text](images/anom_vs_super_1.png)
+
+    - Fraud techniques change all the time while spam emails usually sell the same thing, lead to the same website, etc.
+
+    Let's look at some more examples:
+    
+    ![alt text](images/anom_vs_super_2.png)
+
+    - Supervised learning can be used to detect previous forms of fraud.
+
+#### Choosing What Features to Use
+- In supervised learning, if you don't have the features quite right, or if you have a few extra features that are not relevant to the problem, that often turns out to be okay because the algorithm has the supervised signal, that is enough labels `y`, for the algorithm to figure out what features to ignore or how to re-scale features and to take the best advantage of the features you do give it. For anomaly detection which runs, or learns, just from unlabeled data, it is harder for the algorithm to figure out what features to ignore. So, Professor Ng has found that carefully choosing the features is even more important for anomaly detection than for supervised learning approaches. Let's take a look at some practical tips for how to tune the features for anomaly detection to try to get you the best possible performance:
+
+    ![alt text](images/choosing_features_anom_1.png)
+
+    - One step that can help your anomaly detection algorithm is to try to make sure the features you give it are more or less Gaussian. If your features are not Gaussian, sometimes you can change it to make it a little bit more Gaussian.
+        - Take at look at the graphs. Non-gaussian features don't have that bell-curve distribution.
+        - You can try to make the feature more Gaussian by, for example, taking the log of that feature. The slide shows some techniques you can use.
+    - $ log(x_{2} + c) $ is just a general transformation you can do where `c` is a number. A larger value of `c` will end up transforming the distribution less.
+
+    Let's see how this can be done in a Jupyter notebook:
+
+    ![alt text](images/choosing_features_anom_2.png)
+
+    This histogram does not look too good, so we can add more bins to make it look better:
+
+    ![alt text](images/choosing_features_anom_3.png)
+
+    Let's try a transformation:
+
+    ![alt text](images/choosing_features_anom_4.png)
+
+    - This looks a little more Gaussian.
+
+    Let's try a different number:
+
+    ![alt text](images/choosing_features_anom_5.png)
+
+    - This looks like it was adjusted too far.
+
+    Let's try another number:
+
+    ![alt text](images/choosing_features_anom_6.png)
+
+    - This looks pretty Gaussian. So, we'll replace `x` with $ x^{4} $.
+
+    We can also try a log transformation:
+
+    ![alt text](images/choosing_features_anom_7.png)
+
+    - We added `0.001`, a small number, here since some values in `x` may be 0 - $ log(0) $ is undefined.
+
+    We can also play around with the paramter for this one to see if there's a parameter can make `x` look more Gaussian:
+
+    ![alt text](images/choosing_features_anom_8.png)
+
+    ![alt text](images/choosing_features_anom_9.png)
+
+    ![alt text](images/choosing_features_anom_10.png)
+
+    ![alt text](images/choosing_features_anom_11.png)
+
+    ![alt text](images/choosing_features_anom_12.png)
+
+    There are machine learning literature can show some ways to automatically measure how close these distributions are to Gaussian, but Professor Ng found that in practice, it doesn't make a big difference. If you just try a few values and pick something that looks right to you, that will work well for all practical purposes. Just remember to apply the same transformation to your test and cross-validation sets.
+
+    Other than making sure that your data is approximately Gaussian, after you've trained your anomaly detection algorithm, if it doesn't work that well on your cross validation set, you can also carry out an error analysis process for anomaly detection. In other words, you can try to look at where the algorithm is not yet doing well whereas making errors, and then use that to try to come up with improvements.
+
+    ![alt text](images/choosing_features_anom_13.png)
+
+    - Look at the blue example. It has a pretty large probability even though it's an anomaly. The algorithm will fail to flag this as an anomaly. In this case, what Professor Ng would do is try to look at that example and try to figure out what is it that made him think it is an anomaly, even if this feature $ x_{1} $ took on values similar to other training examples. If he can identify some new feature, say, $ x_{2} $. that helps distinguish this example from the normal examples, then adding that feature can help improve the performance of the algorithm. This is represented by the graph on the right. By graphing these two features together, we can cause that anomaly to stand out (in this example).
+
+    To summarize Ng's development process for anomaly detection:
+    - Train the model.
+    - See what anomalies in the cross validation set the algorithm is failing to detect. 
+    - Look at those examples to see if that can inspire the creation of new features that would allow the algorithm to spot that example - make the example take on unusually large or unusually small values on the new features, so that you can now successfully flag those examples as anomalies.
+
+    Let's say you're building an anomaly detection system to monitor computers in the data center:
+
+    ![alt text](images/choosing_features_anom_14.png)
+
+    - You want to try to figure out if a computer may be behaving strangely and deserves a closer look - maybe because of a hardware failure, or because it's been hacked into or something.
+    - If you train the algorithm, you may find that it detects some anomalies but fails to detect some other anomalies. In that case, it's not unusual to create new features by combining old features.
+        - For example, if you find that there's a computer that is behaving very strangely, but neither is CPU load nor network traffic is that unusual, but what is unusual is it has a really high CPU load while having a very low network traffic volume. You might create a new feature $ x_{5} $ (show in the slide) or other features like $ x_{6} $. You can play around with different choices of these features in order to try to get it so that p(x) is still large for the normal examples, but it becomes small for the anomalies in your cross validation set.
+
+#### Practice Lab: Anomaly Detection
+- [Anomaly Detection](https://colab.research.google.com/drive/1TrJygdpAFOMLJAtj7xzJ7pHS6v0qVJUu?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -2942,3 +3138,5 @@
 - [Decision Trees](https://colab.research.google.com/drive/1KmFSAsvpgTcRLp2RzqEZPauz2wGappP3?authuser=4)
 
 - [K-Means](https://colab.research.google.com/drive/1MHgQwQZF3C6v5BQm9D3R-KnEgeaSLGdQ?authuser=4)
+
+- [Anomaly Detection](https://colab.research.google.com/drive/1TrJygdpAFOMLJAtj7xzJ7pHS6v0qVJUu?authuser=4)
