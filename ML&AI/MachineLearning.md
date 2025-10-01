@@ -3176,6 +3176,65 @@
 
     ![alt text](images/collaborative_filtering_binary_4.png)
 
+### Recommender Systems Implmentation Detail
+
+#### Mean Normalization
+- In the case of building a recommended system with numbers `y` such as movie ratings from one to five or zero to five stars, it turns out your algorithm will run more efficiently and also perform a bit better if you first carry out mean normalization, that is if you normalize the movie ratings to have a consistent average value. Let's take a look at what that means:
+
+    ![alt text](images/mean_normalizaton_1.png)
+
+    - This is the dataset that we've been using but with a 5th user who has not rated any movies.
+    - If you were to train a collaborative filtering algorithm on this data, then because we are trying to make the parameters `w` small because of the regularization term, if you were to run the algorithm on this dataset, you actually end up with the parameters $ w^{(5)} $ for the fifth user, Eve, shown above. It's all 0 because Eve has not rated any movies yet, the parameters $ w^{(5)} $ and $ b^{(5)} $ don't affect the first term (squared error part, since Eve has not rated any movies so all pairs of r(i, j) = 0) in the cost function. This ends up with all predictions for Eve's movie ratings being 0. That's not helpful.
+    - We'll write out all the ratings in a 2D matrix just so they are shown in a more sustained and more compact way. 
+
+    Let's see how to carry out mean normailization:
+
+    ![alt text](images/mean_normalizaton_2.png)
+
+    - For each row, we get the average and put them into a new vector, $ \mu $. After getting the average, we'll make a new matrix that takes the old one and subtracts the mean of each row from each row. This will become our new $ y^{(i, j)} $, which we will use to learn the parameters. Notice that we now add back $ \mu_{i} $ in the linear regression formula; this is so that we do not get negative values. 
+        - This new algorithm will cause Eve's initial guess to be equal to the average rating for that movie.
+        - It turns out that by normalizing the mean of the different movies ratings to be zero, the optimization algorithm for the recommender system will also run just a little bit faster. It also makes the algorithm behave much better for users who have rated no movies or very small numbers of movies, and the predictions will become more reasonable.
+    - In this example, what we did was normalize each of the rows of this matrix to have zero mean, and we saw this helps when there's a new user that hasn't rated a lot of movies yet. 
+    - There's one other alternative that you could choose to instead normalize the columns of this matrix to have a zero mean, and that would be a reasonable thing to do too, but Professor Ng thinks this application, normalizing the rows so that you can give reasonable ratings for a new user, seems more important than normalizing the columns. Normalizing the columns would help if there was a brand new movie that no one has rated yet, but if there's a brand new movie that no one has rated yet, you probably shouldn't show that movie to too many users initially because you don't know that much about that movie. So, normalizing columns the help with the case of a movie with no ratings seems less important to Ng than normalizing the rows to help with the case of a new user that's hardly rated any movies yet.
+
+#### TensorFlow Implementation of Collaborative Filtering
+- You might be used to thinking of TensorFlow as a tool for building neural networks, which it is a great tool for, but it turns out that TensorFlow can also be very helpful for building other types of learning algorithms as well. For many applications, you need to find the derivatives of the cost function to implement gradient descent, but TensorFlow can automatically figure out for you what are the derivatives of the cost function. All you have to do is implement the cost function and without needing to know any calculus, without needing to take derivatives yourself, you can get TensorFlow, with just a few lines of code, to compute that derivative term that can be used to optimize the cost function. Let's take a look at how this works:
+
+    ![alt text](images/TensorFlow_cf_1.png)
+
+    - This is the simplified model, where we took out `b`, that we had used in the past to learn how gradient descent works. 
+    
+    Computing the derivative term can be difficult, but TensorFlow can help with that.
+
+    ![alt text](images/TensorFlow_cf_2.png)
+
+    - The correct term for the feature which automatically takes derivatives is **Auto Diff**, but you may hear *Auto Grad* as well.
+
+    Here's how we can implement the collaborative filtering algorithm in TensorFlow:
+
+    ![alt text](images/TensorFlow_cf_3.png)
+
+    - The `zip()` Python function rearranges the numbers into an appropriate ordering for the `apply_gradients()` function.
+    - With TensorFlow and Auto Diff, you're not limited to just gradient descent. Here, we're using a more powerful optimization algorithm: the Adam optimizer.
+
+#### Finding Related Items
+- When you're browsing a shopping website or movie website, it'll show you related items. How does it do that? It turns out the collaborative filtering algorithm that we've been talking about gives you a nice way to find related items. Let's take a look:
+
+    ![alt text](images/finding_related_items_1.png)
+
+    - When you learn features, they may be hard to interpret, but they do convey what thay item is like.
+    - For practical use, you would probably get the 5 or so items with the smallest distance.
+
+    Here are some limitations of collaborative filtering:
+
+    ![alt text](images/finding_related_items_2.png)
+
+    - The results of collaborative filtering may not be very accurate in the case of the cold start problem.
+    - The second limitation of collaborative filtering is it doesn't give you a natural way to use side information or additional information about items or users. 
+
+#### Practice Lab: Collaborative Filtering Recommender Systems
+- [Collaborative Filtering Recommender Systems](https://colab.research.google.com/drive/1zlpCPrGPkAdWSGgmMczh7Nc_PV4Gqra2?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -3256,3 +3315,5 @@
 - [K-Means](https://colab.research.google.com/drive/1MHgQwQZF3C6v5BQm9D3R-KnEgeaSLGdQ?authuser=4)
 
 - [Anomaly Detection](https://colab.research.google.com/drive/1TrJygdpAFOMLJAtj7xzJ7pHS6v0qVJUu?authuser=4)
+
+- [Collaborative Filtering Recommender Systems](https://colab.research.google.com/drive/1zlpCPrGPkAdWSGgmMczh7Nc_PV4Gqra2?authuser=4)
