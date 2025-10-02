@@ -3235,6 +3235,129 @@
 #### Practice Lab: Collaborative Filtering Recommender Systems
 - [Collaborative Filtering Recommender Systems](https://colab.research.google.com/drive/1zlpCPrGPkAdWSGgmMczh7Nc_PV4Gqra2?authuser=4)
 
+### Content-Based Filtering
+
+#### Collaborative Filtering vs Content-Based Filtering
+- Let's take a look at the difference:
+
+    ![alt text](images/collab_vs_content_1.png)
+
+    - With content-based filtering, you still have data where users have rated some items.
+    - The key to content-based filtering is that we will be able to make good use of features of the user and of the items to find better matches than potentially a pure collaborative filtering approach might be able to.
+
+    Here are some examples of features:
+
+    ![alt text](images/collab_vs_content_2.png)
+
+    - Features could be 1 hot.
+    - You could use these features to construct other features as well like average rating per country or demographic.
+    - Note that the number of features for users and movies can be different from each other.
+
+    Let's take a look at the algorithm we're trying to build:
+
+    ![alt text](images/collab_vs_content_3.png)
+
+    - Previously, we were trying to predict user j's rating of movie i.
+    - For content-based fitlering, we will get rid of $ b^{(j)} $. It turns out this won't hurt the performance of the content-based filtering at all.
+    - Instead of $ w^{(j)} $ and $ x^{(i)} $, we have $ v_{u}^{j} $ and $ v_{m}^{i} $ computed from user features and movie features respectively.
+        - $ v_{u}^{j} $ and $ v_{m}^{i} $ are the same size.
+    - Note that the "likes" on the user vector represent liking a certain genre: action, romance, etc.
+    - The challenge is, given the user features and movie features, how can we compute these vectors?
+
+#### Deep Learning for Content-Based Filtering
+- A good way to develop a content-based filtering algorithm is to use deep learning. The approach we will discuss is the way that many important commercial state-of-the-art content-based filtering algorithms are built today. Let's take a look at how to build it:
+
+    ![alt text](images/deep_learning_for_content_filtering_1.png)
+
+    - We use a neural network to build the user and movie vectors.
+    - Notice that the output layers of both neural networks are the same size, representing the size of the vectors. The hidden layers for each neural network can vary vastly or can be the same.
+    - In the description you've seen so far, we were predicting the 1-5 or 0-5 star movie rating. If we had binary labels, if y was whether the user liked or favored an item, then you can also modify this algorithm to output `0` or `1` by using the sigmoid function.
+
+    We can actually draw these two neural networks together as if they were a single neural network like this:
+
+    ![alt text](images/deep_learning_for_content_filtering_2.png)
+
+    - This model has a lot of paramters. How can we train both the neural networks? Well, we'll use a cost function shown above. 
+    - It turns out, after you've trained this model, you can also use this to find similar items. This is akin to what we have seen with collaborative filtering features, helping you find similar items as well.
+
+    Let's take a look at how to find similar times using content-based filtering:
+
+    ![alt text](images/deep_learning_for_content_filtering_3.png)
+
+    - If you want to find other movies similar to movie i, you can then look for other movies k so that the distance between the vector describing movie k and the vector describing movie i, that the squared distance, is small.
+    - This can be pre-computed ahead of time. You can run a compute server overnight to go through the list of all your movies, and for every movie, find similar movies to it, so that tomorrow, if a user comes to the website and they're browsing a specific movie, you can already have pre-computed 10 or 20 most similar movies to show to the user at that time. The fact that you can pre-compute ahead of time what's similar to a given movie will turn out to be important later when we talk about scaling up this approach to a very large catalog of movies.
+
+- This algorithm shows you one of the benefits of using neural networks over decision trees; neural networks can be put together more easily to work in concert. 
+
+#### Recommending From a Large Catalogue
+- Today's recommender systems will sometimes need to pick a handful of items to recommend from a catalog of thousands or millions or 10s of millions or even more items. How do you do this efficiently computationally, let's take a look:
+
+    ![alt text](images/large_catalogue_cbf_1.png)
+
+    - Having to run inference on millions of items every time a user visits your website becomes computationally infeasible.
+
+    Many large scale recommender systems are implemented as two steps:
+
+    ![alt text](images/large_catalogue_cbf_2.png)
+
+    - The retrieval step will generate a large list of plausible item candidates that tries to cover a lot of possible things you might recommend to the user, and it's okay, during the retrieval step, if you include a lot of items that the user is not likely to like
+    - During the ranking step, the algorithm will fine tune and pick the best items to recommend to the user.
+    - As we saw earlier, the distances for each movie can be precomputed.
+    - The retrieval step can be done quickly, and you may get a list of 100 or 100s of plausible movies to recommend to the user.
+    - The goal of the retrieval step is to ensure broad coverage.
+
+    Let's take a look at the ranking step:
+
+    ![alt text](images/large_catalogue_cbf_3.png)
+
+    - If you have computed $ v_{m} $ for all the movies in advance, then all you need to do is to do inference on the user part of the neural network. So, this computation can be done relatively quickly.
+
+    One of the decisions you need to make for this algorithm is how many items do you want to retrieve during the retrieval step to feed into the more accurate ranking step.
+
+    ![alt text](images/large_catalogue_cbf_4.png)
+
+    - If the estimated rating of `y` of the retrieved items ends up being much higher according your model's prediction if only you were to retrieve say 500 items instead of only 100 items, then that Professor Ng would argue for maybe retrieving more items even if it slows down the algorithm a bit.
+    - With the separate retrieval step and the ranking step, this allows many recommender systems today to give both fast as well as accurate results because the retrieval step tries to prune out a lot of items that are just not worth doing the more detailed inference and inner product on, and then the ranking step makes a more careful prediction for what are the items that the user is actually likely to enjoy
+
+#### Ethical Use of Recommender Systems
+- Even though recommender systems have been very profitable for some businesses, there have been some use cases that have left people and society at large worse off. Let's take a look at some of the problematic use cases of recommender systems, as well as ameliorations to reduce harm or to increase the amount of good that they can do:
+
+    ![alt text](images/ethical_use_recommenders_1.png)
+
+    - When designing a recommender system, there are choices in setting the goal of the recommender system and a lot of choices in deciding what to recommend to users.
+    - Some ad companies put in high bids (high pay per click), which will affect their ads' appearances.
+    - The top two use cases seem good, but the last 3 could be problematic use cases.
+
+    Let's take a look at the potentially problematic use cases:
+
+    ![alt text](images/ethical_use_recommenders_2.png)
+
+    - Here, we're looking at a good and bad use case of the advertisement use case.
+        - The travel industry has a virtuous cycle, while the payday loans industry does not.
+    - How do you define an exploitative business?
+        - This is a good question to think about as we head into our careers.
+    
+    Let's look at some other examples:
+
+    ![alt text](images/ethical_use_recommenders_3.png)
+
+#### TensorFlow Implementation of Content-Based Filtering
+- Let's take a look at the code:
+
+    ![alt text](images/tf_cbf_1.png)
+
+    - At the top, we create the user and item neural networks.
+    - Next, we extract out the features for the users and items and then feed them to their respective neural networks.
+        - `tv.linalg.12_normalize(vec, axis=1)` normalizes the length vector `vec` to be equal to 1. This step makes the algorithm work a bit better.
+            - `vec` here is just a general name for vector. There is no `vec` in the code above.
+    - Keras has a special layer type that just takes the dot product. We use that to take the dot product between `vu` and `vm`.
+    - We then tell Keras the inputs and output of the model.
+    - Lastly, we specify the cost function.
+    - This code snippet are just the key parts; the rest can be seen in the following lab.
+
+#### Practice Lab: Deep Learning for Content-Based Filtering
+- [Deep Learning for Content-Based Filtering](https://colab.research.google.com/drive/1r1EZlexjPY7VCIhOOpQ9w17Q1GGfwcHa?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -3317,3 +3440,5 @@
 - [Anomaly Detection](https://colab.research.google.com/drive/1TrJygdpAFOMLJAtj7xzJ7pHS6v0qVJUu?authuser=4)
 
 - [Collaborative Filtering Recommender Systems](https://colab.research.google.com/drive/1zlpCPrGPkAdWSGgmMczh7Nc_PV4Gqra2?authuser=4)
+
+- [Deep Learning for Content-Based Filtering](https://colab.research.google.com/drive/1r1EZlexjPY7VCIhOOpQ9w17Q1GGfwcHa?authuser=4)
