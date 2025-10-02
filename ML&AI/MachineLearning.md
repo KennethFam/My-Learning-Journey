@@ -3358,6 +3358,202 @@
 #### Practice Lab: Deep Learning for Content-Based Filtering
 - [Deep Learning for Content-Based Filtering](https://colab.research.google.com/drive/1r1EZlexjPY7VCIhOOpQ9w17Q1GGfwcHa?authuser=4)
 
+## Principal Component Analysis
+- PCA, or principal components analysis, is an unsupervised learning algorithm that lets you take data with a lot of features (50, 1,000, or even more) and reduce the number of features to two features, maybe three features, so that you can plot it and visualize it. It's commonly used by data scientists to visualize the data to figure out what might be going on.
+
+### Reducing the Number of Features
+- Let's take a look at how PCA works:
+
+    ![alt text](images/reducing_features_1.png)
+
+    - A car can have many features (length, width, wheel diameter, etc.).
+
+    Let's say we had just the length and width:
+
+    ![alt text](images/reducing_features_2.png)
+
+    - A car's width is constrained due to lane size. So, if you were to plot the length and width of a car, you'd probably find that the widths are about the same while the lengths vary.
+        - When PCA is applied to this dataset, it'll decided to just take the length, $ x_{1} $.
+    
+    Let's look at a second example:
+
+    ![alt text](images/reducing_features_3.png)
+
+    - This time, we have the diameter of the wheel instead of the width.
+    - The diameter does vary but only a little bit. We could choose to keep just $ x_{1} $ to reduce the features.
+
+    Let's look at a more complex example:
+
+    ![alt text](images/reducing_features_4.png)
+
+    - The heights of cars varies a lot.
+    - Here, it's harder to choose which feature to get rid of because they both vary a lot and have useful information.
+    - What if we have a z-axis, which is not sticking out in a 3rd dimension but is lying flat in this plot. It's a combination of $ x_{1} $ and $ x_{2} $.
+        - We reduced the number of features by having a new axis, "size", which uses both $ x_{1} $ and $ x_{2} $.
+    - In practice, PCA is used to reduce a very large number of features down to 2 or 3 features.
+
+    Let's take a look at another example:
+
+    ![alt text](images/reducing_features_5.png)
+
+    ![alt text](images/reducing_features_6.png)
+
+    ![alt text](images/reducing_features_7.png)
+
+    ![alt text](images/reducing_features_8.png)
+
+    - There are several different angles of the 3D data shown above. Notice how the 3D data takes a kind of 2D shape.
+    - Here, the data was reduced from 3 features to 2 features. 
+
+    Let's say we have data about the development status of many different countries:
+
+    ![alt text](images/reducing_features_9.png)
+
+    ![alt text](images/reducing_features_10.png)
+
+    ![alt text](images/reducing_features_11.png)
+
+    ![alt text](images/reducing_features_12.png)
+
+    And so on...
+
+    As we have more and more features, the data becomes harder and harder to visualize.
+
+    What if we each country had 50 features?
+
+    ![alt text](images/reducing_features_13.png)
+
+    ![alt text](images/reducing_features_14.png)
+
+    - PCA will let you take the 50 features and compress them down into two features: $ z_{1} $ and $ z_{2} $.
+        - You may find that $ z_{1} $ loosely corresponds to a country's GDP and $ z_{2} roughly corresponds to per person GDP $
+
+### PCA Algorithm
+- How does PCA work? If you have a dataset with two features, $ x_{1} $ and $ x_{2} $. Initially, your data is plotted or represented using axes $ x_{1} $ and $ x_{2} $, but you want to replace these two features with just one feature. How can you choose a new axis, let's call it the z-axis, that is somehow a good feature for capturing or representing the data? Let's take a look at how PCA does this:
+
+    ![alt text](images/pca_alg_1.png)
+
+    - Here's a dataset with 5 training exmaples. There's no label `y`, since this is an unsupervised training algorithm.
+    - Before applying the steps of PCA, the features should be normalized to have a zero mean.
+    - If the features have different scaling, then you'll also want to feature scale them.
+
+    With these steps out of the way, let's take a look at what PCA does:
+
+    ![alt text](images/pca_alg_2.png)
+
+    - Here, we've removed the x and y axis.
+    - What we have to do now with PCA is pick one axis instead of the two axes that we had previously with which to capture what's important about these five examples.
+
+    We could choose this axis:
+
+    ![alt text](images/pca_alg_3.png)
+
+    - The red dots are where the training examples are projecting onto the new axis.
+    - This axis isn't too bad, since we're keeping the variance from the original dataset (i.e. we're capturing a lot of the information in the original five examples).
+
+    Let's look at some other possible choices.
+
+    ![alt text](images/pca_alg_4.png)
+
+    - Not a great choice. We're capturing less information from the original dataset.
+
+    ![alt text](images/pca_alg_5.png)
+
+    - This is a better choice than the last two. We're capturing a lot of the information from the original data set.
+    - In PCA, this axis is called the **principal component**. It's the axis that results in the largest possible variance when you project data onto it.
+
+    Let's look at a visualization of how different choices of the axis affects the projection:
+
+    ![alt text](images/pca_alg_6.png)
+
+    - We can see the angle in the top right and the projection on the line on the right.
+
+    ![alt text](images/pca_alg_7.png)
+
+    ![alt text](images/pca_alg_8.png)
+
+    - Notice how the points are more squished together here.
+
+    ![alt text](images/pca_alg_9.png)
+
+    - The points vary much more here, therefore capturing much more information from the original dataset.
+
+    ![alt text](images/pca_alg_10.png)
+
+    - PCA would set the axis to about here if you asked it to reduce the data to 1D.
+    - A machine learning library like `scikit-learn` can help you automatically find the principal component.
+
+    Let's take a deeper look at how PCA works:
+
+    ![alt text](images/pca_alg_11.png)
+
+    - PCA has chosen that axis `z`.
+    - The purple vector is a vector of length 1 pointing in the same direction as `z`.
+    - How do we project the training example (red `X`) onto the z-axis? It turns out the formula is the dot project shown above.
+
+    Let's take a look at an old example:
+
+    ![alt text](images/pca_alg_12.png)
+
+    ![alt text](images/pca_alg_13.png)
+
+    - If we wanted to add a 2nd axis, it turns out that it'll always be at a $ 90\degree $ angle to the first axis. If you were to choose a 3rd axis, it'll be at a $ 90\degree $ to the first and second axes. And so on...
+
+    How is PCA different from linear regression?
+
+    ![alt text](images/pca_alg_14.png)
+
+    - In linear regression, you have data (x, y), and you're trying to fit a line where the distance from each point to the line is as small as possible. By doing this, you give `y` "special" treatment because you're minimizing the distance between $ \hat{y} $ and $ y $. Linear regression is trying to predict an output `y`.
+    - PCA uses unlabeld data, and all the features are treated equally. We're trying to find a line segment z, where when the data is projected onto it, it'll retain as much information from the original dataset as possible. PCA is trying to take a lot of features, treat them all equally, and reduce the number of axes necessary to represent the data well.
+    - It turns out that maximizing the spread of these projections will correspond to minimizing the distances of these line segments, the distances the points have to move to be projected down to a. 
+
+    Let's illustrate the difference another way:
+
+    ![alt text](images/pca_alg_15.png)
+
+    - Here, linear regression and PCA produce very different lines.
+
+    Here's one more thing you can do with PCA:
+
+    ![alt text](images/pca_alg_16.png)
+
+    - Can we get the original example from the projected point? You don't have enough information to get $ x_{1} $ and $ x_{2} $, you can can approximate them through a process called **reconstruction**, where you take the projected value and multiply it by the length 1 vector that we had.
+
+### PCA in Code
+- Let's see how we can use the `scikit-learn` Python library to implement PCA:
+
+    ![alt text](images/pca_code_1.png)
+
+    - The PCA algorithm can give you more than 2 or 3 axes, but it'll just be hard to visualize.
+    - The `fit` method automatically does mean normalization.
+    - The 2nd optional step helps you get a sense of whether or not projecting the data onto these axes help you to retain most of the variability, or most of the information in the original dataset.
+    - The text in the lighter black color under the steps are actual methods.
+
+    Here's what PCA in code will look like:
+
+    ![alt text](images/pca_code_2.png)
+
+    - `pca_1` is Professor Ng's notation for PCA with a single principal component.
+    - If `explained_variance_ratio_` returns 0.992, this means that the PCA algorithm was able to capture 99.2% of the variability/information of the original dataset.
+    - `inverse_transform` reverses the projection.
+
+    Let's take a look at an example with 2 principal components.
+
+    ![alt text](images/pca_code_3.png)
+
+    - `explained_variance_ratio_` should return 2 values which correspond to $ z_{1} $ and $ z_{2} $ respectively.
+        - Let's say they are 0.992 and 0.008. These two numbers add up to one because this data is two-dimensional, so the two axes, $ z_{1} $ and $ z_{2} $, explain 100% of the variance in the data. 
+    
+    Here's some advice for applying PCA:
+
+    ![alt text](images/pca_code_4.png)
+
+    - Due to evolving technologies (more storage, faster speeds, etc.), PCA isn't really used for data compression anymore. The same applies for training a supervised learning model (i.e. we have better learning algorithms now).
+    - Professor Ng likes using PCA for data visualization.
+
+### Optional Lab: PCA and Data Visualization
+- [PCA and Data Visualization](https://colab.research.google.com/drive/1wFWc_ox_FonVn4N5Is-NPJVeHXXCQK0J?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -3421,6 +3617,8 @@
 - [Decision Trees](https://colab.research.google.com/drive/1F19PELdKJ6XXDnmqI7AcbODEw0v8sD42?authuser=4)
 
 - [Tree Ensembles](https://colab.research.google.com/drive/1dJe7HOWH8A5Sypm6voi8FnHIYDd9u3tP?authuser=4)
+
+- [PCA and Data Visualization](https://colab.research.google.com/drive/1wFWc_ox_FonVn4N5Is-NPJVeHXXCQK0J?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
