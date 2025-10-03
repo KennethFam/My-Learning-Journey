@@ -3554,6 +3554,117 @@
 ### Optional Lab: PCA and Data Visualization
 - [PCA and Data Visualization](https://colab.research.google.com/drive/1wFWc_ox_FonVn4N5Is-NPJVeHXXCQK0J?authuser=4)
 
+## Reinforcement Learning
+
+### Reinforcement Learning Introduction
+
+#### What is Reinforcement Learning?
+- In machine learning, reinforcement learning is one of those ideas that, while not very widely applied in commercial applications yet today, is one of the pillars of machine learning andnd has lots of exciting research backing it up and improving it every single day. Let's start by taking a look at what is reinforcement learning by looking at an example:
+
+    ![alt text](images/what_is_reinforcement_learning_1.png)
+
+    ![alt text](images/what_is_reinforcement_learning_2.png)
+
+    - The Stanford helicopter weighs 32 pounds.
+    - How would you write a program to fly it?
+    - Radio controlled helicopters are controlled with (2) joysticks, and so the task is, ten times per second, you're given the position, orientation, speed, and so on of the helicopter, and you have to decide how to move the joysticks in order to keep the helicopter balanced in the air. 
+    - Check out this [link](http://heli.stanford.edu) to see videos on how reinforcement learning was used to have this helicopter learn to fly upside-down among other things.
+
+    How do you get a helicopter to fly itself using reinforment learning?
+
+    ![alt text](images/what_is_reinforcement_learning_3.png)
+
+    - In reinforcement learning, we call the position, orientation, speed, and so on of the helicopter the state s.
+    - You could try using supervised learning, but it turns out this is not a great approach for autonomous helicopter flying. A state, `x`, may not always map to one action `y`. When a helicopter is moving through the air, it's actually very ambiguous what the one right action to take.
+        - It's very difficult to get a dataset of `x` and the ideal action `y`.
+    - A key input to the reinforcement learning algorithm is the reward function, which tells the helicopter when it's doing well and when it's doing poorly.
+    - One way to think of why reinforcement learning is so powerful is you have to tell it what to do rather than how to do it and specifying the reward function rather than the optimal action gives you a lot more flexibility in how you design the system. 
+    - Concretely, for flying the helicopter, whenever it is flying well, you may give it a reward of +1 every second it is flying well. Maybe whenever it's flying poorly, you may give it a negative reward, or if it ever crashes, you may give it a very large negative reward like -1,000. This would incentivize the helicopter to spend a lot more time flying well and hopefully to never crash. 
+
+    Here are some applications of reinforment learning:
+
+    ![alt text](images/what_is_reinforcement_learning_4.png)
+
+#### Mars Rover Example
+- We'll develop reinforcement learning using a simplified example inspired by the Mars rover.
+
+    ![alt text](images/mars_rover_ex_1.png)
+
+    - In this application, the rover can be in any of six positions, as shown by the six boxes here. The rover might start off, say, in the fourth box shown here. The position of the Mars rover is called the state in reinforcement learning. There are six states here: state 1, state 2, state 3, state 4, state 5, and state 6. So, the rover is starting off in state 4. 
+    - The rover was sent to Mars to try to carry out different science missions. It can go to different places to use its sensors such as a drill, or a radar, or a spectrometer to analyze the rock at different places on the planet, or go to different places to take interesting pictures for scientists on earth to look at.
+    - In this example, state 1 here on the left has a very interesting surface that scientists would love for the rover to sample. State 6 also has a pretty interesting surface that scientists would quite like the rover to sample, but not as interesting as state 1. We would more likely to carry out the science mission at state 1 than at state 6, but state 1 is further away. The way we will reflect state 1 being potentially more valuable is through the reward function. The reward at state 1 is a 100, the reward at state 6 is 40, and the rewards at all of the other states in-between is 0 because there's not as much interesting science to be done at these states: 2, 3, 4, and 5. 
+    - On each step, the rover gets to choose one of two actions; it can either go to the left, or it can go to the right. The question is: what should the rover do?
+    -  In reinforcement learning, we pay a lot of attention to the rewards because that's how we know if the robot is doing well or poorly.
+    - Let's look at some examples of what might happen:
+        - If the robot was to go left, starting from state 4, then initially starting from state 4, it will receive a reward of 0. After going left, it gets to state 3, where it receives again a reward of 0. Then, it gets to state 2, receives the reward is 0, and finally gets to state 1, where it receives a reward of 100. For this application, let's assume that when it gets either state 1 or state 6, the day ends. In reinforcement learning, we sometimes call this a **terminal state**. What that means is that, after it gets to one of these terminals states, it gets a reward at that state, but then nothing happens after that. Maybe the robot runs out of fuel or ran out of time for the day, which is why it only gets to either enjoy the 100 or the 40 points reward, but then that's it for the day. It doesn't get to earn additional rewards after that.
+        - Instead of going left, the robot could also choose to go to the right in which case from state 4, it would first have a reward of 0, and then it'll move right and get to state 5, have another reward of 0, and then it will get to this other terminal state on the right, state 6, and get a reward of 40. 
+        Going left and going right are not the only options. One thing the robot could do is it can start from state 4 and decide to move to the right. It goes from state 4 to 5, gets a reward of 0 at state 4 and a reward of 0 in state 5, and then maybe it changes its mind and decides to start going to the left. In this case, it will get a reward of 0 at state 4, at state 3, and state 2, and then the reward of 100 when it gets to state 1. In this sequence of actions and states, the robot is wasting a bit of time. So, this maybe isn't such a great way to take actions, but it is one choice that the algorithm could pick, but hopefully you won't pick this one.
+        - Note that the points at the bottom of the slide represent the points gathered for these 3 decisions.
+    - To summarize, at every time step, the robot is in some state, which I'll we'll `S`, and it gets to choose an action, and it also enjoys some rewards, `R(S)`, that it gets from that state. As a result of this action, it to some new state `S'`. As a concrete example, when the robot was in state 4 and it took the action, go left, it enjoyed or maybe didn't enjoy the reward of 0 associated with that state 4, and it wound up in state 3. Just for clarity, the reward, `R(S)`, is the reward associated with `S` state.
+    - When you learn about specific reinforcement learning algorithms, you see that these four things (state, action, reward and next state), which is what happens basically every time you take an action, tends to be the core elements of what reinforcement learning algorithms will look at when deciding how to take actions. 
+
+#### The Return in Reinforcement Learning
+- In the last example, we learned what are the states of reinforcement learning application, as well as how, depending on the actions, you take you go through different states, and also get to enjoy different rewards. But how do you know if a particular set of rewards is better or worse than a different set of rewards? The return in reinforcement learning allows us to capture that.
+
+    As we go through this, one analogy that you might find helpful is if you imagine you have a $5 bill at your feet, you can reach down and pick it up, or you can walk half an hour across town and pick up a $10 bill. Which one would you rather go after? $10 is much better than five dollars, but if you need to walk for half an hour to go and get that $10 bill, then maybe it'd be more convenient to just pick up the $5 bill instead. 
+    
+    The concept of a return captures that rewards you can get quicker are maybe more attractive than rewards that take you a long time to get to. Let's take a look at exactly how that works:
+
+    ![alt text](images/return_reinforcement_learning_1.png)
+
+    - Here's the Mars Rover example.
+    - Let's say we chose to go left, we have the sum of the rewards, but now they're weighted by one additional factor: the **discount factor**. The discount factor is a number a little bit less than 1. Let's say we chose 0.9 in this case. We represent the discount factor with $ \gamma $ ("gamma"). 
+        - The common choice for the discount factor is usually close to one (0.9, 0.99, 0.999, etc.).
+    - What the discount factor $ \gamma $ does is it has the effect of making the reinforcement learning algorithm a little bit impatient because each extra step results in less and less reward due to the discount.
+    - If we choose $ \gamma $ = 0.5, you can see that the reward for state 1 gets greatly discounted if we start at state 4.
+
+    Let's look at some concrete exampes of returns. We'll be using $ \gamma $ = 0.5.
+
+    ![alt text](images/return_reinforcement_learning_2.png)
+
+    - The return you get depends on the rewards, the rewards depend on the actions you take, and so the return depends on the actions you take. 
+    - The top example shows what happens if we can only move left, while the middle example shows what happens if we can only move right. The bottom examples shows a possible scenario for which we can choose to go left or right.
+        - The red numbers in the state boxes represent the return if we were to start off at that state.
+        - We see that if we would always go to the right, the return you expect to get is lower for most states. Maybe always going to the right isn't as good an idea as always going to the left, but it turns out that we don't have to always go to the left or always go to the right. 
+    
+- In the example we went through, all the rewards were zero or positive. If there are any rewards that are negative, then the discount factor actually incentivizes the system to push out the negative rewards as far into the future as possible. Let's look at a financial example. If you had to pay someone $10, maybe that's a negative reward of -10, but if you could postpone payment by a few years, then you're actually better off because $10 a few years from now, because of the interest rate, is actually worth less than $10 that you had to pay today. For systems with negative rewards, it causes the algorithm to try to push out the make the rewards as far into the future as possible. For financial applications and for other applications, that actually turns out to be right thing for the system to do.
+    - Pay $10 now = -10.
+    - Pay $10 in 1 year = -10 * (0.9)
+    - and so on...
+
+#### Making decisions: Policies in reinforcement learning
+- Let's formalize how a reinforcement learning algorithm picks actions by discussing what is a policy in reinforcement learning:
+
+    ![alt text](images/policies_rl_1.png)
+
+    - Here are a couple example policies (from top to bottom):
+        - Go for the nearer reward.
+        - Go for the larger reward.
+        - Go for the smaller reward.
+        - Go left unless you're 1 step away from lesser reward.
+    - In reinforcement learning, our goal is to come up with a function, which is called a policy $ \pi $, whose job it is to take as input any state $ s $ and map it to some action $ a $ that it wants us to take. 
+    - The policy function on the right is an example of the bottom policy.
+
+    So what's the goal of reinforcement learning?
+
+    ![alt text](images/policies_rl_2.png)
+
+    - Perhaps the term *controller* may be more descriptive than *policy*, but *policy* is the standard term in reinforcement learning.
+
+#### Review of Key Concepts
+- Let's review some of the key concepts of reinforcement learning:
+
+    ![alt text](images/key_concepts_rl_1.png)
+
+    - We had a couple of different policies for the Mars Rover.
+    - Note that for the helicopter and chess scenarios, we're trying to find a policy that takes a good action depending on the state.
+
+    This formalism of a reinforcement learning application actually has a name: 
+
+    ![alt text](images/key_concepts_rl_2.png)
+
+    - The term Markov in the **Markov Decision Process (MDP)** refers to the future only depending on the current state and not on anything that might have occurred prior to getting to the current state. In other words, in a Markov decision process, the future depends only on where you are now, not on how you got here.
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
