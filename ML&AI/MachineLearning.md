@@ -3665,6 +3665,159 @@
 
     - The term Markov in the **Markov Decision Process (MDP)** refers to the future only depending on the current state and not on anything that might have occurred prior to getting to the current state. In other words, in a Markov decision process, the future depends only on where you are now, not on how you got here.
 
+### State-Action Value Function
+
+#### State-Action Value Function Definition
+- There's a key quantity that reinforcement learning algorithm will try to compute and that's called the **state-action value function**. Let's take a look at what this function is:
+
+    ![alt text](images/state_action_value_fn_1.png)
+
+    - "Return if" as in the return value if.
+    - Typically denoted by `Q` and takes in a state `s` and action `a`.
+    - How do we know what is the optimal behavior? If we knew what's the optimal behavior, i.e. if we already knew what's the best action to take in every state, why do we still need to compute $ Q(s, a) $ because we already have the optimal policy?
+        - When we look at specific reinforcement learning algorithms later, we will resolve this slightly circular definition and will come up with a way to compute the `Q` function even before we've come up with the optimal policy.
+    - The policy shown here is the one most optimal one that we had for the Mars Rover example when $ \gamma = 0.5 $.
+        - So, $ Q(s, a) $ will be equal to the total return if you start from state `s`, that take the action `a`, and then behave optimally after that, that is take actions according to the policy.
+            - Note that we show some examples at the bottom of what this means. For example, we see the return if we start at state 2, go right, and then behave optimally after that (i.e. follow optimal policy and go left towards 100). Then we show what happens if we decide to go left instead. After repeating this for every state, we can see the returns for each course of actions we take at each state.
+    
+    Once you compute the Q-function, that will give you a way to pick actions as well. 
+
+    ![alt text](images/state_action_value_fn_2.png)
+
+    - The best possible return from any state `s` is the largest value of $ Q(s, a) $ maximizing over `a` (the action).
+        - So, $ \pi(s) $ can just pick the action `a` that gives the largest value of $ Q(s, a) $, and that can turn out to be a good action, the optimal action. 
+    - You may also see this Q-function referred to as Q* or Optimal Q function.
+
+#### State-Action Value Function Example
+- Here's a lab that will let you paly round and modify the mars rover example to see for yourself how $ Q(s, a) $ will change:
+
+    ![alt text](images/state_action_fn_ex_1.png)
+
+    ![alt text](images/state_action_fn_ex_2.png)
+
+    We will change around some values. Take a look at the optimal policy and notice the changes.
+
+    Let's look at what happens if we change `terminal_right_reward` to `10`:
+
+    ![alt text](images/state_action_fn_ex_3.png)
+
+    Now, let's change the right reward back to `40` but change the discount factor to `0.9`, which is closer to 1. This makes the Mars Rover less impatient.
+
+    ![alt text](images/state_action_fn_ex_4.png)
+
+    Let's change the discount factor to `0.3`:
+
+    ![alt text](images/state_action_fn_ex_5.png)
+
+#### Optional Lab: State-Action Value Function
+- [State-Action Value Function](https://colab.research.google.com/drive/1nPRHTCYs4K_PfBFQ4OfvZcDAfaj10c_9?authuser=4)
+
+#### Bellman Equation
+- If you can compute the state action value function $ Q(s, a) $, then it gives you a way to pick a good action from every state. Just pick the action `a`, that gives you the largest value of $ Q(s, a) $. The question is: how do you compute these values Q of S,A? In reinforcement learning, there's a key equation called the **Bellman Equation** that will help us to compute the state-action value function. Let's take a look at what is this equation:
+
+    ![alt text](images/bellman_equation_1.png)
+
+    - The prime `'` symbol is used to denote the next state/action.
+
+    Let's look at some examples and then come back to see why this equation might make sense:
+
+    ![alt text](images/bellman_equation_2.png)
+
+    - Here, we see some example calculations of the Bellman Equation.
+    - If you're in a terminal state, the Bellman Equation simplifies to $ Q(s, a) = R(s) $, since there is not state s'. This is why the red values in the terminal states are just the states' reward values.
+
+    Let's recap $ Q(s, a) $:
+
+    ![alt text](images/bellman_equation_3.png)
+
+    - It turns out that the best possible return from s' is simply the same as s but all the terms have the prime `'` symbol.
+    - The intuition that the Bellman Equation captures is if you're starting from state s, take action a, and then act optimally after that, then you're going to see some sequence of rewards over time. 
+    - In the reinforcement learning literature, $ R(s) $ is sometimes also called the immediate reward; that's what $ R_{1} $ is. It's the reward you get for starting out in some state s. The second term, $ \gamma \max\limits_{a'} Q(s', a') $, is the best possible return for when you start from state s prime. To see why this is, look at the equation at the bottom where $ \gamma $ is factored out.
+        - The takeaway here is that the total return you get in a reinforcement learning problem has two parts.
+    
+    Let's revisit the earlier example:
+
+    ![alt text](images/bellman_equation_4.png)
+
+    - Take a look at the simplfied equation for $ Q(4, \leftarrow) $.
+
+#### Random (Stochastic) Environment
+- In some applications, when you take an action, the outcome is not always completely reliable. For example, if you command your Mars Rover to go left, maybe there's a little bit of a rock slide, or maybe the floor is really slippery and so it slips and goes in the wrong direction. In practice, many robots don't always manage to do exactly what you tell them because of wind blowing them off course, the wheel slipping, or something else. There's a generalization of the reinforcement learning framework we've talked about so far which models random or stochastic environments. Let's take a look:
+
+    ![alt text](images/random_stochastic_env_1.png)
+
+    - Here's our old Mars Rover example. 10% of the time, it slips and goes in the wrong direction, but it goes in the correct direction (the directed one) 90% of the time.
+
+    Let's see what happens in this reinforcement problem shown below:
+
+    ![alt text](images/random_stochastic_env_2.png)
+
+    - Let's say we use the policy shown here.
+
+    If we start at state 4, the actual sequence of states may be random.
+
+    ![alt text](images/random_stochastic_env_3.png)
+
+    Let's say we move left, get lucky, and make it all the way:
+
+    ![alt text](images/random_stochastic_env_4.png)
+
+    Let's say we move left, get unlucky, slips at state 3 back to state 4, and make it all the way:
+
+    ![alt text](images/random_stochastic_env_5.png)
+
+    ![alt text](images/random_stochastic_env_6.png)
+
+    ![alt text](images/random_stochastic_env_7.png)
+
+    ![alt text](images/random_stochastic_env_8.png)
+    
+    You could even get unlucky on the first step, slip to state 5, and finish at state 6 instead (optimal action at state 5 is to go to the right):
+
+    ![alt text](images/random_stochastic_env_9.png)
+
+    ![alt text](images/random_stochastic_env_10.png)
+
+    ![alt text](images/random_stochastic_env_11.png)
+
+    Previously, we had written out the return as this sum of discounted rewards:
+
+    ![alt text](images/random_stochastic_env_12.png)
+
+    But, when the reinforcement learning problem is stochastic, there isn't one sequence of rewards that you see for sure. Instead, you see a sequence of different rewards. In a stochastic reinforcement learning problem, what we're interested in is not maximizing the return because that's a random number. What we're interested in is maximizing the average value of the sum of discounted rewards:
+
+    ![alt text](images/random_stochastic_env_13.png)
+
+    - Here, average value means, if you were to take your policy and try it out a thousand times or a hundred thousand times or a million times, you get lots of different reward sequences like the ones from the example, and if you were to take the average over all of these different sequences of the sum of discounted rewards, then that's what we call the expected return. In statistics, the term *expected* is just another way of saying average. What this means is we want to maximize what we expect to get on average in terms of the sum of discounted rewards.
+    - The notation with `E` is the mathematical notation.
+    - The job of reinforcement learning algorithm is to choose a policy $ \pi $ to maximize the average or the expected sum of discounted rewards.
+
+    Here's how the goal of reinforcement learning changes when we're in a stochastic environment:
+
+    ![alt text](images/random_stochastic_env_14.png)
+
+    $ \downarrow $
+
+    ![alt text](images/random_stochastic_env_15.png)
+
+    - The next state you get to, s', is now random. That why we now add the average operator, E.
+
+    To play around with this in code, we can revisit the previous lab:
+
+    ![alt text](images/random_stochastic_env_16.png)
+
+    - To make this a stochastic environment, we can adjust the misstep probability `misstep_prob`.
+
+    Here's the result if the Mars Rover misstepped 10% of the time:
+
+    ![alt text](images/random_stochastic_env_17.png)
+
+    - Notice, for the non-terminal states, that the rewards are smaller than if we had a 0% chance of misstepping.
+
+    Here's the result if the Mars Rover misstepped 40% of the time:
+
+    ![alt text](images/random_stochastic_env_18.png)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -3730,6 +3883,8 @@
 - [Tree Ensembles](https://colab.research.google.com/drive/1dJe7HOWH8A5Sypm6voi8FnHIYDd9u3tP?authuser=4)
 
 - [PCA and Data Visualization](https://colab.research.google.com/drive/1wFWc_ox_FonVn4N5Is-NPJVeHXXCQK0J?authuser=4)
+
+- [State-Action Value Function](https://colab.research.google.com/drive/1nPRHTCYs4K_PfBFQ4OfvZcDAfaj10c_9?authuser=4)
 
 ### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
