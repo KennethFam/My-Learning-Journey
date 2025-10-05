@@ -3818,6 +3818,217 @@
 
     ![alt text](images/random_stochastic_env_18.png)
 
+### Continuous State Spaces
+
+#### Example of Continuous State Space Applications
+- Many robotic control applications, including the lunar lander application that we looked at in the practice lab, have continuous state spaces. Let's take a look at what that means and how to generalize the concepts we've talked about to these continuous state spaces:
+
+    ![alt text](images/ex_of_continuous_state_space_apps_1.png)
+
+    - The Mars Rover example had a discrete set of states.
+    - Most robots can be in more than one of six or any discrete number of positions; they can be in any of a very large number of continuous value positions.
+        - For example, if the Mars Rover could be anywhere on a line so that its position was indicated by a number ranging from 0-6 kilometers where any number in between is valid, that would be an example of a continuous state space because the position would be represented by a number such as 2.7 kilometers, 4.8 kilometers, or any other number between 0 and 6.
+    - Let's take controlling a (toy) truck for example. For a truck or a car, the state might include not just one number, like how many kilometers of this along on this line. Let's say the truck stays on the ground, so you probably don't need to worry about how tall is, how high up it is. Its state will include x, y, and its angle $ \theta $, as well as maybe its speeds in x-direction, the speed in the y-direction, and how quickly it's turning. Is it turning at one degree per second or is it turning at 30 degrees per second or is it turning really quickly at 90 degrees per second? 
+    - Here, the $ \cdot $ above above the variables indicate that it's representing the rate of change.
+    - Whereas for the Mars Rover example, the state was just 1 of 6 possible numbers. It could be 1, 2, 3, 4, 5 or 6. For the car, the state would comprise of this vector of six numbers, and any of these numbers can take on any value within its valid range. For example, $ \theta $ should range between $ 0\degree $ and $ 360\degree $ degrees.
+
+    Let's revisit the autonomous helicopter example:
+
+    ![alt text](images/ex_of_continuous_state_space_apps_2.png)
+
+    - How would you characterize the position of the helicopter?
+        - The state of the helicopter includes its position in the say, north-south direction, x, its positioned in the east-west direction, y, its height above ground, the row, the pitch, and also the yaw of helicopter. 
+            - row ($ \phi $): Is it rolling to the left or the right?
+            - pitch ($ \theta $): Is it pitching forward or pitching up?
+            - yaw ($ \omega $): What's the compass orientation it's facing? North, east, south, or west?
+    - This is actually the state used to control autonomous helicopters. It's this list of 12 numbers that is input to a policy, and the job of a policy is look at these 12 numbers and decide what's an appropriate action the helicopter should take. 
+    - So, for any continuous state reinforcement learning problem or a continuous state Markov Decision Process (continuous MTP), the state of the problem isn't just one of a small number of possible discrete values like a number from 1-6, instead, it's a vector of numbers, any of which could take any of a large number of values.
+
+#### Lunar Lander
+- The lunar lander lets you land a simulated vehicle on the moon. It's like a fun little video game that's been used by a lot of reinforcement learning researchers. Let's take a look at what it is:
+
+    ![alt text](images/lunar_lander_1.png)
+
+    - In this application you're in command of a lunar lander that is rapidly approaching the surface of the moon, And your job is the fire thrusters at the appropriate times to land it safely on the landing pad. 
+
+    A successful landing will look like this:
+
+    ![alt text](images/lunar_lander_2.png)
+
+    ![alt text](images/lunar_lander_3.png)
+
+    If the reinforcement landing algorithm policy does not do well then this is what it might look like, where the lander unfortunately has crashed on the surface of the moon:
+
+    ![alt text](images/lunar_lander_4.png)
+
+    ![alt text](images/lunar_lander_5.png)
+
+    In this application, we have 4 possible actions:
+
+    ![alt text](images/lunar_lander_6.png)
+
+    - "do nothing" as in let the forces of inertia and gravity pull you towards the surface of the moon.
+    - The right thruster pushes the lunar lander to the left and vice-versa.
+    - The main thruster pushes the lunar lander up.
+    - The goal is to land the lunar lander safely between the two flags on the landing pad. 
+    - The shorter names for these actions will be nothing, left, main, right.
+    - Here are the state variables (dot variables omitted):
+        - x: left/right position
+        - y: up/down position
+        - $ \theta $: angle
+        - l (binary): whether left foot is grounded
+        - r (binary): whether right foot is grounded
+    - l and r are required because a small difference in positioning makes a big difference in whether or not it's landed.
+
+    Here's the reward function for the lunar lander:
+
+    ![alt text](images/lunar_lander_7.png)
+
+    - For getting to the landing pad, it gets a reward between 100 and 140 depending on how well it's flown when gotten to the center of the landing pad.
+    - Position reward for moving toward landing pad and vice-versa.
+    - We have negative rewards for using thrusters to encourage fuel efficiency.
+    - This is a complex reward function. For your own reinforcement learning application, it usually takes some thought to specify exactly what you want or don't want and to codify that in the reward function. But, specifying the reward function should still turn out to be much easier than specifying the exact right action to take from every single state, which is much harder for this and many other reinforcement learning applications.
+
+    Let's summarize the lunar lander problem:
+
+    ![alt text](images/lunar_lander_8.png)
+
+    - For this problem, we'll use a fairly large value for $ \gamma $.
+
+#### Learning the State-Value Function
+- Let's see how we can use reinforcement learning to control the lunar lander or for other reinforcement learning problems. The key idea is that we're going to train a neural network to compute or to approximate the state-action value function $ Q(s, a) $, and that in turn will let us pick good actions. Let's see how this works:
+
+    ![alt text](images/learning_the_state_value_fn_1.png)
+
+    - The heart of the learning algorithm is we're going to train a neural network that inputs the current state and the current action and computes or approximates $ Q(s, a) $. In particular, for the lunar lander, we're going to take the state `s` and any action `a` and put them together. 
+    - The neural network will take 12 inputs. Concretely, the state was that list of eight numbers that we saw previously. We have four possible actions which we will one-hot encode: nothing, left, main, and right.
+    - Reinforcement learning is different from supervised learning. What we're not going to do is input a state and have it output an action, but we're going to input a state-action pair and have it try to output $ Q(s, a) $. Using a neural network inside the reinforcement learning algorithm this way will turn out to work pretty well. We'll see the details in a little bit. 
+    - If you can train a neural network with appropriate choices of parameters in the hidden layers and in the output layer to give you a good estimates of $ Q(s, a) $, then whenever your lunar lander is in some state `s`, you can then use the neural network to compute $ Q(s, a) $ for all four actions. You can compute $ Q(s, nothing) $, $ Q(s, left) $, $ Q(s, main) $, and $ Q(s, right) $. Then, whichever of these has the highest value, you would pick the corresponding action `a`.
+    - So the question becomes, how do you train a neural network to output $ Q(s, a) $? It turns out the approach will be to use Bellman's Equation to create a training set with lots of examples `x` and `y`, and then we'll use the supervised learning we learned when discussing neural networks to learn, mapping `x` to `y`, that is a mapping from the state-action pair to the target value $ Q(s, a) $. 
+
+    So, how do we get the training set?
+
+    ![alt text](images/learning_the_state_value_fn_2.png)
+
+    - Maybe one time you're in some state $ s^{(1)} $, and you happen to take some action $ a^{(1)} $; this could be nothing, left main thruster or right. As a result of which, you got some reward, and you wound up at some state $ s'^{(1)} $. Maybe a different time, you're in some other state, $ s^{(2)} $, you took some other action (could be a good action, could be a bad action), you got the reward, and then you wound up with $ s'^{(1)} $, and so on, multiple times. Maybe you've done this 10,000 times, or even more than 10,000 times. It turns out that each of these tuples will be enough to create a single training example. Notice that the numbers in the tuples give you enough information to compute an output `y`. The first two elements are the input, `x`, while the last two elements help calculate $ Q(s, a) $, `y`. Yes, you may not know $ \max\limits_{a'} Q(s', a') $ because we don't know the Q function yet, but it turns out that when you don't know what is the Q function. You can start off with taking a totally random guess for what is the Q function, and we'll see, soon, that the algorithm will work nonetheless.
+    - What we'll see later is that we'll actually take this training set, where the `x`s are inputs with 12 features and the `y`s are just numbers, and we'll train a neural network with, say, the mean squared error loss to try to predict `y` as a function of the input `x`.
+
+    Let's put it all together:
+
+    ![alt text](images/learning_the_state_value_fn_3.png)
+    
+    - We store only the 10,000 most recent examples so as not to impact computer storage too much.
+        - This technique is sometimes called the **replay buffer**.
+    - It turns out that if you run this algorithm, where you start with a really random guess of the Q function then use Bellman's equations to repeatedly try to improve the estimates of the Q function, over and over, taking lots of actions, training a model that will improve your guess for the Q function, the next model you train will now have a slightly better estimate of what is the Q function. Then the next model you train will be even better and so on. So, as you run this algorithm, on every iteration, $ Q(s', a') $ hopefully becomes an even better estimate of the Q function, so that when you run the algorithm long enough, this will actually become a pretty good estimate of the true value of $ Q(s, a) $ so that you can then use this to pick hopefully good actions for the MDP.
+    - This algorithm is sometimes called the DQN algorithm, which stands for Deep Q Network because you are using deep learning and your network to train a model to learn the Q function. So, hence DQN or Deep Q Network, DQ using a neural network. 
+    - It turns out that, with a couple of refinements to the algorithm, it can work much better. We'll explore that in the next few sections.
+
+#### Algorithm Refinement: Improved Neural Network Architecture
+- Let's take a look at a change to the neural network architecture that will make the DQN algorithm much more efficient:
+
+    ![alt text](images/dqn_nn_refinement_1.png)
+
+    - This is the neural network architecture we saw previously, where it would input 12 numbers and output $ Q(s, a) $. Whenever we are in some state s, we would have to carry out inference in the neural network separately four times to compute the four values for each action so as to pick the action `a` that gives us the largest Q value. This is inefficient because we have to carry our inference four times from every single state.
+    - Instead, it turns out to be more efficient to train a single neural network to output all four of these values simultaneously. 
+
+    Let's take a look at what the modified neural network looks like:
+
+    ![alt text](images/dqn_nn_refinement_2.png)
+    
+    - We now have 8 inputs (instead of 12) and 4 outputs (instead of 1).
+    - This turns out to be more efficient because, given the state `s`, we can run inference just once and get all four of these values and then very quickly pick the action `a` that maximizes $ Q(s, a) $. It also makes it efficient to compute $ \max\limits_{a'} Q(s', a') $.
+    - Note that you're supposed to define the meaning of the outputs. For example, you could make $ y_{1}^{[3]} $ = nothing, $ y_{2}^{[3]} $ = left, and so on.
+
+#### Algorithm Refinement: $ \epsilon $-Greedy Policy
+- The learning algorithm that we developed, even while you're still learning how to approximate $ Q(s, a) $, still needs to take some actions in the lunar lander. How do you pick those actions while you're still learning? The most common way to do so is to use something called an $ \epsilon $-greedy policy. Let's take a look at how that works:
+
+    ![alt text](images/epsilon_greedy_policy_1.png)
+
+    - This is the algorithm that we saw earlier.
+
+    So how do we take actions when we don't have a good approximation of $ Q(s, a) $?
+
+    ![alt text](images/epsilon_greedy_policy_2.png)
+
+    - We don't want to take actions at random because that will often be a bad action.
+    - For option 2, we want to sometimes perform a random action because the neural network may have, for example, set a low value for $ Q(s, main) $ and so it'll never try the main thrusters and learn that it's good for certain scenarios. So, we want the algorithm to sometimes try new actions so that the neural network can learn to overcome its own possible preconceptions about what might be a bad idea that turns out not to be the case.
+        - This is why option 1 is not such a good idea because the neural network might get built on preconceptions.
+        - Sometimes called the "Exploration" step.
+        - This is the most common way to make your reinforcement learning algorithm explore a little bit, even whilst occasionally or maybe most of the time taking greedy actions. 
+    - Taking the action that maximizes $ Q(s, a) $ is sometimes called the "greedy" or "exploitation" action.
+    - Option 2 is called the $ \epsilon $-greedy policy.
+        - In this case, $ \epsilon = 0.05 $.
+    - One trick that's sometimes used in reinforcement learning is to start off $ \epsilon $ high and then gradually decrease it.
+        - Initially, you are taking random actions a lot at a time and then gradually decrease the amount of times you take the random actions, so that over time, you are less likely to take actions randomly and more likely to use your improving estimates of the Q-function to pick good actions. 
+        - For example, in the lunar lander exercise, you might start off with $ \epsilon $ very, very high, maybe even Epsilon equals 1.0. You're just picking actions completely at random initially and then gradually decrease it all the way down to say 0.01, so that eventually you're taking greedy actions 99% of the time and acting randomly only a very small 1% of the time. 
+
+- Compared to supervised learning algorithms, reinforcement learning algorithms are more finicky with their parameters (e.g. $ \epsilon $). For supervised learning, if you didn't choose your parameters quite well, it may take a little bit longer to learn. On the other hand, reinforcement learning algorithms may take 10 to 100 times as long to learn.
+
+#### Algorithm Refinement: Mini-Batch and Soft Updates
+- We'll look at two further refinements to the reinforcement learning algorithm you've seen. The first idea is called using mini-batches, and this turns out to be an idea that can both speedup your reinforcement learning algorithm and is also applicable to supervised learning and can help you speed up your supervised learning algorithm as well (e.g. training a neural network, training a linear regression, or logistic regression model). The second idea we'll look at is soft updates, which will help your reinforcement learning algorithm do a better job to converge to a good solution. Let's take a look at mini-batches and soft updates:
+
+    ![alt text](images/mini_batch_and_soft_updates_1.png)
+
+    - This is a dataset of housing sizes and prices that we've seen before and is simply a review of gradient descent.
+    - What if we have a large training set like $ m = 100,000,000 $?
+        - Gradient descent would be very slow since we'd need to go through every example for every iteration.
+        - Instead of going throught all $ m $ examples, we simply go through a subset of $ m' $ examples, a smaller batch.
+    
+    Here's an example of mini-batch in action:
+
+    ![alt text](images/mini_batch_and_soft_updates_2.png)
+
+    ![alt text](images/mini_batch_and_soft_updates_3.png)
+
+    ![alt text](images/mini_batch_and_soft_updates_4.png)
+
+    ![alt text](images/mini_batch_and_soft_updates_5.png)
+
+    ![alt text](images/mini_batch_and_soft_updates_6.png)
+
+    ![alt text](images/mini_batch_and_soft_updates_7.png)
+
+    ![alt text](images/mini_batch_and_soft_updates_8.png)
+
+    ![alt text](images/mini_batch_and_soft_updates_9.png)
+
+    ![alt text](images/mini_batch_and_soft_updates_10.png)
+
+    - For this example, $ m' = 5 $.
+    - You can scan through the dataset from top to bottom, or another way would be picking a totally different five examples to use on each iteration.
+
+    Let's compare batch learning to mini-batch learning:
+
+    ![alt text](images/mini_batch_and_soft_updates_11.png)
+
+    - Batch learning reliably reaches the global minimum. 
+    - On average, mini-batch learning will tend toward the global minimum, not reliably and somewhat noisily, but every iteration is much more computationally inexpensive and so mini-batch learning or mini-batch gradient descent turns out to be a much faster algorithm when you have a very large training set. 
+    - For supervised learning, where you have a very large training set, mini-batch learning, mini-batch gradient descent, or a mini-batch version with other optimization algorithms like Adam, is used more common than batch gradient descent.
+
+    Let's go back to our reinforcement learning algorithm:
+
+    ![alt text](images/mini_batch_and_soft_updates_12.png)
+
+    - For the mini-batch version, instead of going through all 10,000 examples, we may just go through 1,000 examples when trianing the model. It turns out that this will make each iteration of training the model a little bit more noisy but much faster, and this will overall tend to speed up this reinforcement learning algorithm.
+    - For the last step, there's a chance that we could accidentally set $ Q $ to a new $ Q $ that's worse. This can be fixed through soft updates. 
+
+    Let's take a look at what soft updates are:
+
+    ![alt text](images/mini_batch_and_soft_updates_13.png)
+
+    - This is called a soft update because every time we update the parameters, we're only going to accept a little bit of the new value.
+    - We can set how much we take in of the new parameters through hyperparameters.
+    - $ 1w_{new} + 0w $ is the original algorithm.
+    - It turns out that using the soft update method causes the reinforcement learning algorithm to converge more reliably. It makes it less likely that the reinforcement learning algorithm will oscillate, divert, or have other undesirable properties.
+
+#### The State of Reinforcement Learning
+- One of the reasons for some of the hype around reinforcement learning is: it turns out many of the research publications have been on simulated environments. It's much easier to get a reinforcement learning algorithm to work in a simulation or in a video game than in a real robot. Here are some limitations of reinforcement learning:
+
+    ![alt text](images/state_of_rl_1.png)
+
+### Practice Lab: Reinforcement Learning
+- [Reinforcement Learning](https://colab.research.google.com/drive/1BJDlCxDb2J0PRcQhXJBtAqJvvEQnZNUz?authuser=4)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -3906,3 +4117,5 @@
 - [Collaborative Filtering Recommender Systems](https://colab.research.google.com/drive/1zlpCPrGPkAdWSGgmMczh7Nc_PV4Gqra2?authuser=4)
 
 - [Deep Learning for Content-Based Filtering](https://colab.research.google.com/drive/1r1EZlexjPY7VCIhOOpQ9w17Q1GGfwcHa?authuser=4)
+
+- [Reinforcement Learning](https://colab.research.google.com/drive/1BJDlCxDb2J0PRcQhXJBtAqJvvEQnZNUz?authuser=4)
