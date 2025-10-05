@@ -4028,6 +4028,10 @@
 
 ### Practice Lab: Reinforcement Learning
 - [Reinforcement Learning](https://colab.research.google.com/drive/1BJDlCxDb2J0PRcQhXJBtAqJvvEQnZNUz?authuser=4)
+    - Referenced papers for this lab to read if you would like to learn more about Deep Q-Learning:
+        - [Mnih, V., Kavukcuoglu, K., Silver, D. et al. Human-level control through deep reinforcement learning. Nature 518, 529–533 (2015).](https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf?utm_source=chatgpt.com)
+        - [Lillicrap, T. P., Hunt, J. J., Pritzel, A., et al. Continuous Control with Deep Reinforcement Learning. ICLR (2016).](https://arxiv.org/abs/1509.02971?utm_source=chatgpt.com)
+        - [Mnih, V., Kavukcuoglu, K., Silver, D. et al. Playing Atari with Deep Reinforcement Learning. arXiv e-prints. arXiv:1312.5602 (2013).](https://arxiv.org/abs/1312.5602)
 
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
