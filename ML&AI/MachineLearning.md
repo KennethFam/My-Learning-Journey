@@ -4033,6 +4033,13 @@
         - [Lillicrap, T. P., Hunt, J. J., Pritzel, A., et al. Continuous Control with Deep Reinforcement Learning. ICLR (2016).](https://arxiv.org/abs/1509.02971?utm_source=chatgpt.com)
         - [Mnih, V., Kavukcuoglu, K., Silver, D. et al. Playing Atari with Deep Reinforcement Learning. arXiv e-prints. arXiv:1312.5602 (2013).](https://arxiv.org/abs/1312.5602)
 
+## Neural Networks and Deep Learning
+
+### Introduction to Deep Learning
+
+#### Welcome 
+- ![alt text](images/welcome_nn_dl_1.png)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
