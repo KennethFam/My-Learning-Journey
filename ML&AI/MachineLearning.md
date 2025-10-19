@@ -4040,6 +4040,50 @@
 #### Welcome 
 - ![alt text](images/welcome_nn_dl_1.png)
 
+#### What is a Neural Network?
+- ![alt text](images/what_nn_1.png)
+
+    ![alt text](images/what_nn_2.png)
+    
+    - This is an example neural network.
+    - Each neuron takes all of the features from the previous layer and decides which one is important to it.
+    - This is just review. Neural networks have already been discussed.
+
+#### Supervised Learning with Neural Networks
+- Almost all the economic value created by neural networks has been through one type of machine learning, called supervised learning.
+
+    ![alt text](images/sl_with_nn_1.png)
+
+    - A lot of the value creation through neural networks has been through cleverly selecting what should be x and what should be y for your particular problem, and then fitting this supervised learning component into often a bigger system such as an autonomous vehicle.
+    - RNN: Recurrent Neural Network
+        - Often used for sequence data.
+    
+    ![alt text](images/sl_with_nn_2.png)
+
+    Let's look at what structured data and unstructured data are:
+
+    ![alt text](images/sl_with_nn_3.png)
+
+    - Structured data basically means databases of data.
+        - You may have columns/features that have well-defined meanings like size and number of bedrooms.
+    - Unstructured data don't have features with well-defined meanings. 
+        - For example, a pixel value or individual words in a piece of text.
+    - One of the most exciting things about the rise of neural networks is that, thanks to deep learning, thanks to neural networks, computers are now much better at interpreting unstructured data as well compared to just a few years ago.
+
+#### Why is Deep Learning Taking Off?
+-  ![alt text](images/why_dl_taking_off_1.png)
+    - Due to the digitization of society, we have been able to obtain a lot more data.
+    - Labeled data as in (x, y).
+    - m = amount of data
+    - When you have small training sets, the relative ordering of the algorithms is not actually very well defined. So, if you don't have a lot of training data, it is often up to your skill at hand engineering features that determines performance.
+
+    ![alt text](images/why_dl_taking_off_2.png)
+
+    - Computation as in our ability to train large neural networks either on cpu or gpu.
+    - Many of the algorithmic innovations have been about trying to make neural networks run much faster.
+        - For example, one of the huge breakthroughs in neural networks has been switching from a sigmoid function to a ReLU function. It turns out that one of the problems of using sigmoid functions and machine learning is that there are these regions where the slope of the function, where the gradient, is nearly zero and so learning becomes really slow, because, when you implement gradient descent and the gradient is zero, the parameters just change very slowly. So, learning is very slow whereas, by changing the activation function of the neural network to use the rectified linear unit, or RELU, the gradient is equal to 1 for all positive values of input, and so, the gradient is much less likely to gradually shrink to 0. The gradient, the slope of the line, is 0 on the left, but it turns out that just by switching from the sigmoid function to the ReLU function has made gradient descent work much faster. This is an example of a maybe relatively simple algorithmic innovation, but ultimately, the impact of this algorithmic innovation was it really helped computation.
+    - Fast training is important because the process of training neural networks is very iterative. You may not be able to experiment as much if your neural network takes a month or months to train.
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
