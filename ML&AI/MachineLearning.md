@@ -4084,10 +4084,294 @@
         - For example, one of the huge breakthroughs in neural networks has been switching from a sigmoid function to a ReLU function. It turns out that one of the problems of using sigmoid functions and machine learning is that there are these regions where the slope of the function, where the gradient, is nearly zero and so learning becomes really slow, because, when you implement gradient descent and the gradient is zero, the parameters just change very slowly. So, learning is very slow whereas, by changing the activation function of the neural network to use the rectified linear unit, or RELU, the gradient is equal to 1 for all positive values of input, and so, the gradient is much less likely to gradually shrink to 0. The gradient, the slope of the line, is 0 on the left, but it turns out that just by switching from the sigmoid function to the ReLU function has made gradient descent work much faster. This is an example of a maybe relatively simple algorithmic innovation, but ultimately, the impact of this algorithmic innovation was it really helped computation.
     - Fast training is important because the process of training neural networks is very iterative. You may not be able to experiment as much if your neural network takes a month or months to train.
 
+### Neural Networks Basics
+
+#### Logistic Regression as a Neural Network
+
+##### Binary Classification
+- Logistic regression is an algorithm for binary classification.
+
+    ![alt text](images/dl_bc_1.png)
+
+    - This is an example of binary classification.
+    - We're using 64x64 images. 
+    -  To store an image, your computer stores three separate matrices corresponding to the red, green, and blue color channels of the image.
+    - To turn an image into a feature vector `x`, we need to take all the pixel values and unroll them into the feature vector.
+    - The dimension, $ n_{x} $, of the input feature vector `x` is 12288.
+
+    Let's look at the notation we'll be using:
+
+    ![alt text](images/dl_bc_2.png)
+
+    - $ x \epsilon \mathbb{R}^{n_{x}} $ means that x is an $ n_{x} $ dimensional feature vector of real numbers.
+    - Here, the input `X` is stacked in columns unlike in other courses where `X` is stacked up in rows with the training examples transposed. This makes our implementation much easier.
+    - Y is also stacked in columns.
+
+##### Logistic Regression
+- ![alt text](images/dl_lr_1.png)
+    - $ \hat{y} $ is the prediction given by your learning algorithm.
+    - We use the sigmoid function, $ \sigma $, for logistic regression.
+    - When we program neural networks, we'll usually keep the parameter `w` and parameter `b` separate.
+        - The notation on the top right in red is the other notation, where `w` and `b` are together instead of separate. We will not be using this notation. 
+            - In this convention, we define an extra feature called $ x_{0} = 1$.
+        It's easier to implement our neural networks if we just keep them separate.
+
+##### Logistic Regression Cost Function
+- ![alt text](images/dl_lr_cost_fn_1.png)
+    - Remember, we do not use squared error for logistic regression.
+    - Those "wants" at the bottom, for the cost function, are for minimizing the cost function.
+    - Loss function is for a single training example, while the cost function is for all your training examples.
+    - Logistic regression can be viewed as a very small neural network.
+
+##### Gradient Descent
+- ![alt text](images/dl_gd_1.png)
+    - Notice that $ J(w, b) $ is convex, "bowl-shaped".
+    - Gradient descents tries to take a step "downhill" in the direction of steepest descent or as quickly downward as possible.
+
+    Here's what gradient descent specifically does:
+
+    ![alt text](images/dl_gd_2.png)
+
+    - $ := $ represents an "update".
+    - Here, we show two examples where `w` is far left or far right.
+    - We will use $ d $ instead of the $ \partial $ symbol.
+        - In calculus, $ \partial $ is used when we take derivates of functions with two or more variables.
+    - The letters in red are what we will name our variables in code.
+
+##### Derivatives
+- You don't need a deep understanding of calculus in order to apply neural networks and deep learning effectively. Still, it is good to know about them.
+
+    ![alt text](images/dl_derivatives_1.png)
+
+    - Noticed that when we nudged `a` to the right by `0.001`, $ f(a) $ went up by `0.003`, or 3 times as much as we nudged `a` to the right.
+    - Derivative just means slope.
+    - Here, we nudged `a` by `0.001`, but the formal definition of derivates actually uses an infinitesimal amount (small amount).
+    - This function has a derivative of `3`. So, no matter where we calculate the slope, we'll get `3`.
+
+##### More Derivative Examples
+- The slope of a function can be different at different points of the function.
+
+    ![alt text](images/dl_more_derivatives_1.png)
+
+    - The variation of the width and height of the triangles are different at different points on the curve.
+    - The error term in 4.004`001` is there because we nudged `a` by `0.001`, which is not small enough. If we used an infinitesimal value, it'd go away.
+
+    Let's look at more examples:
+
+    ![alt text](images/dl_more_derivatives_2.png)
+
+    - $ log_{e}(a) $ can be written as $ ln(a) $.
+
+- If you're curious about the derivative formula for specific functions, feel free to look them up.
+
+##### Computation Graph
+- The computations of a neural network are organized in terms of a forward pass or a forward propagation step, in which we compute the output of the neural network, followed by a backward pass or back propagation step, which we use to compute gradients or compute derivatives. The computation graph explains why it is organized this way.
+
+    ![alt text](images/dl_computation_graph_1.png)
+
+    - To compute `J`, we did a left to right pass or forward propagation. To compute the derivatives, we'd need to do a right to left pass or backward propagation.
+
+##### Derivatives with a Computation Graph
+- Let's take a cleaned up version of that computation graph and show how you can use it to figure out derivative calculations for that function J.
+
+    ![alt text](images/dl_derivatives_computation_graph_1.png)
+
+    - Here, you see the use of the chain rule. Since `a` affects `v` which affects `J`, we can find $ \frac{dJ}{da} $ by doing $ \frac{dJ}{dv} \frac{dv}{da} $.
+    - When you're witting codes to implement backpropagation, there will usually be some final output variable that you really care about, or that you want to optimize. In this case, the final output variable is `J`, or the last node in your computation graph. 
+        - A lot of the computations you have will be to compute the derivative of the final output variable, `J` in this case, with various intermediate variables such as `a`, `b`, `c`, `u` or `v`.
+        - In code, `dvar` will represent the derivative of the final output variable you care about such as `J` with respect to the various intermediate quantities you're computing in your code. For example, $ \frac{dJ}{da} $ would be named `da` in code.
+    
+    Let's continue with the backward propagation:
+
+    ![alt text](images/dl_derivatives_computation_graph_2.png)
+
+    - At the bottom left, `9` results from `3 x 3`.
+    - They key takeaway is that, by computing the derivatives from right to left, it makes the calculations easier because the terms on the right are used to compute the terms on the left.
+
+##### Logistic Regression Gradient Descent
+- Let's recap logistic regression and write out the computations using a computation graph:
+
+    ![alt text](images/dl_lr_gd_1.png)
+
+    Here's a cleaned up version of the diagram along with the calculations:
+
+    ![alt text](images/dl_lr_gd_2.png)
+
+    - This how to compute derivatives and implement gradient descent with respect to just one training example for logistic regression. 
+
+##### Gradient Descent on m Examples
+- Let's see how we can implement gradient descent for `m` training examples:
+
+    ![alt text](images/dl_gd_m_ex_1.png)
+
+    - You just do the same derivative calculations and average them.
+
+    Here's a simple implementation of one step of gradient descent:
+
+    ![alt text](images/dl_gd_m_ex_2.png)
+
+    - You need 2 for loops: one for the `m` training examples and one for the features. Here, we only have 2 features, so we did not use an extra `for` loop. This scales badly. In the modern era, we use vectorization and avoid `for` loops.
+
+###### Derivation of DL/dz
+- [Derivation of DL/dz](https://community.deeplearning.ai/t/derivation-of-dl-dz/165)
+
+    ![alt text](images/dl_derivation_dl_dz_1.png)
+
+    ![alt text](images/dl_derivation_dl_dz_2.png)
+
+#### Python and Vectorization
+
+##### Vectorization
+- Vectorization is basically the art of getting rid of explicit for loops in your code.
+
+    ![alt text](images/dl_vectorization_1.png)
+
+    - Vectorization is made possible due to SIMD (Single Instruction Multiple Data) in GPU/CPU.
+
+    ![alt text](images/dl_vectorization_2.png)
+
+    ![alt text](images/dl_vectorization_3.png)
+
+    ![alt text](images/dl_vectorization_4.png)
+
+    - The different in time between the vectorized version and non-vectorized version is huge.
+
+##### More Vectorization Examples
+- The rule of thumb to keep in mind is, when you're programming your neural networks or when you're programming logistic regression, whenever possible, avoid explicit for-loops.
+
+    ![alt text](images/dl_more_vectorization_ex_1.png)
+
+    - Left side is non-vectorized while right side is vectorized.
+    - For clarification, that one line on the left is `u = np.zeros((n, 1))`.
+
+    ![alt text](images/dl_more_vectorization_ex_2.png)
+
+    - Left side is non-vectorized while right side is vectorized.
+    - NumPy offers a variety of functions. So, whenever you are tempted to write a for-loop, take a look and see if there's a way to call a NumPy built-in function to do it without that for-loop.
+
+    Let's see how we can apply vectorization to our gradient descent code for logistic regression:
+
+    ![alt text](images/dl_more_vectorization_ex_3.png)
+
+    - We've reduced it down to just one for-loop.
+
+##### Vectorizing Logistic Regression
+- Let's see how we can process an entire training set for gradient descent for logistic regression without a single for-loop:
+
+    ![alt text](images/dl_vectorizing_lr_1.png)
+
+    - Notice that we did not calculate each $ z^{(i)} $ and $ a^{(i)} $ value one by one. One line of code was used to calculate `Z` and `A`.
+    - Although `b` is of shape `(1, 1)`, NumPy will broadcast it to every element in the resulting dot product.
+
+##### Vectorizing Logistic Regression's Gradient Output
+- Let's see how we can use vectoriztion to perform the gradient computations for all `m` training samples all at the same time.
+
+    ![alt text](images/dl_vectorizing_lr_gradient_output_1.png)
+
+    - Notice that `dz` is transposed when calculating `dw`.
+
+    Let's see how we can vectorize our earlier back propagation implementation:
+
+    ![alt text](images/dl_vectorizing_lr_gradient_output_2.png)
+
+    - Notice that we got rid of the for-loop.
+    - To do multiple iterations of gradient descent, you would still need a for-loop.
+
+##### Broadcasting in Python
+- Let's delve into how broadcasting in Python actually works:
+
+    ![alt text](images/dl_broadcasting_python_1.png)
+
+    - Let's say we're trying to calculate the % of calories from each macro.
+    - You can do this without an explicit for-loop.
+
+    Let's take a look at the code:
+
+    ![alt text](images/dl_broadcasting_python_2.png)
+
+    - `A.sum(axis=0)`
+        - `axis=0` here means to just sum vertically.
+        - This returns a 1-D array not a 2-D matrix.
+    
+    ![alt text](images/dl_broadcasting_python_3.png)
+
+    - Note that we reshaped `cal` into a 2-D matrix since it was a 1-D vector.
+
+    Now, let's go back to the slide:
+
+    ![alt text](images/dl_broadcasting_python_4.png)
+
+    - 0 is the vertical axis while 1 is the horizontal axis.
+    - Technically, we do not need to reshape `cal`.
+        - The `reshape` method is a constant time function, so it's cheap. It's good to call it just to make sure everything is the shape we want it to be.
+    
+    How can we divide a 3x4 matrix with a 1x4 matrix? Broadcasting.
+
+    ![alt text](images/dl_broadcasting_python_5.png)
+
+    - If we tried to add a number to a 4x1 matrix, it'd take the number and auto-expand it into a 4x1 matrix as well.
+    - This type of broadcasting works with both column vectors and row vectors.
+    - For the column vector gets duplicated to match the number of rows as the mxn matrix.
+    - For the row vector, the row elements are duplicated to match the number of columns as the mxn matrix.
+
+    ![alt text](images/dl_broadcasting_python_6.png)
+
+    - For advanced MATLAB/Octave users, in neural network programming, the `bsxfun` function does something similar, not quite the same, but it is often used for a similar purpose as what we use broadcasting in Python for.
+
+##### A Note on Python/Numpy Vectors
+- For Python, a great flexibility of the language lets you get a lot done even with just a single line of code, but there's also weakness because with broadcasting and this great amount of flexibility. Sometimes, it's possible you can introduce very subtle bugs or very strange looking bugs, if you're not familiar with all of the intricacies of how broadcasting and how features like broadcasting work. For example, if you take a column vector and add it to a row vector, you would expect it to throw up a dimension mismatch or type error or something, but you might actually get back a matrix as a sum of a row vector and a column vector. Let's look at some tips and tricks to eliminate or simplify and eliminate all the strange looking bugs in your own code:
+
+    ![alt text](images/dl_note_on_nupy_vecs_1.png)
+
+    - `np.random.randn(5)` creates an array of 5 random Gaussian variables.
+    - `a` is a rank one array; it is neither a row vector or a column vector. If you transpose it, you'll get the same result.
+    - Notice that the dot product results in a number not a vector.
+
+    Avoid using rank 1 arrays.
+
+    ![alt text](images/dl_note_on_nupy_vecs_2.png)
+
+    - By changing the argument to `randn` from `5` to `(5, 1)`, we can make `a` a column vector.
+
+    ![alt text](images/dl_note_on_nupy_vecs_3.png)
+
+    - It's also good to use the `assert()` function to ensure that your matrix is the correct shape. The function is inexpensive to execute, and they also help to serve as documentation for your code.
+
+    In summary, avoid rank 1 arrays. Instead, use a row or column vector instead.
+
+##### Explanation of Logistic Regression Cost Function
+- This is mainly review so notes are limited.
+
+    ![alt text](images/dl_explanation_of_lr_cost_fn_1.png)
+
+    ![alt text](images/dl_explanation_of_lr_cost_fn_2.png)
+
+    - Because the $ \log $ function is a strictly monotonically increasing function, maximizing $ \log p(y \mid x) $ should give you a similar result as optimizing $ p(y \mid x) $.
+    - There's a negative sign next to the loss function because, usually if you're training a learning algorithm, you want to make probabilities large, whereas in logistic regression, we're trying minimize the loss function which maximizes the log of probability.
+
+    Now, how about the cost function?
+
+    ![alt text](images/dl_explanation_of_lr_cost_fn_3.png)
+
+    - Originally, we just had $ p(labels in training set) = \prod^{m}_{i = 1}p(y^{(i)} \mid x^{(i)})$. Maximizing this is the same as maximizing the log, so we just put logs on both sides, which results in a summation. Since we're minimizing the cost instead of maximizing, we got rid of the negative sign.
+    - Maximum likelihood estimation is a statistical method for estimating the parameters of a probability model by finding the parameter values that make the observed data most likely.
+    - To summarize, by minimizing this cost function $ J(w,b) $ we're really carrying out maximum likelihood estimation with the logistic regression model under the assumption that our training examples were IID, or identically independently distributed. 
+
+#### Optional Lab: Python Basics with NumPy
+- [Python Basics with NumPy](https://colab.research.google.com/drive/1RT8fgFvRnLH7LhQEaof4UBmb6m-D9ETw?authuser=4#scrollTo=6L4822-2aCt_)
+
+#### Practice Lab: Logistic Regression with a Neural Network Mindset
+- [Logistic Regression with a Neural Network Mindset](https://colab.research.google.com/drive/1We2qs2sqLQNWMgjNiEw4STkfopLMcp4o?authuser=4)
+    - Bibliography:
+        - [Implementing a Neural Network from Scratch in Python](https://dennybritz.com/posts/wildml/implementing-a-neural-network-from-scratch/)
+        - [Why normalize images by subtracting dataset's image mean, instead of the current image mean in deep learning?](https://stats.stackexchange.com/questions/211436/why-normalize-images-by-subtracting-datasets-image-mean-instead-of-the-current)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
-### Optional
+### Machine Learning Specialization
+
+#### Optional
 - [Python and Jupyter Notebooks](https://colab.research.google.com/drive/1cGZyfoWUMjn4f61B-njulkBWUdyEV-AN?authuser=4)
 
 - [Model Representation](https://colab.research.google.com/drive/1TSL3bQ1-YsvCqqmBvfjtByZgOR6shxmg?authuser=4)
@@ -4152,7 +4436,7 @@
 
 - [State-Action Value Function](https://colab.research.google.com/drive/1nPRHTCYs4K_PfBFQ4OfvZcDAfaj10c_9?authuser=4)
 
-### Practice
+#### Practice
 - [Linear Regression](https://colab.research.google.com/drive/1qG_MCjpe_fH-hi_mUVbZpVNwbsMxm6Ns?authuser=4)
 
 - [Logistic Regression](https://colab.research.google.com/drive/1VRkENCB5PU_l0c-hAKhu9e5AzvNlMZTh?authuser=4)
@@ -4174,3 +4458,11 @@
 - [Deep Learning for Content-Based Filtering](https://colab.research.google.com/drive/1r1EZlexjPY7VCIhOOpQ9w17Q1GGfwcHa?authuser=4)
 
 - [Reinforcement Learning](https://colab.research.google.com/drive/1BJDlCxDb2J0PRcQhXJBtAqJvvEQnZNUz?authuser=4)
+
+### Deep Learning Specialization
+
+#### Optional
+- [Python Basics with NumPy](https://colab.research.google.com/drive/1RT8fgFvRnLH7LhQEaof4UBmb6m-D9ETw?authuser=4#scrollTo=6L4822-2aCt_)
+
+#### Practice
+- - [Logistic Regression with a Neural Network Mindset](https://colab.research.google.com/drive/1We2qs2sqLQNWMgjNiEw4STkfopLMcp4o?authuser=4)
