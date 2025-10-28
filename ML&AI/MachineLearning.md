@@ -4533,7 +4533,9 @@
         - You can use `0.01` or any small number. We will discuss when you would want to use a different number later on.
 
 #### Practice Lab: Planar Data Classification with One Hidden Layer
-- [Planar Data Classification with One Hidden Layer]()
+- [Planar Data Classification with One Hidden Layer](https://colab.research.google.com/drive/1aPzJif3zA6JmPMtNPc-mHa6XL_71uSmj?authuser=4)
+    - Reference(s):
+        - [CS231n Deep Learning for Computer Vision](https://cs231n.github.io/neural-networks-case-study/)
 
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
@@ -4634,4 +4636,6 @@
 - [Python Basics with NumPy](https://colab.research.google.com/drive/1RT8fgFvRnLH7LhQEaof4UBmb6m-D9ETw?authuser=4#scrollTo=6L4822-2aCt_)
 
 #### Practice
-- - [Logistic Regression with a Neural Network Mindset](https://colab.research.google.com/drive/1We2qs2sqLQNWMgjNiEw4STkfopLMcp4o?authuser=4)
+- [Logistic Regression with a Neural Network Mindset](https://colab.research.google.com/drive/1We2qs2sqLQNWMgjNiEw4STkfopLMcp4o?authuser=4)
+
+- [Planar Data Classification with One Hidden Layer](https://colab.research.google.com/drive/1aPzJif3zA6JmPMtNPc-mHa6XL_71uSmj?authuser=4)
