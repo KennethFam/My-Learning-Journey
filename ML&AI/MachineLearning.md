@@ -4353,7 +4353,7 @@
 
     ![alt text](images/dl_explanation_of_lr_cost_fn_3.png)
 
-    - Originally, we just had $ p(labels in training set) = \prod^{m}_{i = 1}p(y^{(i)} \mid x^{(i)})$. Maximizing this is the same as maximizing the log, so we just put logs on both sides, which results in a summation. Since we're minimizing the cost instead of maximizing, we got rid of the negative sign.
+    - Originally, we just had $ p(labels \space in \space training \space set) = \prod^{m}_{i = 1}p(y^{(i)} \mid x^{(i)})$. Maximizing this is the same as maximizing the log, so we just put logs on both sides, which results in a summation. Since we're minimizing the cost instead of maximizing, we got rid of the negative sign.
     - Maximum likelihood estimation is a statistical method for estimating the parameters of a probability model by finding the parameter values that make the observed data most likely.
     - To summarize, by minimizing this cost function $ J(w,b) $ we're really carrying out maximum likelihood estimation with the logistic regression model under the assumption that our training examples were IID, or identically independently distributed. 
 
@@ -4365,6 +4365,175 @@
     - Bibliography:
         - [Implementing a Neural Network from Scratch in Python](https://dennybritz.com/posts/wildml/implementing-a-neural-network-from-scratch/)
         - [Why normalize images by subtracting dataset's image mean, instead of the current image mean in deep learning?](https://stats.stackexchange.com/questions/211436/why-normalize-images-by-subtracting-datasets-image-mean-instead-of-the-current)
+
+### Shallow Neural Networks
+
+#### Neural Networks Overview
+- ![alt text](images/dl_nn_overview_1.png)
+    - We'll use superscripts like $ [1] $ to indicate the layer that's being referenced. Note that we start at layer 1.
+    - In this case, we're simply repeating logistic regression twice for the bottom neural network.
+
+#### Neural Network Representation
+- Let's look at a neural network with a single hidden layer:
+
+    ![alt text](images/dl_nn_representation_1.png)
+
+    - The term hidden layer refers to the fact that, in the training set, the true values for these nodes in the middle are not observed.
+
+#### Computing a Neural Network's Output
+- Let's look at how a neural network with a single hidden layer computes its output:
+
+    ![alt text](images/dl_computing_nn_output_1.png)
+
+    - The 3rd and 4th nodes do a similar computation as the first two.
+
+    Let's look at the computations more closely:
+
+    ![alt text](images/dl_computing_nn_output_2.png)
+
+    - When we're vectorizing, a rule of thumb that might help you navigate this, when we different nodes in a layer, we stack them vertically into a column vector.
+    - Notice the notation for when we refer to the vector as a whole (no subscript). By notation, only the weight vector has a capital letter, since it's technically the only matrix.
+
+    Now, let's see how the output is calculated:
+
+    ![alt text](images/dl_computing_nn_output_3.png)
+
+    - To compute the output of a neural network with one hidden layer, you only need the 4 lines of code on the right.
+
+#### Vectorizing Across Multiple Examples
+- Let's see how we can vectorize a neural network with a single hidden layer across multiple training examples:
+
+    ![alt text](images/dl_vectorizing_across_m_1.png)
+
+    - Notice the new superscript `(i)`, which is used to indicate what training example we're working on.
+    - Our goal is to get rid of the for-loop.
+
+    Let's see how the code will change for the vectorized implementation:
+    
+    ![alt text](images/dl_vectorizing_across_m_2.png)
+
+    - Notice that a lot of the letters (`X`, `Z`, and `A`) have been capitalized due to them transforming from vectors to matrices.
+    - Purple words at the bottom right are "hidden units".
+    - For each matrix, the training examples are represented horizontally, while the number of units (or features for `X`) are represented vertically.
+
+#### Explanation for Vectorized Implementation
+- Let's give a bit more justification for why the equations we wrote down is a correct implementation of vectorizing across multiple examples:
+
+    ![alt text](images/dl_vect_impl_explanation_1.png)
+
+    - To simplify the equations, we'll set `b` to `0`.
+    - $w^[i]x^(i)$ results in some column vector. When we perform the calculation on multiple examples, then these results line up side by side in the matrix. This is why the equations are correct. If we added `b` back, we'd simply end up adding $b^[i]$ to each $z^[i](i)$.
+
+    Let's recap:
+
+    ![alt text](images/dl_vect_impl_explanation_2.png)
+
+    - Note that $X$ is technically $A^[0]$
+
+#### Activation Functions
+- When you build your neural network, one of the choices you get to make is what activation function to use in the hidden layers as well as at the output units of your neural network. So far, we've just been using the sigmoid activation function, but sometimes other choices can work much better. Let's take a look at some of the options:
+
+    ![alt text](images/dl_activation_fns_1.png)
+
+    - The **sigmoid** function in the calculations for $a^[i]$ is called an activation function. In the more general case, we could have a function $g(z^{[i]})$, which could be a non-linear function that may not be the sigmoid function.
+    - An activation function that almost always works better than the sigmoid function is the **tangent** function or the hyperbolic tangent function. This function is just a vertically shifted version of the sigmoid function.
+        - It works better because the mean of the activations that come out of your hidden layer are closer to having a zero mean. Sometimes, when you train a learning algorithm, you might center the data and have your data have zero mean using a tanh instead of a sigmoid function. This has the effect of centering your data so that the mean of your data is close to 0 rather than maybe 0.5. And this actually makes learning for the next layer a little bit easier. 
+        - The exception is the output layer if $y \epsilon {0, 1}$
+    - The downside of the sigmoid function and the tanh function is that when $z$ is very large or very small, then the gradient becomes very small, which results in gradient descent slowing down. So, another choice that's very popular is the **Rectified Linear Unit (ReLU)** function.
+        - For implementation, the derivate when $z \lt 0$ is 0, $z \gt 0$ is 1, and $z = 0$ is not well defined. When implemented on the computer, the derivative at $z = 0$ is very small (0.000...). In practice, you can make it equal to 1 or 0, and the code will work just fine.
+        - For half of the range of `z`, the slope for value is 0, but in practice, enough of your hidden units will have `z` greater than zero, so learning can still be quite fast for most training examples. 
+        - There's also the **leaky ReLU** function, where the slope for $z \lt 0$ is slightly negative. This usally works better than ReLU but is not used as much in practice.
+    - In summary, ReLU is the default choice for hidden layers and the output layer is based on your specific task (e.g. sigmoid for binary classification).
+
+    Here is a recapt of some of the activation functions:
+
+    ![alt text](images/dl_activation_fns_2.png)
+
+    - `0.01` in leaky ReLU could technically be a parameter that we can change.
+
+- It's hard to know what to choose for your application. If you're stuck, try all of them and see which works best.
+
+#### Why do you need Non-Linear Activation Functions?
+- Why does a neural network need a non-linear activation function? Turns out, for your neural network to compute interesting functions, you do need to pick a non-linear activation function. Let's see why.
+
+    ![alt text](images/dl_why_non_linear_act_fn_1.png)
+
+    - Let's say we used a linear activation function. It turns out that your output will simply be a linear function no matter how many layers you have. 
+    - If we made the activation functions in the hidden layer linear, then the output would be no more expressive than standard logistic regression.
+    - For the output layer, you can use a linear activation function for a regression problem.
+        - You may even use ReLU for the output layer if the regression problem only involves positive outputs.
+    - You don't want to use linear activation functions for hidden layers except in very special circumstances relating to compression. Using the linear activation function for hidden layers is extremely rare. 
+
+#### Derivatives of Activation Functions
+- When you implement back propagation for your neural network, you need to compute the slope or the derivative of the activation functions. So, let's take a look at our choices of activation functions and how you can compute the slope of these functions:
+
+    ![alt text](images/dl_derivatives_of_act_fns_1.png)
+
+    ![alt text](images/dl_derivatives_of_act_fns_2.png)
+
+    ![alt text](images/dl_derivatives_of_act_fns_3.png)
+
+    - Remember that for $z = 0$, we can set the derivative to either of the two values. 
+
+#### Gradient Descent for Neural Networks
+- Let's see how we can implement gradient descent for the neural network with one hidden layer:
+
+    ![alt text](images/dl_gd_nn_1.png)
+
+    - $n_{x}$ here is the number of features/outputs for each layer.
+    - Note that we also need to update the parameters for the other layers too. It's just not included here.
+
+    ![alt text](images/dl_gd_nn_2.png)
+
+    - `keepdims=True` ensures that Numpy keeps the dimensions and does not return a rank 1 when we want a rank 2 array (e.g. `(n,)` instead of `(n, 1)`).
+        - You could also use `reshape` instead of this parameter.
+
+#### Backpropagation Intuition
+- Let's see how the backpropagation equations were derived:
+
+    ![alt text](images/dl_backprop_intuit_1.png)
+
+    - Recall that this was for the 1 layer neural network.
+
+    Let's now see how this is done for the 2 layer neural network:
+
+    ![alt text](images/dl_backprop_intuit_2.png)
+
+    - We don't need to calculate the derivative for `x` because we're not trying to optimize the inputs.
+    - In practice, the computation for $da^{[2]}$ and $dz^{[2]}$ are usually collapsed into one step. The same is true for $da^{[1]}$ and $dz^{[1]}$.
+    - $*$ represents an element-wise product.
+    - $z^{[2]}, dz^{[2]}$ are of dimension `(1, 1)` for binary classification, since we only use one neuron.
+    - Notice that for every variable, its derivate also has the same dimension. This is shown on the slide using `foo` and `dfoo` as an example.
+    - Notice the similarities between the derivatives for the parameters.
+
+    Let's now take a look at the 6 equations that were derived and vectorize them:
+
+    ![alt text](images/dl_backprop_intuit_3.png)
+
+    ![alt text](images/dl_backprop_intuit_4.png)
+
+#### Random Initialization
+- When you train your neural network, it's important to initialize the weights randomly. For logistic regression, it was okay to initialize the weights to zero, but for a neural network, if you initialize the weights or parameters to all zero and then apply gradient descent, it won't work. Let's see why:
+
+    ![alt text](images/dl_random_init_1.png)
+
+    - It turns out that initializing `b` to all zeroes is okay but not `w`.
+    - If the weights are all 0, the hidden units become identical/symmetric.
+    - By kind of a proof by induction, it turns out that after every single iteration of training, your two hidden units are still computing exactly the same function. 
+        - It's possible to show that, for `dw`, every row will take on the same value. This will in turn result in $w^{[i]}$ have identical rows.
+    - There's no point in having many units if they all compute the same thing.
+
+    The solution to this is to initialize your parameters randomly:
+
+    ![alt text](images/dl_random_init_2.png)
+
+    - `b` does not have what's called the **symmetry breaking problem**, so it's okay to initialize it to all zeroes.
+    - Where did the constant `0.01` come from? It turns out that we usually prefer to initialize the weights to very small random values.
+        - Take the tanh function for example. If the weights are large, we will end up with a large `z` which results in a large value for tanh (making it saturated). This will put it at a point where the slope is very small, slowing down learning.
+        - You can use `0.01` or any small number. We will discuss when you would want to use a different number later on.
+
+#### Practice Lab: Planar Data Classification with One Hidden Layer
+- [Planar Data Classification with One Hidden Layer]()
 
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
