@@ -4764,5 +4764,7 @@
 
 ## Readings 
 
-### Deep Learning Specialization
+### Optional
+
+#### Deep Learning Specialization
 - [Feedforward Neural Networks in Depth](https://community.deeplearning.ai/t/feedforward-neural-networks-in-depth/98811)
