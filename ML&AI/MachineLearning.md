@@ -4537,6 +4537,128 @@
     - Reference(s):
         - [CS231n Deep Learning for Computer Vision](https://cs231n.github.io/neural-networks-case-study/)
 
+### Deep Neural Networks
+
+#### Deep L-layer Neural Network
+- So, what's a deep neural network?
+
+    ![alt text](images/dl_deep_l_layer_nn_1.png)
+
+    Let's take a look at the notation:
+
+    ![alt text](images/dl_deep_l_layer_nn_2.png)
+
+    - The input features are called $x$.
+
+#### Forward Propagation in a Deep Network
+- Let's first go over what forward propagation will look like for a single training example `x`, and then later on, we'll talk about the vectorized version, where you want to carry out forward propagation on the entire training set at the same time:
+
+    ![alt text](images/dl_forward_prop_dn_1.png)
+
+    - The general forward propagation formula is shown at the top right.
+    - For forward propagation, there is a for-loop which goes through each layer. There isn't a way to get rid of it, so it's okay.
+
+#### Getting your Matrix Dimensions Right
+- When implementing a deep neural network, one of the debugging tools Professor Ng often uses to check the correctness of his code is to pull a piece of paper and just work through the dimensions in matrix he's working with. Let's see how we can do that:
+
+    ![alt text](images/dl_matrix_dimensions_1.png)
+
+    ![alt text](images/dl_matrix_dimensions_2.png)
+
+    - Here are the general formulas for the dimensions of each matrix:
+        - $W^{[l]}$ and $dW^{[l]}$: $(n^{[l]}, n^{[l - 1]})$
+        - $b^[l]$ and $db^{[l]}$: $(n^[l], 1)$
+        - $Z^[l]$, $A^[l]$, and $g^[l](Z^{[l]})$: $(n^{[l]}, m)$
+
+#### Why Deep Representations?
+- Let's go through a couple examples and try to gain some intuition for why deep networks might work well. So first, what is a deep network computing?
+
+    ![alt text](images/dl_why_deep_representations_1.png)
+
+    - If you're building a system for face recognition or face detection, here's what a deep neural network could be doing.
+    - Perhaps you input a picture of a face, then you can think of the first layer of the neural network as maybe being a feature detector or an edge detector. The second layer may group the edges together to form parts of faces. The third layer may put together those parts to form faces.
+        - This will make more sense when we talk about convolutional neural networks (CNNs).
+        - The main intuition you should take away from this is that it starts by just finding simple things like edges, and then builds them up, composing them together to detect more complex things like an eye or a nose, then composing those together to find even more complex things. This type of simple to complex hierarchical representation, or compositional representation, applies in other types of data than images and face recognition as well. You can see an example for speech recognition at the bottom.
+    - Audio -> low level aduio waveform -> phonemes (e.g. C, A, and T) -> words -> sentences/phrases
+
+    The other piece of intuition about why deep networks seem to work well is the following:
+
+    ![alt text](images/dl_why_deep_representations_2.png)
+
+    - This intuition comes from circuit theory.
+    - The representations show how many XOR gates we'd need to represent the equation.
+        - If we are limited in the number of layers, the number of units increase exponentially as shown on the right.
+    - There are mathematically functions that are much easier to compute with deep networks rather than shallow networks.
+
+    You can also consider its branding, "deep learning", as another reason why deep learning has taken off.
+
+#### Building Blocks of Deep Neural Networks
+- You've already seen the basic building blocks of forward propagation and back propagation, the key components you need to implement a deep neural network. Let's see how you can put these components together to build your deep net:
+
+    ![alt text](images/dl_building_blocks_of_dnn_1.png)
+
+    - Here's a network of a few layers.
+    - The vectors/matrices marked for cache simply means that it'll be useful to cache them for use in back propagation later.
+    - The forward/backward arrows represent forward/backward propagation respectively. The down arrows represent the output from that step.
+
+    Here's the basic computation of a neural network:
+
+    ![alt text](images/dl_building_blocks_of_dnn_2.png)
+
+    - This is one iteration of gradient descent for your neural network.
+    - It is convienent to cache the parameters as well, not just $z^{[l]}$.
+
+#### Forward and Backward Propagation
+- Let's see how you can implement forward and backward propagation:
+
+    ![alt text](images/dl_forward_and_back_prop_1.png)
+
+    ![alt text](images/dl_forward_and_back_prop_2.png)
+
+    - The right side shows the vectorized implementation.
+
+    To summarize, you may have something like this:
+
+    ![alt text](images/dl_forward_and_back_prop_3.png)
+
+    - We initialize forward propagation with $x$ or $a^{[0]}$ and backward propagation with $da^{[l]}$.
+
+- A lot of the complexity of machine learning comes from the data rather than from the lines of codes. 
+    - Sometimes you feel like you implement a few lines of code and are not quite sure what it did, but it almost magically works, and it's because a lot of magic is actually not in the piece of code you write, which is often not too long. It's not exactly simple, but it's not 10,000 or 100,000 lines of code. A lot of the complexity of your learning algorithm comes from the data rather than necessarily from you writing thousands and thousands of lines of code.
+
+#### Optional Reading: Feedforward Neural Networks in Depth
+- [Feedforward Neural Networks in Depth](https://community.deeplearning.ai/t/feedforward-neural-networks-in-depth/98811)
+
+#### Parameters vs Hyperparameters
+- Being effective in developing your deep neural nets requires that you not only organize your parameters well but also your hyper parameters. So what are hyper parameters? Let's take a look:
+
+    ![alt text](images/dl_parameters_hyperparameters_1.png)
+
+    - At the bottom are hyperparameters that we'll discuss later on (momentum term, minibatch size, various forms of regularization parameters).
+    - Earlier eras of machine learning called $\alpha$ a parameter instead of a hyperparameter.
+
+    When you're training a deep net for your own application, you'll find that there may be a lot of possible settings for the hyper parameters that you need to just try out.
+
+    ![alt text](images/dl_parameters_hyperparameters_2.png)
+
+    - An example of this process would be trying to find a good $\alpha$. One way we could do this is to example the cost J vs the number of iterations.
+    - An empirical process is just a fancy way of saying "try a lot of things and see which one works".
+    - Deep learning today is applied to so many problems (vision, speech, natural language processing, ads, search, recommendations, etc.).
+    - As you make progress on your problem, it is quite possible that the best value for your hyperparameter(s) might change. This could be due to new computer infrastructure or something else that has change. So, maybe one rule of thumb is, every now and then, maybe every few months, if you're working on a problem for an extended period of time (e.g. for many years), just try a few values for the hyper parameters and double check if there's a better value for the hyper parameters. As you do so, you'll slowly gain intuition as well about the hyper parameters that work best for your problems. 
+
+#### Clarification For: What does this have to do with the brain?
+![alt text](images/dl_and_human_brain_clarification.png)
+
+#### What does this have to do with the brain?
+- So what does deep learning have to do with the brain? Not a lot. Let's take a quick look at why people keep making the analogy between deep learning and the human brain:
+
+    ![alt text](images/dl_and_human_brain_1.png)
+
+    - When you implement a neural network, you implement forward and backward propagation.
+    - Real neurons are very complex, and scientists to this day have no idea what they're doing. It's unclear how neurons learn and whether or not they do forward and backward propagation.
+    - Deep learning is very good at learning x -> y mappings.
+    - The deep learning field has moved to a point where the brain analogy is breaking down.
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -4639,3 +4761,8 @@
 - [Logistic Regression with a Neural Network Mindset](https://colab.research.google.com/drive/1We2qs2sqLQNWMgjNiEw4STkfopLMcp4o?authuser=4)
 
 - [Planar Data Classification with One Hidden Layer](https://colab.research.google.com/drive/1aPzJif3zA6JmPMtNPc-mHa6XL_71uSmj?authuser=4)
+
+## Readings 
+
+### Deep Learning Specialization
+- [Feedforward Neural Networks in Depth](https://community.deeplearning.ai/t/feedforward-neural-networks-in-depth/98811)
