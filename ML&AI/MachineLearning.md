@@ -4659,6 +4659,14 @@
     - Deep learning is very good at learning x -> y mappings.
     - The deep learning field has moved to a point where the brain analogy is breaking down.
 
+#### Practice Lab: Building your Deep Neural Network: Step by Step
+- [Building your Deep Neural Network: Step by Step](https://colab.research.google.com/drive/1eF9AqAP9NONATV2CT6zQ08wI_bavOnji?authuser=4)
+
+#### Practice Lab: Deep Neural Network - Application
+- [Deep Neural Network - Application](https://colab.research.google.com/drive/1wssuoLDmNPsZLF1R_xlRESMd4fWDmogJ?authuser=4)
+    - Reference(s):
+        - [Autoreload of modules in IPython](https://stackoverflow.com/questions/1907993/autoreload-of-modules-in-ipython)
+
 ## Labs
 - Note that the labs are paid content on Coursera. Therefore, these links lead to private notebooks, which are only for my personal use. 
 
@@ -4761,6 +4769,10 @@
 - [Logistic Regression with a Neural Network Mindset](https://colab.research.google.com/drive/1We2qs2sqLQNWMgjNiEw4STkfopLMcp4o?authuser=4)
 
 - [Planar Data Classification with One Hidden Layer](https://colab.research.google.com/drive/1aPzJif3zA6JmPMtNPc-mHa6XL_71uSmj?authuser=4)
+
+- [Building your Deep Neural Network: Step by Step](https://colab.research.google.com/drive/1eF9AqAP9NONATV2CT6zQ08wI_bavOnji?authuser=4)
+
+- [Deep Neural Network - Application](https://colab.research.google.com/drive/1wssuoLDmNPsZLF1R_xlRESMd4fWDmogJ?authuser=4)
 
 ## Readings 
 
