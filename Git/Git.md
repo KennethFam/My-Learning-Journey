@@ -349,7 +349,7 @@ git config --get user.email
 ## Git Best Practices
 - Two helpful best practices to consider are atomic commits and leveraging those atomic commits to make your commit messages more useful to future collaborators.
     - atomic commit: a commit that includes changes related to only one feature or task of your program
-        - Two main reasons for doint this:
+        - Two main reasons for doing this:
             1. if something you change turns out to cause some problems, it is easy to revert the specific change without losing other changes
             2. it enables you to write better commit messages
 
