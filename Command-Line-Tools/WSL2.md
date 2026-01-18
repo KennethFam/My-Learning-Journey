@@ -16,6 +16,14 @@
     - This is needed if you want to connect from other devices on your local network.
 - [Ubuntu/WSL SSH Server Setup Guide](https://www.youtube.com/watch?v=VjkE4dqdHX8)
 
+## Mounting Windows Drives
+- WSL automatically mounts your Windows drives, so you can change to a drive directory by running:
+    ```
+    cd /mnt/{drive letter}/
+    ```
+    - Ex: `cd /mnt/c/`
+    - You can use this to, for example, go to your downloads folder and move a file to your Linux root director or some other directory on your Linux environment.
+
 ## Links
 - [Using WSL with VS Code](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode).
 - [Run Linux GUI apps (e.g. Chrome) on the Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps)
