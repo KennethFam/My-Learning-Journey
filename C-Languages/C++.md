@@ -2630,6 +2630,545 @@ int main()
 
 </details>
 
+### Void functions (non-value returning functions)
+- Functions are not required to return a value back to the caller. To tell the compiler that a function does not return a value, a return type of `void` is used. For example:
+    ```cpp
+    #include <iostream>
+
+    // void means the function does not return a value to the caller
+    void printHi()
+    {
+        std::cout << "Hi" << '\n';
+
+        // This function does not return a value so no return statement is needed
+    }
+
+    int main()
+    {
+        printHi(); // okay: function printHi() is called, no value is returned
+
+        return 0;
+    }
+    ```
+    - In the above example, the `printHi` function has a useful behavior (it prints “Hi”) but it doesn’t need to return anything back to the caller. Therefore, `printHi` is given a `void` return type.
+    - When `main` calls `printHi`, the code in `printHi` executes, and “Hi” is printed. At the end of `printHi`, control returns to `main` and the program proceeds.
+    - A function that does not return a value is called a **non-value returning function** (or a **void function**).
+
+#### Void functions don’t need a return statement
+- Void functions don’t need a return statement
+
+- A return statement (with no return value) can be used in a void function -- such a statement will cause the function to return to the caller at the point where the return statement is executed. This is the same thing that happens at the end of the function anyway. Consequently, putting an empty return statement at the end of a void function is redundant:
+    ```cpp
+    #include <iostream>
+
+    // void means the function does not return a value to the caller
+    void printHi()
+    {
+        std::cout << "Hi" << '\n';
+
+        return; // tell compiler to return to the caller -- this is redundant since the return will happen at the end of the function anyway!
+    } // function will return to caller here
+
+    int main()
+    {
+        printHi();
+
+        return 0;
+    }
+    ```
+    - Best practice: Do not put a return statement at the end of a non-value returning function.
+
+#### Void functions can’t be used in expressions that require a value
+- Some types of expressions require values. For example:
+    ```cpp
+    #include <iostream>
+
+    int main()
+    {
+        std::cout << 5; // ok: 5 is a literal value that we're sending to the console to be printed
+        std::cout << ;  // compile error: no value provided
+
+        return 0;
+    }
+    ```
+    - In the above program, the value to be printed needs to be provided on the right-side of the `std::cout <<`. If no value is provided, the compiler will produce a syntax error. Since the second call to `std::cout` does not provide a value to be printed, this causes an error.
+
+    Now consider the following program:
+
+    ```cpp
+    #include <iostream>
+
+    // void means the function does not return a value to the caller
+    void printHi()
+    {
+        std::cout << "Hi" << '\n';
+    }
+
+    int main()
+    {
+        printHi(); // okay: function printHi() is called, no value is returned
+
+        std::cout << printHi(); // compile error
+
+        return 0;
+    }
+    ```
+    - The first call to `printHi()` is called in a context that does not require a value. Since the function doesn’t return a value, this is fine.
+    - The second function call to function `printHi()` won’t even compile. Function `printHi` has a `void` return type, meaning it doesn’t return a value. However, this statement is trying to send the return value of `printHi` to `std::cout` to be printed. `std::cout` doesn’t know how to handle this (what value would it output?). Consequently, the compiler will flag this as an error. You’ll need to comment out this line of code in order to make your code compile.
+
+- **Tip**
+
+    Some statements require values to be provided, and others don’t.
+
+    When we have a statement that consists of just a function call (e.g. the first `printHi()` in the above example), we’re calling a function for its behavior, not its return value. In this case, we can call either a non-value returning function, or we can call a value-returning function and just ignore the return value.
+
+    When we call a function in a context that requires a value (e.g. `std::cout`), a value must be provided. In such a context, we can only call value-returning functions.
+
+    ```cpp
+    #include <iostream>
+
+    // Function that does not return a value
+    void returnNothing()
+    {
+    }
+
+    // Function that returns a value
+    int returnFive()
+    {
+        return 5;
+    }
+
+    int main()
+    {
+        // When calling a function by itself, no value is required
+        returnNothing(); // ok: we can call a function that does not return a value
+        returnFive();    // ok: we can call a function that returns a value, and ignore that return value
+
+        // When calling a function in a context that requires a value (like std::cout)
+        std::cout << returnFive();    // ok: we can call a function that returns a value, and the value will be used
+        std::cout << returnNothing(); // compile error: we can't call a function that returns void in this context
+
+        return 0;
+    }
+    ```
+
+#### Returning a value from a void function is a compile error
+- Trying to return a value from a non-value returning function will result in a compilation error:
+    ```cpp
+    void printHi() // This function is non-value returning
+    {
+        std::cout << "In printHi()" << '\n';
+
+        return 5; // compile error: we're trying to return a value
+    }
+    ```
+#### Quiz
+<details>
+<summary><strong> Question(s) </strong></summary>
+
+- Inspect the following programs and state what they output, or whether they will not compile.
+    ```cpp
+    #include <iostream>
+
+    void printA()
+    {
+        std::cout << "A\n";
+    }
+
+    void printB()
+    {
+        std::cout << "B\n";
+    }
+
+    int main()
+    {
+        printA();
+        printB();
+
+        return 0;
+    }
+    ```
+    - This program prints the letters A and B on separate lines.
+
+    ```cpp
+    #include <iostream>
+
+    void printA()
+    {
+        std::cout << "A\n";
+    }
+
+    int main()
+    {
+        std::cout << printA() << '\n';
+
+        return 0;
+    }
+    ```
+    - This program does not compile. Function `printA()` returns `void`, which can’t be sent to `std::cout` to be printed. This will produce a compile error.
+
+</details>
+
+### Introduction to function parameters and arguments
+
+#### Function parameters and arguments
+- In many cases, it is useful to be able to pass information to a function being called, so that the function has data to work with. For example, if we wanted to write a function to add two numbers, we need some way to tell the function which two numbers to add when we call it. Otherwise, how would the function know what to add? We do that via function parameters and arguments.
+
+- A **function parameter** is a variable used in the header of a function. Function parameters work almost identically to variables defined inside the function, but with one difference: they are initialized with a value provided by the caller of the function.
+    - Function parameters are defined in the function header by placing them in between the parenthesis after the function name, with multiple parameters being separated by commas. Here are some examples of functions with different numbers of parameters:
+        ```cpp
+        // This function takes no parameters
+        // It does not rely on the caller for anything
+        void doPrint()
+        {
+            std::cout << "In doPrint()\n";
+        }
+
+        // This function takes one integer parameter named x
+        // The caller will supply the value of x
+        void printValue(int x)
+        {
+            std::cout << x << '\n';
+        }
+
+        // This function has two integer parameters, one named x, and one named y
+        // The caller will supply the value of both x and y
+        int add(int x, int y)
+        {
+            return x + y;
+        }
+        ```
+
+- An **argument** is a value that is passed from the caller to the function when a function call is made:
+    ```cpp
+    doPrint(); // this call has no arguments
+    printValue(6); // 6 is the argument passed to function printValue()
+    add(2, 3); // 2 and 3 are the arguments passed to function add()
+    ```
+    - Note that multiple arguments are also separated by commas.
+
+#### How parameters and arguments work together
+- When a function is called, all of the parameters of the function are created as variables, and the value of each of the arguments is copied into the matching parameter (using copy initialization). This process is called **pass by value**. Function parameters that utilize pass by value are called **value parameters**. For example:
+    ```cpp
+    #include <iostream>
+
+    // This function has two integer parameters, one named x, and one named y
+    // The values of x and y are passed in by the caller
+    void printValues(int x, int y)
+    {
+        std::cout << x << '\n';
+        std::cout << y << '\n';
+    }
+
+    int main()
+    {
+        printValues(6, 7); // This function call has two arguments, 6 and 7
+
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    6
+    7
+    ```
+    - When function `printValues` is called with arguments `6` and `7`, `printValues`‘s parameter `x` is created and initialized with the value of `6`, and `printValues`‘s parameter `y` is created and initialized with the value of `7`.
+    - Note that the number of arguments must generally match the number of function parameters, or the compiler will throw an error. The argument passed to a function can be any valid expression (as the argument is essentially just an initializer for the parameter, and initializers can be any valid expression).
+
+#### Fixing our challenge program
+- Let's fix this program:
+    ```cpp
+    #include <iostream>
+
+    int getValueFromUser()
+    {
+        std::cout << "Enter an integer: ";
+        int input{};
+        std::cin >> input;
+
+        return input;
+    }
+
+    // This function won't compile
+    void printDouble()
+    {
+        int num{};
+        std::cout << num << " doubled is: " << num * 2 << '\n';
+    }
+
+    int main()
+    {
+        int num { getValueFromUser() };
+
+        printDouble();
+
+        return 0;
+    }
+    ```
+
+    Here's the fixed version:
+    ```cpp
+    #include <iostream>
+
+    int getValueFromUser()
+    {
+        std::cout << "Enter an integer: ";
+        int input{};
+        std::cin >> input;
+
+        return input;
+    }
+
+    void printDouble(int value) // This function now has an integer parameter
+    {
+        std::cout << value << " doubled is: " << value * 2 << '\n';
+    }
+
+    int main()
+    {
+        int num { getValueFromUser() };
+
+        printDouble(num);
+
+        return 0;
+    }
+    ```
+    - In this program, variable `num` is first initialized with the value entered by the user. Then, function `printDouble` is called, and the value of argument `num` is copied into the `value` parameter of function `printDouble`. Function `printDouble` then uses the value of parameter value.
+
+#### Using return values as arguments
+- In the above problem, we can see that variable `num` is only used once, to transport the return value of function `getValueFromUser` to the argument of the call to function `printDouble`. We can simplify the above example slightly as follows:
+    ```cpp
+    #include <iostream>
+
+    int getValueFromUser()
+    {
+        std::cout << "Enter an integer: ";
+        int input{};
+        std::cin >> input;
+
+        return input;
+    }
+
+    void printDouble(int value)
+    {
+        std::cout << value << " doubled is: " << value * 2 << '\n';
+    }
+
+    int main()
+    {
+        printDouble(getValueFromUser());
+
+        return 0;
+    }
+    ```
+    - Now, we’re using the return value of function `getValueFromUser` directly as an argument to function `printDouble`!
+    - Although this program is more concise (and makes it clear that the value read by the user will be used for nothing else), you may also find this “compact syntax” a bit hard to read. If you’re more comfortable sticking with the version that uses the variable instead, that’s fine.
+
+#### How parameters and return values work together
+- By using both parameters and a return value, we can create functions that take data as input, do some calculation with it, and return the value to the caller. Here is an example of a very simple function that adds two numbers together and returns the result to the caller:
+    ```cpp
+    #include <iostream>
+
+    // add() takes two integers as parameters, and returns the result of their sum
+    // The values of x and y are determined by the function that calls add()
+    int add(int x, int y)
+    {
+        return x + y;
+    }
+
+    // main takes no parameters
+    int main()
+    {
+        std::cout << add(4, 5) << '\n'; // Arguments 4 and 5 are passed to function add()
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    9
+    ```
+    - Execution starts at the top of main. When `add(4, 5)` is evaluated, function `add` is called, with parameter `x` being initialized with value `4`, and parameter `y` being initialized with value `5`.
+    - The `return` statement in function `add` evaluates `x + y` to produce the value `9`, which is then returned back to `main`. This value of `9` is then sent to `std::cout` to be printed on the console.
+        - ![alt text](images/parameters_and_return_values_pictoral_format.png)
+
+#### More examples
+- Let’s take a look at some more function calls:
+    ```cpp
+    #include <iostream>
+
+    int add(int x, int y)
+    {
+        return x + y;
+    }
+
+    int multiply(int z, int w)
+    {
+        return z * w;
+    }
+
+    int main()
+    {
+        std::cout << add(4, 5) << '\n'; // within add() x=4, y=5, so x+y=9
+        std::cout << add(1 + 2, 3 * 4) << '\n'; // within add() x=3, y=12, so x+y=15
+
+        int a{ 5 };
+        std::cout << add(a, a) << '\n'; // evaluates (5 + 5)
+
+        std::cout << add(1, multiply(2, 3)) << '\n'; // evaluates 1 + (2 * 3)
+        std::cout << add(1, add(2, 3)) << '\n'; // evaluates 1 + (2 + 3)
+
+        return 0;
+    }
+    ```
+    Output:
+    ```
+    9
+    15
+    10
+    7
+    6
+    ```
+
+#### Unreferenced parameters and unnamed parameters
+- In certain cases, you will encounter functions that have parameters that are not used in the body of the function. These are called **unreferenced parameters**. As a trivial example:
+    ```cpp
+    void doSomething(int count) // warning: unreferenced parameter count
+    {
+        // This function used to do something with count but it is not used any longer
+    }
+
+    int main()
+    {
+        doSomething(4);
+
+        return 0;
+    }
+    ```
+    - Just like with unused local variables, your compiler will probably warn that variable `count` has been defined but not used.
+
+- In a function definition, the name of a function parameter is optional. Therefore, in cases where a function parameter needs to exist but is not used in the body of the function, you can simply omit the name. A parameter without a name is called an **unnamed parameter**:
+    ```cpp
+    void doSomething(int) // ok: unnamed parameter will not generate warning
+    {
+    }
+    ```
+
+    The Google C++ style guide recommends using a comment to document what the unnamed parameter was:
+    ```cpp
+    void doSomething(int /*count*/)
+    {
+    }
+    ```
+
+- **Author's note**
+
+    You’re probably wondering why we’d write a function that has a parameter whose value isn’t used. This happens most often in cases similar to the following:
+
+    1. Let’s say we have a function with a single parameter. Later, the function is updated in some way, and the value of the parameter is no longer needed. If the now-unused function parameter were simply removed, then every existing call to the function would break (because the function call would be supplying more arguments than the function could accept). This would require us to find every call to the function and remove the unneeded argument. This might be a lot of work (and require a lot of retesting). It also might not even be possible (in cases where we did not control all of the code calling the function). So instead, we might leave the parameter as it is, and just have it do nothing.
+
+    2. Operators `++` and `--` have prefix and postfix variants (e.g. `++foo` vs `foo++`). An unreferenced function parameter is used to differentiate whether an overload of such an operator is for the prefix or postfix case.
+
+    3. When we need to determine something from the type (rather than the value) of a type template parameter.
+
+- Best practice: When a function parameter exists but is not used in the body of the function, do not give it a name. You can optionally put a name inside a comment.
+
+#### Conclusion
+- Function parameters and return values are the key mechanisms by which functions can be written in a reusable way, as it allows us to write functions that can perform tasks and return retrieved or calculated results back to the caller without knowing what the specific inputs or outputs are ahead of time.
+
+#### Quiz
+<details>
+<summary><strong> Question(s) </strong></summary>
+
+1. What’s wrong with this program fragment?
+    ```cpp
+    #include <iostream>
+
+    void multiply(int x, int y)
+    {
+        return x * y;
+    }
+
+    int main()
+    {
+        std::cout << multiply(4, 5) << '\n';
+
+        return 0;
+    }
+    ```
+    - `multiply()` has a return type of `void`, meaning it is a non-value returning function. Since the function is trying to return a value (via a return statement), this function will produce a compiler error. The return type should be `int`.
+
+2. What two things are wrong with this program fragment?
+    ```cpp
+    #include <iostream>
+
+    int multiply(int x, int y)
+    {
+        int product { x * y };
+    }
+
+    int main()
+    {
+        std::cout << multiply(4) << '\n';
+
+        return 0;
+    }
+    ```
+    - Problem 1: `main()` passes one argument to `multiply()`, but `multiply()` requires two arguments. Problem 2: `multiply()` doesn’t have a `return` statement.
+
+3. What value does the following program print?
+    ```cpp
+    #include <iostream>
+
+    int add(int x, int y, int z)
+    {
+        return x + y + z;
+    }
+
+    int multiply(int x, int y)
+    {
+        return x * y;
+    }
+
+    int main()
+    {
+        std::cout << multiply(add(1, 2, 3), 4) << '\n';
+
+        return 0;
+    }
+    ```
+    - `multiply` is called where `x` = `add(1, 2, 3)`, and `y` = `4`. First, the CPU resolves `x` = `add(1, 2, 3)`, which returns 1 + 2 + 3, or `x` = `6`.` multiply(6, 4)` = `24`, which is the answer.
+
+4. Write a function called `doubleNumber()` that takes one integer parameter. The function should return double the value of the parameter.
+    ```cpp
+    int doubleNumber(int x)
+    {
+        return 2 * x;
+    }
+    ```
+
+5. Write a complete program that reads an integer from the user, doubles it using the `doubleNumber()` function you wrote in the previous quiz question, and then prints the doubled value out to the console.
+    ```cpp
+    #include <iostream>
+
+    int doubleNumber(int x)
+    {
+        return 2 * x;
+    }
+
+    int main()
+    {
+        std::cout << "Enter an integer value: ";
+        int x{};
+        std::cin >> x;
+        std::cout << doubleNumber(x) << '\n';
+
+        return 0;
+    }
+    ```
+    - Note: You may come up with other (similar) solutions. There are often many ways to do the same thing in C++.
+
+</details>
+
 ## Vocabulary
 - statement: an instruction in a computer program that tells the computer to perform an action. Most (but not all) statements in C++ end in a semicolon. If you see a line that ends in a semicolon, it’s probably a statement.
 
@@ -2732,6 +3271,20 @@ int main()
 
 - value-returning function: a function that returns a value
 
+- non-value returning function (or a void function): a function that does not return a value
+
+- function parameter: a variable used in the header of a function
+
+- argument: a value that is passed from the caller to the function when a function call is made
+
+- pass by value: all of the parameters of the function are created as variables, and the value of each of the arguments is copied into the matching parameter (using copy initialization)
+
+- value parameters: function parameters that utilize pass by value
+
+- unreferenced parameters: parameters that are not used in the body of the function
+
+- unnamed parameter: a parameter without a name
+
 ## Vocab from old slides (will be updated if needed) 
 - encapsulation: combining a number of items, such as variables and functions, into a single package such as an object of a class
 
@@ -2787,6 +3340,8 @@ int main()
 - Make sure your functions with non-void return types return a value in all cases. Failure to return a value from a value-returning function will cause undefined behavior. 
 
 - Follow DRY: “Don’t repeat yourself”. If you need to do something more than once, consider how to modify your code to remove as much redundancy as possible. Variables can be used to store the results of calculations that need to be used more than once (so we don’t have to repeat the calculation). Functions can be used to define a sequence of statements we want to execute more than once. And loops (which we’ll cover later on) can be used to execute a statement more than once. Like all best practices, DRY is meant to be a guideline, not an absolute. DRY can harm overall comprehension when code is broken into pieces that are too small.
+
+- Do not put a return statement at the end of a non-value returning function.
 
 ## Extra Notes:
 - Big 3 for dynamic usage in classes are copy constructor, assignment operator, and destructor. If you need one, you need the rest.
